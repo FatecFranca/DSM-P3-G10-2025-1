@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0px;
+    --font-primiaria: 'Montserrat', sans-serif;
+    --cor-primaria: #333;
+    --cor-secundaria: #f3f3f3;
+    --cor-vermelha: #ff0f35;
+    --background: #0f0f0f;
+    font-family: var(--font-primiaria); 
+    color: var(--cor-primaria);
+    padding-top: 4rem;
+}
+p,
+h1,
+h2,
+h3,
+h4 {
+    margin: 0;
+}
+
+a {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--cor-primaria);
+}
+
+ul,
+li {
+    padding: 0;
+    list-style: none;
+    margin: 0;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+button,
+input {
+    display: block;
+    font-size: 1rem;
+    font-family: var(--font-primiaria);
+    color: var(--cor-primaria);
+}
+
+.container  {
+    max-width: 75rem;
+    margin: 0 auto;
+}
+
+.title {
+  font-family: var(--type-second);
+  line-height: 1;
+  font-size: 3rem;
+  margin: 1rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ff0f35; 
+  margin-bottom: 0.5rem;
+}
+
+.title::after {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 1rem;
+  background: var(--cor-vermelha);
+  position: absolute;
+  bottom: -2px;
+  left: 100px;
+  border-radius: 0.2rem;
+  z-index: -1;
+}
+.animeDown {
+  opacity: 0;
+  transform: translateY(-25px);
+  animation: animeDown 0.3s forwards;
+}
+
+@keyframes animeDown {
+  to {
+    opacity: 1;
+    transform: initial;
+  }
+}

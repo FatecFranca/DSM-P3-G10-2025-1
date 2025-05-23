@@ -1,0 +1,66 @@
+.header {
+    box-shadow: 0 1px 1px rgba(0,0,0, 0.2);
+    top: 0px    ;
+    position: fixed;
+    width: 100%;
+    z-index: 200;
+    background: var(--background);
+    padding: 0 0.5rem;
+}
+
+.nav {
+   height: 4rem;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.navigation {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-weight: 500;
+}
+
+.login {
+    position: relative;
+    z-index: 1;
+    padding: 0.3rem;
+    color: var(--cor-secundaria);
+}
+.login::before {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 17px;
+    position: relative;
+    background: url('../../Assets/usuario.svg') no-repeat center center;
+    margin: 0 0.5rem;
+}
+.cadastro {
+    padding: 0.3rem;
+    color: var(--cor-secundaria);
+}
+
+.buscarWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.iconeBuscar {
+  position: absolute;
+  left: 0.5rem;
+  width: 20px;
+  height: 20px;
+  background: url('../../Assets/search.svg') no-repeat center center;
+  background-size: contain;
+  pointer-events: none;
+}
+
+.buscar {
+  padding-left: 2rem;
+  height: 2rem;
+  border-radius: 5px;
+  width: 100%;
+}

@@ -1,0 +1,47 @@
+.footer {
+  background: #0f0f0f;
+  color: #eee;
+  padding: 3rem 1rem 1.5rem;
+  text-align: center;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--cor-vermelha); 
+  margin-bottom: 0.5rem;
+}
+
+.tagline {
+  font-size: 1rem;
+  color: #aaa;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.socials a {
+  color: #888;
+  font-size: 1.4rem;
+  transition: color 0.3s ease;
+}
+
+.socials a:hover {
+  color: var(--cor-vermelha); 
+}
+
+.copy {
+  font-size: 0.8rem;
+  color: #666;
+}

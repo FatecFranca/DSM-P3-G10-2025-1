@@ -1,0 +1,25 @@
+.button {
+  font-size: 1rem;
+  font-family: var(--type-first);
+  cursor: pointer;
+  border: none;
+  border-radius: 0.4rem;
+  background: var(--cor-vermelha);
+  color: #fff;
+  min-width: 8rem;
+  padding: 0.8rem 1.2rem;
+  box-sizing: border-box;
+  text-align: center;
+  transition: 0.1s;
+}
+
+.button:hover,
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--cor-vermelha);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
