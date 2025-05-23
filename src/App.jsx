@@ -5,7 +5,6 @@ import Home from "./Components/Home";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Login from "./Components/Login/Login";
-import Cadastro from "./Components/Login/Cadastro";
 
 const App = () => {
   return (
@@ -15,7 +14,6 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login/*" element={<Login />} />
-          <Route path="/cadastro" element={<Cadastro />} />
         </Routes>
         <Footer />
       </BrowserRouter>

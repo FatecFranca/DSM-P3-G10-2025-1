@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Footer.module.css";
-import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
+import { FaXTwitter } from 'react-icons/fa6';
 
 const Footer = () => {
   return (
@@ -10,7 +11,7 @@ const Footer = () => {
         <p className={styles.tagline}>Avaliações honestas. Jogabilidade real. Sem enrolação.</p>
         <div className={styles.socials}>
           <a href="#"><FaFacebookF /></a>
-          <a href="#"><FaTwitter /></a>
+          <a href="#"><FaXTwitter /></a>
           <a href="#"><FaInstagram /></a>
           <a href="#"><FaYoutube /></a>
         </div>

@@ -2,12 +2,12 @@ import React from "react";
 import { Link, useNavigate} from "react-router-dom";
 import Input from "../Form/Input";
 import Button from "../Form/Button";
-import styles from "./FormLogin.module.css";
-import stylesBtn from "../Form/Button.module.css";
+import styles from "./FormCadastro.module.css";
 import useForm from "../../Hooks/useForm";
-const FormLogin = () => {
+const FormCadastro = () => {
   // usa email.value e password.value para pegar o valor do input
   // usa email.validate() e password.validate() para validar o input
+  const name = useForm('');
   const email = useForm('email');
   const password = useForm('');
   const navigate = useNavigate();
@@ -15,27 +15,20 @@ const FormLogin = () => {
     event.preventDefault();
     if (email.validate() && password.validate()) {
       console.log(email.value, password.value);
-      navigate('/');
+      navigate('/login');
   }
   }
   return (
-    <section className="animeDown">
-      <h1 className="title">Login</h1>
+    <section className={`${styles.content} animedown`}>
+      <h1 className="title">Cadastro</h1>
       <form className={styles.form} onSubmit={handleSubmit}>
+        <Input label="Nome Completo" type="text" name="name" {...name} />
         <Input label="E-mail" type="email" name="email" {...email} />
         <Input label="Senha" type="password" name="password" {...password} />
-        <Link to="recuperar" className={styles.forget}>Esqueceu a Senha?</Link>
         <Button>Entrar</Button>
       </form>
-      <div className={styles.cadastro}>
-        <h2 className={styles.subtitle}>Cadastre-se</h2>
-        <p>Ainda não possui conta? Cadastre-se no site.</p>
-        <Link className={stylesBtn.button} to="cadastro">
-          Cadastro
-        </Link>
-      </div>
     </section>
   );
 };
 
-export default FormLogin;
+export default FormCadastro;

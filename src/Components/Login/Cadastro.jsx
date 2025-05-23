@@ -1,9 +1,7 @@
 import React from 'react'
-
+import FormCadastro from './FormCadastro'
 const Cadastro = () => {
-  return (
-    <div>Cadastro</div>
-  )
+  return <FormCadastro/>
 }
 
 export default Cadastro

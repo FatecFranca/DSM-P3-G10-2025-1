@@ -1,0 +1,11 @@
+.squares {
+    height: 2rem;
+    width: 5%;
+    background-color: var(--cor-vermelha);
+    border-radius: 5px;
+    padding: 10px;
+}
+.container {
+    display: flex;
+    gap: 20px;
+}

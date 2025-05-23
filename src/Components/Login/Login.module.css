@@ -34,5 +34,6 @@
     border: none;
     padding: 2rem 1rem;
     margin: 0 auto;
+    min-width: 400px;
   }
 }

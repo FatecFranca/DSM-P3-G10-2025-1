@@ -76,8 +76,8 @@ input {
   height: 1rem;
   background: var(--cor-vermelha);
   position: absolute;
-  bottom: -2px;
-  left: 100px;
+  bottom: -3px;
+  left: -4px;
   border-radius: 0.2rem;
   z-index: -1;
 }
