@@ -15,7 +15,7 @@ const FormLogin = () => {
     event.preventDefault();
     if (email.validate() && password.validate()) {
       console.log(email.value, password.value);
-      navigate('/');
+      navigate('/conta');
   }
   }
   return (

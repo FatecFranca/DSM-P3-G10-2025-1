@@ -11,6 +11,9 @@
   border-radius: 0.4rem;
   background: #eee;
   transition: 0.2s;
+  resize: none; 
+  max-height: 300px; 
+  box-sizing: border-box;
 }
 
 .input:focus,

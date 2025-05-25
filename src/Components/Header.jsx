@@ -4,13 +4,13 @@ import styles from "./Header.module.css";
 
 const Header = () => {
   const [search, setSearch] = React.useState("");
-  const [loginPage, setLoginPage] = React.useState(false);
+  const [accountPage, setAccountPage] = React.useState(false);
   const location = useLocation();
   const handleSearch = (event) => {
     setSearch(event.target.value);
   };
   React.useEffect(() => {
-    setLoginPage(location.pathname.startsWith("/login"));
+    setAccountPage(location.pathname.startsWith("/login") || location.pathname.startsWith("/conta"));
   }, [location.pathname]);
   return (
     <header className={styles.header}>
@@ -18,7 +18,7 @@ const Header = () => {
         <Link className={styles.logo} to="/">
           <h2 className="logo">GameReview</h2>
         </Link>
-        {!loginPage && (
+        {!accountPage && (
           <div className={styles.buscarWrapper}>
             <span className={styles.iconeBuscar}></span>
             <input

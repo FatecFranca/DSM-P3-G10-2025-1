@@ -3,7 +3,7 @@ import FormLogin from "./FormLogin";
 import { Route, Routes } from "react-router-dom";
 import styles from "./Login.module.css";
 import RecuperarSenha from './RecuperarSenha'
-import Cadastro from "./Cadastro";
+import FormCadastro from "./FormCadastro";
 const Login = () => {
   return (
       <div className={styles.login}> 
@@ -11,7 +11,7 @@ const Login = () => {
           <Routes>
             <Route path="/" element={<FormLogin />} />
             <Route path="recuperar" element={<RecuperarSenha/>}/>
-            <Route path="cadastro" element={<Cadastro/>}/>
+            <Route path="cadastro" element={<FormCadastro/>}/>
           </Routes>
         </div>
       </div>

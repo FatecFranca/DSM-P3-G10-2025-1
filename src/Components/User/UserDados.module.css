@@ -1,0 +1,44 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: var(--cor-secundaria);
+}
+
+.user {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    background-color: var(--background);
+    padding: 5rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+    color: var(--cor-secundaria);
+    margin-top: 1rem;
+    max-width: 800px;
+}
+
+.user h2 {
+    margin-bottom: 2rem;
+}
+.dados {
+    position: relative;
+}
+.dados::after {
+    content: '';
+    display: block;
+    background: var(--cor-vermelha);
+    height: 100%;
+    width: 0.5rem;
+    position: absolute;
+    top: 0px;
+    right: -3.25rem;
+}
+
+.buttonNoFocus:focus {
+  outline: none;
+  box-shadow: none;
+}

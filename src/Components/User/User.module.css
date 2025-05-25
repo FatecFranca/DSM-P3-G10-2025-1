@@ -1,0 +1,11 @@
+.page {
+    display: flex;
+}
+
+.container {
+    flex: 1;
+    justify-content: center;
+    align-items: start;
+    background-color: var(--cor-secundaria);
+    padding: 2rem;
+}

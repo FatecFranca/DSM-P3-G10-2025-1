@@ -1,0 +1,44 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: var(--cor-secundaria);
+}
+
+.user {
+    background-color: var(--background);
+    padding: 3rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+    color: var(--cor-secundaria);
+    margin-top: 1rem;
+}
+
+.name {
+    font-size: 1.6rem;
+    line-height: 1.1;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.user p {
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    position: relative;
+    padding: 1rem;
+}
+
+.user p::before {
+    content: '';
+    display: block;
+    background: var(--cor-vermelha);
+    height: 0.3rem;
+    width: 1rem;
+    border-radius: 0.2rem;
+    position: absolute;
+    top: 1.5rem;
+    left: -.5rem;
+}
