@@ -31,7 +31,13 @@ const GamePost = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    if (!title.validate() || !developer.validate() || !date.validate()) return;
+    if (
+      !title.validate() ||
+      !developer.validate() ||
+      !date.validate() ||
+      description.validate()
+    )
+      return;
     formData.append("img", img.raw);
     formData.append("titulo", title.value);
     formData.append("genero", genero);

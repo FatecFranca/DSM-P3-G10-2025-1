@@ -1,0 +1,75 @@
+.wrapper {
+  background: var(--background);
+  padding: 2rem;
+  border-radius: 1rem;
+  color: var(--cor-secundaria);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+  margin-top: 2rem;
+}
+
+.lista {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.card {
+  background: var(--cor-secundaria);
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  color: var(--cor-primaria);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.inicial {
+  background: linear-gradient(135deg, var(--cor-primaria), var(--cor-vermelha));
+  color: white;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.title {
+    margin-bottom: 2rem;
+}
+.nickname {
+    font-size: 1.2rem;
+}
+.stars {
+  display: flex;
+  gap: 0.2rem;
+
+}
+
+.filled {
+  color: gold;
+  font-size: 1.2rem;
+}
+
+.empty {
+  color: #ccc;
+  font-size: 1.2rem;
+}
+
+.comment {
+  margin-left: 4rem;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.semComentario {
+  font-style: italic;
+  color: #aaa;
+}

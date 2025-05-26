@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../Form/Input";
 import Button from "../Form/Button";
 import styles from "./FormLogin.module.css";
@@ -8,15 +8,15 @@ import useForm from "../../Hooks/useForm";
 const FormLogin = () => {
   // usa email.value e password.value para pegar o valor do input
   // usa email.validate() e password.validate() para validar o input
-  const email = useForm('email');
-  const password = useForm('');
+  const email = useForm("email");
+  const password = useForm("");
   const navigate = useNavigate();
   function handleSubmit(event) {
     event.preventDefault();
     if (email.validate() && password.validate()) {
       console.log(email.value, password.value);
-      navigate('/conta');
-  }
+      navigate("/conta");
+    }
   }
   return (
     <section className="animeDown">
@@ -24,7 +24,9 @@ const FormLogin = () => {
       <form className={styles.form} onSubmit={handleSubmit}>
         <Input label="E-mail" type="email" name="email" {...email} />
         <Input label="Senha" type="password" name="password" {...password} />
-        <Link to="recuperar" className={styles.forget}>Esqueceu a Senha?</Link>
+        <Link to="recuperar" className={styles.forget}>
+          Esqueceu a Senha?
+        </Link>
         <Button>Entrar</Button>
       </form>
       <div className={styles.cadastro}>

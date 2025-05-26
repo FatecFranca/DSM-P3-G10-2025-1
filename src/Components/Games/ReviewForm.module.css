@@ -1,0 +1,44 @@
+.form {
+  background: var(--cor-secundaria);
+  color: var(--cor-primaria);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+}
+
+h3 {
+  margin-bottom: 1rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+.filled {
+  color: gold;
+}
+
+.empty {
+  color: #ccc;
+}
+
+.error {
+  color: #f31;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+
+}
+.btn {
+  margin-top: 0.25rem;
+}
+
+.btn:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}

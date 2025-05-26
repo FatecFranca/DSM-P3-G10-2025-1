@@ -15,7 +15,7 @@ const User = () => {
           <Route path="/" element={<UserAccount />} />
           <Route path="/posts" element={<UserPosts />} />
           <Route path="/dados" element={<UserDados />} />
-          <Route path="/criar" element={<GamePost/>} />
+          <Route path="/criar" element={<GamePost />} />
         </Routes>
       </div>
     </div>

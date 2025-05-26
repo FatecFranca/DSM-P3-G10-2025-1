@@ -1,9 +1,7 @@
 import React from "react";
 
-const UserIcon = () => {
-  // colocar a inicial do usuario aqui
-  const userInitial = 'p';
-  return <div className='userInitial'>{userInitial}</div>;
+const UserIcon = ({ initial }) => {
+  return <div className="userInitial">{initial}</div>;
 };
 
 export default UserIcon;
