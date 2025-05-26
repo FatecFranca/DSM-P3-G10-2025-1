@@ -7,10 +7,11 @@ import Textarea from "../Form/TextArea";
 import useForm from "../../Hooks/useForm";
 
 const GamePost = () => {
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 1000);
   const title = useForm("");
   const developer = useForm("");
   const date = useForm("date");
-  const [description, setDescription] = React.useState("");
+  const description = useForm("");
   const [img, setImg] = React.useState({});
   const [genero, setGenero] = React.useState("");
   function handleImageChange({ target }) {
@@ -19,6 +20,14 @@ const GamePost = () => {
       raw: target.files[0],
     });
   }
+
+  React.useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth <= 1000);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -43,8 +52,7 @@ const GamePost = () => {
           <Textarea
             label="Descrição"
             name="description"
-            value={description}
-            onChange={({ target }) => setDescription(target.value)}
+            {...description}
             required
           />
           <p style={{ paddingBottom: 8 }}>Gênero</p>
@@ -82,12 +90,35 @@ const GamePost = () => {
             type="date"
             {...date}
           />
-          <input type="file" name="img" id="img" onChange={handleImageChange} required />
+          <div className={styles.fileInputWrapper}>
+            <label htmlFor="img" className={styles.fileLabel}>
+              Escolher imagem
+            </label>
+            <input
+              type="file"
+              id="img"
+              name="img"
+              onChange={handleImageChange}
+              className={styles.hideFile}
+              required
+            />
+            {img?.raw && <p className={styles.fileName}>{img.raw.name}</p>}
+          </div>
+
+          {isMobile && img.preview && (
+            <div className={styles.mobileWrapper}>
+              <h1>Preview: </h1>
+              <div
+                className={styles.mobilePreview}
+                style={{ backgroundImage: `url('${img.preview}')` }}
+              ></div>
+            </div>
+          )}
           <Button className={styles.button}>Postar</Button>
         </form>
       </div>
       <div>
-        {img.preview && (
+        {!isMobile && img.preview && (
           <div className={styles.previewWrapper}>
             <h1>Preview: </h1>
             <div

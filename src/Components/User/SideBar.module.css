@@ -1,5 +1,5 @@
 .nav {
-    height: 100vh;
+    height: calc(100vh + 2.5rem);
     background-color: var(--cor-vermelha);
     color: var(--cor-secundaria);
     display: flex;
@@ -54,4 +54,16 @@
 
 .nav :global(.active)::after {
   width: 100%;
+}
+
+@media (max-width: 1000px) {
+  .nav {
+    flex-direction: row;
+    height: 5rem;
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+    font: .5rem;
+    align-items: center;
+  }
 }

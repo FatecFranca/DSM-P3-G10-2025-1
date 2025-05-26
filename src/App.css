@@ -124,3 +124,11 @@ input {
     transform: initial;
   }
 }
+
+@media (max-width: 1000px) {
+  .userInitial {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.2rem;
+  }
+}
