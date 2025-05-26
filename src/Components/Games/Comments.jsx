@@ -10,7 +10,7 @@ const Comments = ({ avaliacoes }) => {
 
       <ReviewForm />
 
-      <div className={styles.lista}>
+      <div className={styles.list}>
         {avaliacoes.length === 0 ? (
           <p className={styles.semComentario}>Nenhum comentário ainda.</p>
         ) : (
