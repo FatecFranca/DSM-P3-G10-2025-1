@@ -42,3 +42,17 @@
     top: 1.5rem;
     left: -.5rem;
 }
+
+@media (max-width: 600px) {
+    .content {
+      padding: 1rem;
+    }
+  
+    .user {
+      width: 100%;
+      padding: 2rem;
+    }
+    .name {
+        font-size: 1.3rem;
+    }
+  }

@@ -9,3 +9,9 @@
     display: flex;
     gap: 20px;
 }
+
+@media (max-width: 600px) {
+    .squares {
+        width: 30%;
+    }
+}

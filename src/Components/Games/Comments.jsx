@@ -19,7 +19,9 @@ const Comments = ({ avaliacoes }) => {
               <div className={styles.user}>
                 <UserIcon initial={avaliacao.usuario.charAt(0).toUpperCase()} />
                 <div>
-                  <strong className={styles.nickname}>{avaliacao.usuario}</strong>
+                  <strong className={styles.nickname}>
+                    {avaliacao.usuario}
+                  </strong>
                   <div className={styles.stars}>
                     {Array.from({ length: 5 }, (_, i) => (
                       <span

@@ -116,6 +116,7 @@ input {
   opacity: 0;
   transform: translateY(-25px);
   animation: animeDown 0.3s forwards;
+  will-change: transform, opacity;
 }
 
 @keyframes animeDown {

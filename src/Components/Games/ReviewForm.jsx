@@ -6,7 +6,7 @@ import Button from "../Form/Button";
 const ReviewForm = () => {
   const [notaValue, setNotaValue] = React.useState(0);
   const [error, setError] = React.useState("");
-  const comentario = useForm("");
+  const comentario = useForm(false);
 
   function handleSubmit(e) {
     e.preventDefault();

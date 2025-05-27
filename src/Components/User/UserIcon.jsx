@@ -1,7 +1,7 @@
 import React from "react";
 
-const UserIcon = ({ initial }) => {
-  return <div className="userInitial">{initial}</div>;
+const UserIcon = ({ initial, className }) => {
+  return <div className={`${className} userInitial`}>{initial}</div>;
 };
 
 export default UserIcon;

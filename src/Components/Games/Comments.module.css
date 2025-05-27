@@ -73,3 +73,9 @@
   font-style: italic;
   color: #aaa;
 }
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 2rem;
+  }
+}

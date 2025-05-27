@@ -59,11 +59,34 @@
 @media (max-width: 1000px) {
   .nav {
     flex-direction: row;
-    height: 5rem;
+    height: 4rem;
     width: 100%;
     justify-content: center;
     padding: 1rem;
-    font: .5rem;
     align-items: center;
+    gap: 2rem;
+  }
+  .nav a {
+    font-size: 1.2rem;
+  }
+}
+@media (max-width: 600px) {
+  .nav {
+    flex-direction: row;
+    height: 4rem;
+    width: 100%;
+    justify-content: center;
+    padding: .5rem;
+    align-items: center;
+    gap: 1rem;
+  }
+  .nav a {
+    font-size: 1.1rem;
+  }
+  .icon {
+    display: none;
+  }
+  .nav button {
+    font-size: 1.1rem;
   }
 }
