@@ -1,20 +1,20 @@
 .footer {
   background: #0f0f0f;
   color: #eee;
-  padding: 3rem 1rem 1.5rem;
+  padding: 3rem 1rem 1.5rem; /* já em rem */
   text-align: center;
   height: 13.5rem;
 }
 
 .container {
-  max-width: 1000px;
+  max-width: 62.5rem; /* 1000px */
   margin: 0 auto;
 }
 
 .logo {
-  font-size: 2rem;
+  font-size: 2rem; /* já em rem */
   font-weight: 700;
-  color: var(--cor-vermelha); 
+  color: var(--cor-vermelha);
   margin-bottom: 0.5rem;
 }
 
@@ -39,7 +39,7 @@
 }
 
 .socials a:hover {
-  color: var(--cor-vermelha); 
+  color: var(--cor-vermelha);
 }
 
 .copy {

@@ -16,20 +16,21 @@ const categorias = [
 const jogosDestaque = [
   {
     nome: "CyberStrike",
-    capa: "https://via.placeholder.com/150x200/000000/FFFFFF?text=CyberStrike",
+    capa: "https://via.placeholder.com/150x200.png?text=CyberStrike",
     avaliacao: "9.2"
   },
   {
     nome: "Fantasy Realms",
-    capa: "https://via.placeholder.com/150x200/000000/FFFFFF?text=Fantasy+Realms",
+    capa: "https://via.placeholder.com/150x200.png?text=Fantasy%20Realms",
     avaliacao: "8.7"
   },
   {
     nome: "Speed Horizon",
-    capa: "https://via.placeholder.com/150x200/000000/FFFFFF?text=Speed+Horizon",
+    capa: "https://via.placeholder.com/150x200.png?text=Speed%20Horizon",
     avaliacao: "9.0"
   }
 ];
+
 
 const Home = () => {
   return (
