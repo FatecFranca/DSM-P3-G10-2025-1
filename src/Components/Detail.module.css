@@ -10,8 +10,9 @@
     gap: 20px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 770px) {
     .squares {
         width: 30%;
+        height: 1rem;
     }
 }

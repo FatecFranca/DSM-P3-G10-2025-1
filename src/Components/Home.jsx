@@ -15,18 +15,18 @@ const categorias = [
 
 const jogosDestaque = [
   {
-    nome: "CyberStrike",
-    capa: "https://via.placeholder.com/150x200.png?text=CyberStrike",
+    nome: "The Elder Scrolls IV OBLIVION",
+    capa: "./assets/3.jpg",
     avaliacao: "9.2"
   },
   {
-    nome: "Fantasy Realms",
-    capa: "https://via.placeholder.com/150x200.png?text=Fantasy%20Realms",
-    avaliacao: "8.7"
+    nome: "Doom The Dark Ages",
+    capa: "./assets/2.jpg",
+    avaliacao: "11"
   },
   {
-    nome: "Speed Horizon",
-    capa: "https://via.placeholder.com/150x200.png?text=Speed%20Horizon",
+    nome: "GTA VI",
+    capa: "./assets/1.jpg",
     avaliacao: "9.0"
   }
 ];
@@ -45,13 +45,13 @@ const Home = () => {
       {/* Categorias */}
       <section className={styles.categorias}>
         <ul className={styles.listaCategorias}>
-          {categorias.map((cat, index) => (
+          {categorias.map((categoria, index) => (
             <li key={index}>
               <Link
-                to={`/genero/${cat.toLowerCase().replace(/\s+/g, '-')}`}
+                to={`/genero/${categoria.toLowerCase().replace(/\s+/g, '-')}`}
                 className={styles.categoriaItem}
               >
-                {cat}
+                {categoria}
               </Link>
             </li>
           ))}
