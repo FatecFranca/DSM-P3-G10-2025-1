@@ -1,25 +1,22 @@
 .button {
   font-size: 1rem;
-  font-family: var(--type-first);
+  font-weight: 600;
   cursor: pointer;
   border: none;
   border-radius: 0.4rem;
-  background: var(--cor-vermelha);
-  color: #fff;
-  min-width: 8rem;
+  background: #007bff;
+  color: white;
   padding: 0.8rem 1.2rem;
-  box-sizing: border-box;
-  text-align: center;
-  transition: 0.1s;
+  width: 100%;
+  transition: 0.2s;
 }
 
-.button:hover,
-.button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--cor-vermelha);
+.button:hover:not(.disabled) {
+  background: #0056b3;
 }
 
-.button:disabled {
-  opacity: 0.5;
-  cursor: wait;
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #6c757d;
 }

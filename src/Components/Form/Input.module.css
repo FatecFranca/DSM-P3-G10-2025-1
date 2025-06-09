@@ -2,37 +2,39 @@
   margin-bottom: 1rem;
 }
 
+.label {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1;
+  padding-bottom: 0.5rem;
+  color: #333;
+  font-weight: 600;
+}
+
 .input {
-  border: 1px solid #eee;
+  border: 1px solid #ddd;
   display: block;
   width: 100%;
   font-size: 1rem;
   padding: 0.8rem;
   border-radius: 0.4rem;
-  background: #eee;
+  background: #fff;
   transition: 0.2s;
-  resize: none; 
-  max-height: 300px; 
   box-sizing: border-box;
 }
 
-.input:focus,
-.input:hover {
+.input:focus {
   outline: none;
-  border-color: rgb(255, 255, 255);
-  background: white;
-  box-shadow: 0 0 0 3px var(--cor-vermelha);
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
-.label {
-  display: block;
-  font-size: 1rem;
-  line-height: 1;
-  padding-bottom: 0.5rem;
+.inputError {
+  border-color: #dc3545;
 }
 
 .error {
-  color: #f31;
+  color: #dc3545;
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }

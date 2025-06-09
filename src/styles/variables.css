@@ -1,0 +1,67 @@
+:root {
+  /* Paleta de cores principal */
+  --primary: #7e22ce;        /* Roxo vibrante - cor principal */
+  --primary-light: #a855f7;  /* Roxo mais claro */
+  --primary-dark: #581c87;   /* Roxo mais escuro */
+  
+  --secondary: #2563eb;      /* Azul - cor secundária */
+  --secondary-light: #60a5fa;/* Azul mais claro */
+  --secondary-dark: #1e40af; /* Azul mais escuro */
+  
+  /* Cores neutras */
+  --background: #f8fafc;     /* Background principal */
+  --surface: #ffffff;        /* Superfícies/cards */
+  --surface-alt: #f1f5f9;    /* Superfície alternativa */
+  
+  /* Cores de texto */
+  --text-primary: #0f172a;   /* Texto principal */
+  --text-secondary: #475569; /* Texto secundário */
+  --text-tertiary: #94a3b8;  /* Texto terciário/desabilitado */
+  --text-on-primary: #ffffff;/* Texto sobre cor primária */
+  
+  /* Cores de status */
+  --success: #10b981;        /* Verde - sucesso */
+  --warning: #f59e0b;        /* Amarelo - aviso */
+  --error: #ef4444;          /* Vermelho - erro */
+  --info: #3b82f6;           /* Azul - informação */
+  
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Bordas */
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 1rem;
+  --border-color: #e2e8f0;
+  
+  /* Espaçamento */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Transições */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 500ms ease;
+  
+  /* Fontes */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: 'Poppins', var(--font-sans);
+  --font-mono: 'Fira Code', 'Consolas', monospace;
+}
+
+/* Tema escuro */
+.dark-theme {
+  --background: #0f172a;
+  --surface: #1e293b;
+  --surface-alt: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #64748b;
+  --border-color: #334155;
+}

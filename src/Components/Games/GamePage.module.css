@@ -70,9 +70,10 @@
   }
 
   .image {
-    max-width: 100%;
+    max-width: 80%;
+    aspect-ratio: 2 / 2;
     height: auto;
-    margin: 0 auto;
+    
   }
 
   .details {
