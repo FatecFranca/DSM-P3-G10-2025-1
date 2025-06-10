@@ -10,6 +10,7 @@
 
 /* Base do Footer */
 .footer {
+<<<<<<< HEAD
   background-color: var(--footer-bg);
   color: var(--footer-text);
   padding: 60px 0 30px;
@@ -34,16 +35,35 @@
 
 .container {
   max-width: 1200px;
+=======
+  background: #0f0f0f;
+  color: #eee;
+  padding: 3rem 1rem 1.5rem; /* já em rem */
+  text-align: center;
+  height: 13.5rem;
+}
+
+.container {
+  max-width: 62.5rem; /* 1000px */
+>>>>>>> 37d17bb102d7dded37706fc6816ae724580ac321
   margin: 0 auto;
   padding: 0 clamp(1rem, 5%, 2rem);
   position: relative;
 }
 
+<<<<<<< HEAD
 /* Grid Layout */
 .footerGrid {
   display: grid;
   grid-template-columns: 1.2fr repeat(2, 1fr) 1.5fr;
   gap: clamp(2rem, 5%, 4rem);
+=======
+.logo {
+  font-size: 2rem; /* já em rem */
+  font-weight: 700;
+  color: var(--cor-vermelha);
+  margin-bottom: 0.5rem;
+>>>>>>> 37d17bb102d7dded37706fc6816ae724580ac321
 }
 
 .footerLinksWrapper {
@@ -76,10 +96,15 @@
   transition: transform 0.3s ease;
 }
 
+<<<<<<< HEAD
 .logoIcon svg {
   width: 22px;
   height: 22px;
   color: white;
+=======
+.socials a:hover {
+  color: var(--cor-vermelha);
+>>>>>>> 37d17bb102d7dded37706fc6816ae724580ac321
 }
 
 .logoText {
@@ -249,6 +274,7 @@
 
 .privacyNote {
   font-size: 0.8rem;
+<<<<<<< HEAD
   color: var(--footer-muted);
 }
 
@@ -435,3 +461,7 @@
     gap: 1rem;
   }
 }
+=======
+  color: #666;
+}
+>>>>>>> 37d17bb102d7dded37706fc6816ae724580ac321

@@ -14,62 +14,22 @@ const categorias = [
 
 const jogosDestaque = [
   {
-    id: 1,
-    nome: "The Elder Scrolls IV OBLIVION",
-    capa: "./assets/3.jpg",
-    avaliacao: "9.2",
-    descricao: "Um épico RPG medieval de mundo aberto onde você pode forjar seu próprio destino.",
-    genero: ["RPG", "Mundo Aberto", "Aventura"]
+    nome: "CyberStrike",
+    capa: "https://via.placeholder.com/150x200/000000/FFFFFF?text=CyberStrike",
+    avaliacao: "9.2"
   },
   {
-    id: 2,
-    nome: "Doom The Dark Ages",
-    capa: "./assets/2.jpg",
-    avaliacao: "11",
-    descricao: "Brutal, rápido e intenso - o retorno do FPS icônico com uma ambientação medieval.",
-    genero: ["FPS", "Ação", "Terror"]
+    nome: "Fantasy Realms",
+    capa: "https://via.placeholder.com/150x200/000000/FFFFFF?text=Fantasy+Realms",
+    avaliacao: "8.7"
   },
   {
-    id: 3,
-    nome: "GTA VI",
-    capa: "./assets/1.jpg",
-    avaliacao: "9.0",
-    descricao: "A aguardada sequência que promete revolucionar a experiência de mundo aberto mais uma vez.",
-    genero: ["Ação", "Mundo Aberto", "Aventura"]
-  },
-  {
-    id: 4,
-    nome: "Assassin's Creed Shadows",
-    capa: "./assets/2.jpg",
-    avaliacao: "8.8",
-    descricao: "Um novo capítulo da saga que nos leva às sombras feudais do Japão.",
-    genero: ["Ação", "Aventura", "Stealth"]
+    nome: "Speed Horizon",
+    capa: "https://via.placeholder.com/150x200/000000/FFFFFF?text=Speed+Horizon",
+    avaliacao: "9.0"
   }
 ];
 
-const novosLancamentos = [
-  {
-    id: 5,
-    nome: "Starfield",
-    capa: "./assets/1.jpg",
-    data: "11/05/2025",
-    plataformas: ["PC", "Xbox Series X/S"]
-  },
-  {
-    id: 6,
-    nome: "Dragon Age: Dreadwolf",
-    capa: "./assets/3.jpg",
-    data: "15/06/2025",
-    plataformas: ["PC", "PS5", "Xbox Series X/S"]
-  },
-  {
-    id: 7,
-    nome: "Silksong",
-    capa: "./assets/2.jpg", 
-    data: "07/07/2025",
-    plataformas: ["PC", "Switch", "PS5", "Xbox Series X/S"]
-  }
-];
 
 const Home = () => {
   const [categoriaAtiva, setCategoriaAtiva] = useState(null);
@@ -97,24 +57,17 @@ const Home = () => {
       </section>
 
       {/* Categorias */}
-      <section className={styles.categoriasSection}>
-        <div className={styles.sectionHeader}>
-          <h2>Explore por Categorias</h2>
-          <Detail />
-        </div>
-        <div className={styles.categoriasFlex}>
-          {categoriasVisíveis.map((categoria, index) => (
-            <Link
-              key={index}
-              to={`/genero/${categoria.toLowerCase().replace(/\s+/g, '-')}`}
-              className={`${styles.categoriaItem} ${categoriaAtiva === categoria ? styles.ativo : ''}`}
-              onClick={(e) => {
-                e.preventDefault();
-                handleCategoriaClick(categoria);
-              }}
-            >
-              {categoria}
-            </Link>
+      <section className={styles.categorias}>
+        <ul className={styles.listaCategorias}>
+          {categorias.map((cat, index) => (
+            <li key={index}>
+              <Link
+                to={`/genero/${cat.toLowerCase().replace(/\s+/g, '-')}`}
+                className={styles.categoriaItem}
+              >
+                {cat}
+              </Link>
+            </li>
           ))}
           {categorias.length > 10 && (
             <button 
