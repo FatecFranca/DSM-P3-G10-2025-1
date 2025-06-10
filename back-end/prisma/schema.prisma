@@ -13,8 +13,11 @@ model User {
   email     String   @unique
   password  String
   avatarUrl String?
-  reviews   Review[]
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviews   Review[]
+  
+  @@map("users")
 }
 
 model Game {
@@ -24,22 +27,35 @@ model Game {
   coverUrl    String?
   releaseDate DateTime?
   genreIds    String[]  @db.ObjectId
-  reviews     Review[]
   createdAt   DateTime  @default(now())
-}
-
-model Genre {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String @unique
+  updatedAt   DateTime  @updatedAt
+  reviews     Review[]
+  
+  @@map("games")
 }
 
 model Review {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  rating    Int
+  rating    Int      // 1 a 5
   comment   String
-  user      User     @relation(fields: [userId], references: [id])
   userId    String   @db.ObjectId
-  game      Game     @relation(fields: [gameId], references: [id])
   gameId    String   @db.ObjectId
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, gameId]) // Um usuário só pode fazer uma review por jogo
+  @@map("reviews")
+}
+
+model Genre {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("genres")
 }

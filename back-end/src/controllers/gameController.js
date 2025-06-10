@@ -1,8 +1,18 @@
-import prisma from '../config/database.js';
+import { PrismaClient } from '@prisma/client';
 
+const prisma = new PrismaClient();
+
+// Criar novo jogo
 export const createGame = async (req, res) => {
   try {
     const { title, description, coverUrl, releaseDate, genreIds } = req.body;
+
+    // Validação básica
+    if (!title || !description) {
+      return res.status(400).json({
+        error: 'Título e descrição são obrigatórios'
+      });
+    }
 
     const game = await prisma.game.create({
       data: {
@@ -16,24 +26,35 @@ export const createGame = async (req, res) => {
 
     res.status(201).json(game);
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao criar jogo' });
+    console.error('Erro ao criar jogo:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
   }
 };
 
+// Buscar todos os jogos
 export const getAllGames = async (req, res) => {
   try {
-    const { page = 1, limit = 10, genre } = req.query;
-    const skip = (page - 1) * limit;
+    const { page = 1, limit = 10, search, genreId } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    const where = genre ? {
-      genreIds: {
-        has: genre
-      }
-    } : {};
+    const where = {};
+    
+    if (search) {
+      where.title = {
+        contains: search,
+        mode: 'insensitive'
+      };
+    }
+
+    if (genreId) {
+      where.genreIds = {
+        has: genreId
+      };
+    }
 
     const games = await prisma.game.findMany({
       where,
-      skip: parseInt(skip),
+      skip,
       take: parseInt(limit),
       include: {
         reviews: {
@@ -42,32 +63,47 @@ export const getAllGames = async (req, res) => {
           }
         },
         _count: {
-          select: { reviews: true }
+          select: {
+            reviews: true
+          }
         }
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     });
 
-    // Calcular média de avaliações
-    const gamesWithRating = games.map(game => {
-      const totalRatings = game.reviews.length;
-      const averageRating = totalRatings > 0 
-        ? game.reviews.reduce((sum, review) => sum + review.rating, 0) / totalRatings
+    // Calcular média de rating para cada jogo
+    const gamesWithStats = games.map(game => {
+      const avgRating = game.reviews.length > 0
+        ? game.reviews.reduce((sum, review) => sum + review.rating, 0) / game.reviews.length
         : 0;
-
+      
       return {
         ...game,
-        averageRating: parseFloat(averageRating.toFixed(1)),
-        totalReviews: totalRatings,
-        reviews: undefined // Remover reviews da resposta
+        averageRating: Math.round(avgRating * 10) / 10,
+        reviews: undefined // Remove reviews detalhadas da resposta
       };
     });
 
-    res.json(gamesWithRating);
+    const total = await prisma.game.count({ where });
+
+    res.json({
+      games: gamesWithStats,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / parseInt(limit))
+      }
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao buscar jogos' });
+    console.error('Erro ao buscar jogos:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
   }
 };
 
+// Buscar jogo por ID
 export const getGameById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -97,48 +133,78 @@ export const getGameById = async (req, res) => {
     }
 
     // Calcular estatísticas
-    const totalReviews = game.reviews.length;
-    const averageRating = totalReviews > 0 
-      ? game.reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
+    const avgRating = game.reviews.length > 0
+      ? game.reviews.reduce((sum, review) => sum + review.rating, 0) / game.reviews.length
       : 0;
 
-    const gameWithStats = {
-      ...game,
-      averageRating: parseFloat(averageRating.toFixed(1)),
-      totalReviews
+    const ratingDistribution = {
+      5: game.reviews.filter(r => r.rating === 5).length,
+      4: game.reviews.filter(r => r.rating === 4).length,
+      3: game.reviews.filter(r => r.rating === 3).length,
+      2: game.reviews.filter(r => r.rating === 2).length,
+      1: game.reviews.filter(r => r.rating === 1).length
     };
 
-    res.json(gameWithStats);
+    res.json({
+      ...game,
+      statistics: {
+        averageRating: Math.round(avgRating * 10) / 10,
+        totalReviews: game.reviews.length,
+        ratingDistribution
+      }
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao buscar jogo' });
+    console.error('Erro ao buscar jogo:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
   }
 };
 
+// Atualizar jogo
 export const updateGame = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, coverUrl, releaseDate, genreIds } = req.body;
 
-    const game = await prisma.game.update({
+    // Verificar se o jogo existe
+    const existingGame = await prisma.game.findUnique({
+      where: { id }
+    });
+
+    if (!existingGame) {
+      return res.status(404).json({ error: 'Jogo não encontrado' });
+    }
+
+    const updatedGame = await prisma.game.update({
       where: { id },
       data: {
-        title,
-        description,
-        coverUrl,
-        releaseDate: releaseDate ? new Date(releaseDate) : null,
-        genreIds
+        ...(title && { title }),
+        ...(description && { description }),
+        ...(coverUrl !== undefined && { coverUrl }),
+        ...(releaseDate && { releaseDate: new Date(releaseDate) }),
+        ...(genreIds && { genreIds })
       }
     });
 
-    res.json(game);
+    res.json(updatedGame);
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao atualizar jogo' });
+    console.error('Erro ao atualizar jogo:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
   }
 };
 
+// Deletar jogo
 export const deleteGame = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Verificar se o jogo existe
+    const existingGame = await prisma.game.findUnique({
+      where: { id }
+    });
+
+    if (!existingGame) {
+      return res.status(404).json({ error: 'Jogo não encontrado' });
+    }
 
     await prisma.game.delete({
       where: { id }
@@ -146,6 +212,48 @@ export const deleteGame = async (req, res) => {
 
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao deletar jogo' });
+    console.error('Erro ao deletar jogo:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+};
+
+// Buscar jogos em destaque (mais bem avaliados)
+export const getFeaturedGames = async (req, res) => {
+  try {
+    const { limit = 6 } = req.query;
+
+    const games = await prisma.game.findMany({
+      include: {
+        reviews: {
+          select: {
+            rating: true
+          }
+        },
+        _count: {
+          select: {
+            reviews: true
+          }
+        }
+      }
+    });
+
+    // Filtrar jogos com pelo menos 3 reviews e calcular média
+    const gamesWithRatings = games
+      .filter(game => game.reviews.length >= 3)
+      .map(game => {
+        const avgRating = game.reviews.reduce((sum, review) => sum + review.rating, 0) / game.reviews.length;
+        return {
+          ...game,
+          averageRating: Math.round(avgRating * 10) / 10,
+          reviews: undefined
+        };
+      })
+      .sort((a, b) => b.averageRating - a.averageRating)
+      .slice(0, parseInt(limit));
+
+    res.json(gamesWithRatings);
+  } catch (error) {
+    console.error('Erro ao buscar jogos em destaque:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
   }
 };

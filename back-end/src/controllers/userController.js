@@ -1,5 +1,5 @@
-import prisma from '../config/database.js';
-import bcrypt from 'bcryptjs';
+import prisma from '../database/client.js';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 export const createUser = async (req, res) => {
@@ -32,6 +32,7 @@ export const createUser = async (req, res) => {
     
     res.status(201).json(userWithoutPassword);
   } catch (error) {
+    console.error('Erro ao criar usuário:', error);
     res.status(500).json({ error: 'Erro ao criar usuário' });
   }
 };
@@ -53,6 +54,7 @@ export const getAllUsers = async (req, res) => {
     
     res.json(users);
   } catch (error) {
+    console.error('Erro ao buscar usuários:', error);
     res.status(500).json({ error: 'Erro ao buscar usuários' });
   }
 };
@@ -89,6 +91,7 @@ export const getUserById = async (req, res) => {
 
     res.json(user);
   } catch (error) {
+    console.error('Erro ao buscar usuário:', error);
     res.status(500).json({ error: 'Erro ao buscar usuário' });
   }
 };
@@ -112,6 +115,7 @@ export const updateUser = async (req, res) => {
 
     res.json(user);
   } catch (error) {
+    console.error('Erro ao atualizar usuário:', error);
     res.status(500).json({ error: 'Erro ao atualizar usuário' });
   }
 };
@@ -126,6 +130,7 @@ export const deleteUser = async (req, res) => {
 
     res.status(204).send();
   } catch (error) {
+    console.error('Erro ao deletar usuário:', error);
     res.status(500).json({ error: 'Erro ao deletar usuário' });
   }
 };

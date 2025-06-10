@@ -1,26 +1,25 @@
-import { Router } from 'express';
+import express from 'express';
 import {
   createReview,
   getAllReviews,
   getReviewById,
   updateReview,
   deleteReview,
-  getRecentReviews,
-  getPopularReviews
+  getPopularReviews,
+  getRecentReviews
 } from '../controllers/reviewController.js';
-import { authMiddleware } from '../middleware/auth.js';
 
-const router = Router();
+const router = express.Router();
 
 // Rotas públicas
 router.get('/', getAllReviews);
-router.get('/recent', getRecentReviews);
 router.get('/popular', getPopularReviews);
+router.get('/recent', getRecentReviews);
 router.get('/:id', getReviewById);
 
-// Rotas protegidas (requerem autenticação)
-router.post('/', authMiddleware, createReview);
-router.put('/:id', authMiddleware, updateReview);
-router.delete('/:id', authMiddleware, deleteReview);
+// Rotas que requerem autenticação (por enquanto públicas)
+router.post('/', createReview);
+router.put('/:id', updateReview);
+router.delete('/:id', deleteReview);
 
 export default router;

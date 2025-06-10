@@ -4,16 +4,20 @@ import {
   getAllGames,
   getGameById,
   updateGame,
-  deleteGame
+  deleteGame,
+  getFeaturedGames
 } from '../controllers/gameController.js';
-import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.post('/', authMiddleware, createGame);
+// Rotas públicas
 router.get('/', getAllGames);
+router.get('/featured', getFeaturedGames);
 router.get('/:id', getGameById);
-router.put('/:id', authMiddleware, updateGame);
-router.delete('/:id', authMiddleware, deleteGame);
+
+// Rotas que requerem autenticação (por enquanto públicas)
+router.post('/', createGame);
+router.put('/:id', updateGame);
+router.delete('/:id', deleteGame);
 
 export default router;
