@@ -1,12 +1,20 @@
 import { Router } from 'express'
-import controller from '../controllers/clientes.js'
+import { 
+  createGenre, 
+  getAllGenres, 
+  getGenreById, 
+  getGenreBySlug,
+  updateGenre, 
+  deleteGenre 
+} from '../controllers/genreController.js'
 
 const router = Router()
 
-router.post('/', controller.create)
-router.get('/', controller.retrieveAll)
-router.get('/:id', controller.retrieveOne)
-router.put('/:id', controller.update)
-router.delete('/:id', controller.delete)
+router.post('/', createGenre)
+router.get('/', getAllGenres)
+router.get('/slug/:slug', getGenreBySlug)
+router.get('/:id', getGenreById)
+router.put('/:id', updateGenre)
+router.delete('/:id', deleteGenre)
 
 export default router
