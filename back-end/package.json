@@ -10,7 +10,7 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "^5.15.0",
+    "@prisma/client": "^5.22.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
@@ -19,6 +19,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.10",
-    "prisma": "^5.15.0"
+    "prisma": "^5.22.0"
   }
 }
