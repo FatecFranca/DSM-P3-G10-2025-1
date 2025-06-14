@@ -1,4 +1,5 @@
-import prisma from '../database/client.js';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 // Criar nova review
 export const createReview = async (req, res) => {
@@ -116,11 +117,11 @@ export const getAllReviews = async (req, res) => {
   }
 };
 
-// Buscar review por ID
+// Atualizar o método de busca de review por ID para incluir comentários e reações
 export const getReviewById = async (req, res) => {
+  const { id } = req.params;
+  
   try {
-    const { id } = req.params;
-
     const review = await prisma.review.findUnique({
       where: { id },
       include: {
@@ -128,105 +129,73 @@ export const getReviewById = async (req, res) => {
           select: {
             id: true,
             name: true,
+            username: true,
             avatarUrl: true
           }
         },
-        game: {
-          select: {
-            id: true,
-            title: true,
-            coverUrl: true
-          }
-        }
+        game: true,
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                avatarUrl: true
+              }
+            },
+            reactions: true
+          },
+          orderBy: { createdAt: 'desc' }
+        },
+        reactions: true
       }
     });
-
+    
     if (!review) {
       return res.status(404).json({ error: 'Review não encontrada' });
     }
-
-    res.json(review);
+    
+    // Adicionar contagem de reações
+    const reactionSummary = {
+      likes: review.reactions.filter(r => r.type === 'LIKE').length,
+      dislikes: review.reactions.filter(r => r.type === 'DISLIKE').length,
+      total: review.reactions.length
+    };
+    
+    res.status(200).json({
+      ...review,
+      reactionSummary,
+      commentCount: review.comments.length
+    });
   } catch (error) {
-    console.error('Erro ao buscar review:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    res.status(400).json({ error: error.message });
   }
 };
 
 // Atualizar review
 export const updateReview = async (req, res) => {
+  const { id } = req.params;
+  const { content, rating } = req.body;
   try {
-    const { id } = req.params;
-    const { rating, comment } = req.body;
-
-    // Verificar se a review existe
-    const existingReview = await prisma.review.findUnique({
-      where: { id }
-    });
-
-    if (!existingReview) {
-      return res.status(404).json({ error: 'Review não encontrada' });
-    }
-
-    // Validação
-    if (rating && (rating < 1 || rating > 5)) {
-      return res.status(400).json({
-        error: 'Rating deve estar entre 1 e 5'
-      });
-    }
-
-    const updatedReview = await prisma.review.update({
+    const review = await prisma.review.update({
       where: { id },
-      data: {
-        ...(rating && { rating: parseInt(rating) }),
-        ...(comment && { comment })
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            avatarUrl: true
-          }
-        },
-        game: {
-          select: {
-            id: true,
-            title: true,
-            coverUrl: true
-          }
-        }
-      }
+      data: { content, rating }
     });
-
-    res.json(updatedReview);
+    res.status(200).json(review);
   } catch (error) {
-    console.error('Erro ao atualizar review:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    res.status(400).json({ error: error.message });
   }
 };
 
-// Deletar review
+// Remover review
 export const deleteReview = async (req, res) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-
-    // Verificar se a review existe
-    const existingReview = await prisma.review.findUnique({
-      where: { id }
-    });
-
-    if (!existingReview) {
-      return res.status(404).json({ error: 'Review não encontrada' });
-    }
-
-    await prisma.review.delete({
-      where: { id }
-    });
-
+    await prisma.review.delete({ where: { id } });
     res.status(204).send();
   } catch (error) {
-    console.error('Erro ao deletar review:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    res.status(400).json({ error: error.message });
   }
 };
 

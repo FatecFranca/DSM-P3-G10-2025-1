@@ -4,10 +4,14 @@ import dotenv from 'dotenv';
 
 // Importar rotas
 import authRoutes from './routes/authRoutes.js';
-import userRoutes from './routes/usersRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import gameRoutes from './routes/gameRoutes.js';
 import genreRoutes from './routes/genreRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
+import commentRoutes from './routes/commentRoutes.js';
+import commentReactionRoutes from './routes/commentReactionRoutes.js';
+import reviewReactionRoutes from './routes/reviewReactionRoutes.js';
+import gameProgressRoutes from './routes/gameProgressRoutes.js';
 
 dotenv.config();
 
@@ -42,6 +46,10 @@ app.use('/api/users', userRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/genres', genreRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/comment-reactions', commentReactionRoutes);
+app.use('/api/review-reactions', reviewReactionRoutes);
+app.use('/api/game-progress', gameProgressRoutes);
 
 // Middleware para rotas não encontradas
 app.use('*', (req, res) => {

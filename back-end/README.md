@@ -148,9 +148,9 @@ O sistema possui os seguintes modelos principais:
 - `GET /api/games` - Listar jogos
 - `GET /api/games/:id` - Obter detalhes de um jogo
 - `GET /api/games/featured` - Obter jogos em destaque
-- `GET /api/games/upcoming` - Obter próximos lançamentos
-- `GET /api/games/top-rated` - Obter jogos melhor avaliados
-- `GET /api/games/search` - Buscar jogos por nome
+- `POST /api/games` - Criar um novo jogo
+- `PUT /api/games/:id` - Atualizar um jogo
+- `DELETE /api/games/:id` - Excluir um jogo
 
 ### Reviews
 
@@ -159,7 +159,34 @@ O sistema possui os seguintes modelos principais:
 - `POST /api/reviews` - Criar uma nova review
 - `PUT /api/reviews/:id` - Atualizar uma review
 - `DELETE /api/reviews/:id` - Excluir uma review
-- `GET /api/reviews/game/:id` - Obter reviews de um jogo específico
+- `GET /api/reviews/popular` - Listar reviews populares
+- `GET /api/reviews/recent` - Listar reviews recentes
+
+### Comentários
+
+- `GET /api/comments/review/:reviewId` - Listar comentários de uma review
+- `POST /api/comments` - Criar um novo comentário
+- `DELETE /api/comments/:id` - Excluir um comentário
+
+### Reações de Comentário
+
+- `GET /api/comment-reactions/comment/:commentId` - Listar reações de um comentário
+- `POST /api/comment-reactions` - Criar ou atualizar reação em comentário
+- `DELETE /api/comment-reactions/:id` - Excluir reação de comentário
+
+### Reações de Review
+
+- `GET /api/review-reactions/review/:reviewId` - Listar reações de uma review
+- `POST /api/review-reactions` - Criar ou atualizar reação em review
+- `DELETE /api/review-reactions/:id` - Excluir reação de review
+
+### Progresso de Jogo
+
+- `GET /api/game-progress/user/:userId` - Listar progresso de jogos de um usuário
+- `GET /api/game-progress/game/:gameId` - Listar usuários por progresso de um jogo
+- `GET /api/game-progress/status/:status` - Listar jogos por status de progresso
+- `POST /api/game-progress` - Atualizar ou criar progresso de jogo
+- `DELETE /api/game-progress/:id` - Excluir progresso de jogo
 
 ### Gêneros/Categorias
 

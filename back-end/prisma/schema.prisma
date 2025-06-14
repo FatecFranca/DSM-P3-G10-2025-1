@@ -12,11 +12,21 @@ model User {
   name      String
   email     String   @unique
   password  String
+  username  String?  @unique // Adicionado para identificação única
+  bio       String?  // Biografia do usuário
   avatarUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relacionamentos existentes
   reviews   Review[]
-  
+
+  // Novos relacionamentos para funcionalidades faltantes
+  comments         Comment[]
+  reviewReactions  ReviewReaction[]
+  commentReactions CommentReaction[]
+  gameProgresses   GameProgress[]
+
   @@map("users")
 }
 
@@ -26,36 +36,125 @@ model Game {
   description String
   coverUrl    String?
   releaseDate DateTime?
+  developer   String?   // Desenvolvedor
+  publisher   String?   // Publicadora
+  platform    String[]  // Plataformas (PS5, Xbox, PC, etc.)
   genreIds    String[]  @db.ObjectId
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  reviews     Review[]
-  
+
+  // Relacionamentos
+  reviews        Review[]
+  gameProgresses GameProgress[]
+
   @@map("games")
+}
+
+model Genre {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  slug String @unique // Para URLs amigáveis
+
+  @@map("genres")
 }
 
 model Review {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  rating    Int      // 1 a 5
-  comment   String
-  userId    String   @db.ObjectId
-  gameId    String   @db.ObjectId
+  rating    Int      // Validar 1-5
+  title     String?  // Título da review
+  comment   String   // Conteúdo da review
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  
-  @@unique([userId, gameId]) // Um usuário só pode fazer uma review por jogo
+
+  // Relacionamentos existentes
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.ObjectId
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId String @db.ObjectId
+
+  // Novos relacionamentos
+  comments  Comment[]
+  reactions ReviewReaction[]
+
   @@map("reviews")
 }
 
-model Genre {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String   @unique
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  @@map("genres")
+// NOVAS MODELS PARA FUNCIONALIDADES FALTANTES
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String   @db.ObjectId
+  review   Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  reviewId String   @db.ObjectId
+
+  // Reações nos comentários
+  reactions CommentReaction[]
+
+  @@map("comments")
+}
+
+model ReviewReaction {
+  id       String      @id @default(auto()) @map("_id") @db.ObjectId
+  type     ReactionType
+
+  // Relacionamentos
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String   @db.ObjectId
+  review   Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  reviewId String   @db.ObjectId
+
+  // Garantir que um usuário só pode ter uma reação por review
+  @@unique([userId, reviewId])
+  @@map("review_reactions")
+}
+
+model CommentReaction {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  type      ReactionType
+
+  // Relacionamentos
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String    @db.ObjectId
+  comment   Comment   @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String    @db.ObjectId
+
+  // Garantir que um usuário só pode ter uma reação por comentário
+  @@unique([userId, commentId])
+  @@map("comment_reactions")
+}
+
+model GameProgress {
+  id     String           @id @default(auto()) @map("_id") @db.ObjectId
+  status GameProgressStatus
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Relacionamentos
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.ObjectId
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId String @db.ObjectId
+
+  // Garantir que um usuário só pode ter um status por jogo
+  @@unique([userId, gameId])
+  @@map("game_progresses")
+}
+
+// ENUMS
+
+enum ReactionType {
+  LIKE
+  DISLIKE
+}
+
+enum GameProgressStatus {
+  WANT_TO_PLAY     // "Jogos que quero jogar"
+  CURRENTLY_PLAYING // "Jogos que estou jogando"
+  COMPLETED        // "Jogos já zerados"
 }

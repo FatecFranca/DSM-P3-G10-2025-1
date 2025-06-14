@@ -7,12 +7,17 @@ import reviewRoutes from '../routes/reviewRoutes.js';
 import gameRoutes from '../routes/gameRoutes.js';
 import genreRoutes from '../routes/genreRoutes.js';
 import userRoutes from '../routes/userRoutes.js';
+// Novas rotas
+import commentRoutes from '../routes/commentRoutes.js';
+import reviewReactionRoutes from '../routes/reviewReactionRoutes.js';
+import commentReactionRoutes from '../routes/commentReactionRoutes.js';
+import gameProgressRoutes from '../routes/gameProgressRoutes.js';
 
 // Configurar variáveis de ambiente
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
 // Middlewares
 app.use(cors());
@@ -29,7 +34,11 @@ app.get('/', (req, res) => {
       reviews: '/api/reviews',
       games: '/api/games',
       genres: '/api/genres',
-      users: '/api/users'
+      users: '/api/users',
+      comments: '/api/comments',
+      reviewReactions: '/api/review-reactions',
+      commentReactions: '/api/comment-reactions',
+      gameProgress: '/api/game-progress'
     },
     documentation: {
       reviews: {
@@ -63,6 +72,27 @@ app.get('/', (req, res) => {
         'GET /api/users/:id': 'Buscar usuário por ID',
         'PUT /api/users/:id': 'Atualizar usuário',
         'DELETE /api/users/:id': 'Deletar usuário'
+      },
+      comments: {
+        'GET /api/comments/review/:reviewId': 'Listar comentários de uma review',
+        'POST /api/comments': 'Criar novo comentário',
+        'PUT /api/comments/:id': 'Atualizar comentário',
+        'DELETE /api/comments/:id': 'Deletar comentário'
+      },
+      reviewReactions: {
+        'POST /api/review-reactions': 'Reagir a uma review',
+        'GET /api/review-reactions/review/:reviewId': 'Listar reações de uma review',
+        'DELETE /api/review-reactions/:id': 'Remover reação'
+      },
+      commentReactions: {
+        'POST /api/comment-reactions': 'Reagir a um comentário',
+        'GET /api/comment-reactions/comment/:commentId': 'Listar reações de um comentário',
+        'DELETE /api/comment-reactions/:id': 'Remover reação'
+      },
+      gameProgress: {
+        'POST /api/game-progress': 'Atualizar progresso de jogo',
+        'GET /api/game-progress/user/:userId': 'Listar progresso de jogos por usuário',
+        'GET /api/game-progress/game/:gameId': 'Listar usuários por progresso de jogo'
       }
     }
   });
@@ -82,6 +112,11 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/genres', genreRoutes);
 app.use('/api/users', userRoutes);
+// Adicionar novas rotas
+app.use('/api/comments', commentRoutes);
+app.use('/api/review-reactions', reviewReactionRoutes);
+app.use('/api/comment-reactions', commentReactionRoutes);
+app.use('/api/game-progress', gameProgressRoutes);
 
 // Middleware para rotas não encontradas
 app.use('*', (req, res) => {
@@ -113,10 +148,14 @@ app.listen(PORT, () => {
 🏥 Health Check: http://localhost:${PORT}/health
 
 📋 Endpoints disponíveis:
-   • Reviews: http://localhost:${PORT}/api/reviews
-   • Games: http://localhost:${PORT}/api/games
-   • Genres: http://localhost:${PORT}/api/genres
-   • Users: http://localhost:${PORT}/api/users
+   • Reviews:           http://localhost:${PORT}/api/reviews
+   • Games:             http://localhost:${PORT}/api/games
+   • Genres:            http://localhost:${PORT}/api/genres
+   • Users:             http://localhost:${PORT}/api/users
+   • Comments:          http://localhost:${PORT}/api/comments
+   • Review Reactions:  http://localhost:${PORT}/api/review-reactions
+   • Comment Reactions: http://localhost:${PORT}/api/comment-reactions
+   • Game Progress:     http://localhost:${PORT}/api/game-progress
   `);
 });
 
