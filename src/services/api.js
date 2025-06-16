@@ -1,17 +1,18 @@
 import axios from 'axios';
 
-// Cria uma instância do axios com a configuração base
+// Configuração da API com depuração aprimorada
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api', // Ajuste se necessário para outro ambiente
+  baseURL: 'http://localhost:5000/api', // Ajuste para a URL correta do seu back-end
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000 // 10 segundos de timeout
 });
 
-// Interceptor para incluir o token de autorização em cada requisição
+// Interceptador para adicionar o token JWT nas requisições
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('gameReviews_token');
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -22,19 +23,28 @@ api.interceptors.request.use(
   }
 );
 
-// Interceptor para tratar respostas e erros comuns
+// Interceptador para facilitar o debug de erros
 api.interceptors.response.use(
   (response) => {
     return response;
-  },
+  }, 
   (error) => {
-    // Se o erro for 401 (não autorizado), pode redirecionar para login
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem('gameReviews_token');
-      localStorage.removeItem('gameReviews_user');
-      // Se estiver usando React Router, poderia redirecionar para login
-      // window.location.href = '/login';
+    // Log detalhado do erro
+    if (error.response) {
+      // O servidor respondeu com um status de erro
+      console.error('Erro na resposta da API:', {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+    } else if (error.request) {
+      // A requisição foi feita mas não houve resposta
+      console.error('Sem resposta do servidor:', error.request);
+    } else {
+      // Erro na configuração da requisição
+      console.error('Erro na configuração da requisição:', error.message);
     }
+    
     return Promise.reject(error);
   }
 );

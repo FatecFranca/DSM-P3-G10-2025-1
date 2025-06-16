@@ -1,37 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuthContext } from '../../context/AuthContext';
 import Input from '../Form/Input';
 import Button from '../Form/Button';
 import Error from '../Helper/Error';
 import styles from './FormCadastro.module.css';
+import api from '../../services/api';
 
 const FormCadastro = () => {
   // Estados para campos obrigatórios
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   
-  // Estados para campos opcionais (apenas avatarUrl, removemos bio)
+  // Estados para campos opcionais
+  const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   
   // Estados para controle do formulário
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [step, setStep] = useState(1); // Para formulário multi-etapa
+  const [step, setStep] = useState(1);
   
   const navigate = useNavigate();
-  const { register, isAuthenticated } = useAuthContext();
   
-  // Redirecionar se já estiver autenticado
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/');
-    }
-  }, [isAuthenticated, navigate]);
-
   // Validação do formulário
   const validateStep1 = () => {
     if (!name.trim()) {
@@ -51,8 +43,9 @@ const FormCadastro = () => {
       return false;
     }
     
-    if (!username.trim()) {
-      setError('Nome de usuário é obrigatório');
+    // Username é opcional no modelo, mas se fornecido, verificamos
+    if (username && username.length < 3) {
+      setError('Nome de usuário deve ter pelo menos 3 caracteres');
       return false;
     }
     
@@ -100,44 +93,68 @@ const FormCadastro = () => {
       setLoading(true);
       setError(null);
       
-      // Dados para o cadastro - formato esperado pelo back-end
+      // Construindo o objeto de dados exatamente como o back-end espera
       const userData = {
-        name,
-        email,
-        username,
-        password,
-        avatarUrl: avatarUrl || undefined // Envia apenas se tiver valor
+        name, // Obrigatório
+        email, // Obrigatório 
+        password, // Obrigatório
       };
       
-      // Chamada para o back-end via AuthContext
-      const result = await register(userData);
+      // Adicionando campos opcionais apenas se tiverem valores
+      if (username && username.trim()) {
+        userData.username = username.trim();
+      }
       
-      if (result.success) {
-        // Redirecionamento após registro bem-sucedido
+      if (avatarUrl && avatarUrl.trim()) {
+        userData.avatarUrl = avatarUrl.trim();
+      }
+      
+      console.log('Enviando dados para registro:', userData);
+      
+      // Chamada direta para a API
+      const response = await api.post('/auth/register', userData);
+      
+      console.log('Resposta do servidor:', response.data);
+      
+      if (response.data && response.data.token) {
+        // Salvar token e dados do usuário
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        
+        // Redirecionar para a página de conta
         navigate('/conta');
       } else {
-        // Exibe mensagem de erro retornada pelo back-end
-        setError(result.message);
+        throw new Error('Resposta inválida do servidor');
       }
     } catch (err) {
-      console.error('Erro durante o cadastro:', err);
+      console.error('Erro no cadastro:', err);
       
-      // Tratamentos específicos de erro do back-end
       if (err.response) {
-        // O servidor respondeu com um status de erro
+        // Extrair mensagem específica do back-end
+        const backendError = err.response.data;
+        console.log('Resposta do back-end:', backendError);
+        
         if (err.response.status === 409) {
-          setError('Este e-mail ou nome de usuário já está em uso');
-        } else if (err.response.data && err.response.data.message) {
-          setError(err.response.data.message);
+          // Verificar se é erro de unicidade (email ou username já existente)
+          if (backendError.message && backendError.message.includes('email')) {
+            setError('Este email já está em uso');
+          } else if (backendError.message && backendError.message.includes('username')) {
+            setError('Este nome de usuário já está em uso');
+          } else {
+            setError(backendError.message || 'Email ou username já cadastrado');
+          }
+        } else if (backendError.message) {
+          // Outras mensagens de erro do back-end
+          setError(backendError.message);
         } else {
-          setError('Falha no cadastro. Verifique os dados e tente novamente.');
+          setError(`Erro no servidor (${err.response.status})`);
         }
       } else if (err.request) {
-        // A requisição foi feita mas não houve resposta
+        // Erro de conexão
         setError('Não foi possível conectar ao servidor. Verifique sua conexão.');
       } else {
-        // Ocorreu um erro ao configurar a requisição
-        setError('Ocorreu um erro ao processar seu cadastro.');
+        // Outros erros
+        setError(err.message || 'Erro ao processar o cadastro');
       }
     } finally {
       setLoading(false);
@@ -160,7 +177,7 @@ const FormCadastro = () => {
           {step === 1 ? (
             <>
               <Input
-                label="Nome completo"
+                label="Nome completo *"
                 type="text"
                 name="name"
                 value={name}
@@ -169,7 +186,7 @@ const FormCadastro = () => {
               />
               
               <Input
-                label="E-mail"
+                label="E-mail *"
                 type="email"
                 name="email"
                 value={email}
@@ -178,13 +195,12 @@ const FormCadastro = () => {
               />
               
               <Input
-                label="Nome de usuário"
+                label="Nome de usuário (opcional)"
                 type="text"
                 name="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ''))}
                 placeholder="Seu identificador único"
-                required
               />
               
               <Button type="submit">
@@ -194,7 +210,7 @@ const FormCadastro = () => {
           ) : (
             <>
               <Input
-                label="Senha"
+                label="Senha *"
                 type="password"
                 name="password"
                 value={password}
@@ -204,7 +220,7 @@ const FormCadastro = () => {
               />
               
               <Input
-                label="Confirmar senha"
+                label="Confirmar senha *"
                 type="password"
                 name="confirmPassword"
                 value={confirmPassword}
