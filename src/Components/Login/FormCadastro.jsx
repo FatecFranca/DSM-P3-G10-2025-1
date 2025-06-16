@@ -14,8 +14,7 @@ const FormCadastro = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   
-  // Estados para campos opcionais
-  const [bio, setBio] = useState('');
+  // Estados para campos opcionais (apenas avatarUrl, removemos bio)
   const [avatarUrl, setAvatarUrl] = useState('');
   
   // Estados para controle do formulário
@@ -24,7 +23,7 @@ const FormCadastro = () => {
   const [step, setStep] = useState(1); // Para formulário multi-etapa
   
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuthContext();
+  const { register, isAuthenticated } = useAuthContext();
   
   // Redirecionar se já estiver autenticado
   useEffect(() => {
@@ -77,7 +76,8 @@ const FormCadastro = () => {
   };
 
   // Avançar para a próxima etapa
-  const nextStep = () => {
+  const nextStep = (e) => {
+    e.preventDefault();
     if (validateStep1()) {
       setStep(2);
     }
@@ -100,35 +100,46 @@ const FormCadastro = () => {
       setLoading(true);
       setError(null);
       
-      // Dados para o cadastro
+      // Dados para o cadastro - formato esperado pelo back-end
       const userData = {
         name,
         email,
         username,
         password,
-        bio,
-        avatarUrl
+        avatarUrl: avatarUrl || undefined // Envia apenas se tiver valor
       };
       
-      // Simulação - em produção, você chamaria sua API de registro aqui
-      console.log('Dados do cadastro:', userData);
+      // Chamada para o back-end via AuthContext
+      const result = await register(userData);
       
-      setTimeout(() => {
-        // Simular resposta bem-sucedida
-        login({
-          id: Date.now().toString(),
-          name,
-          email,
-          username
-        }, 'token-exemplo');
-        
-        // Redirecionar para home após login
-        navigate('/');
-      }, 1500);
-      
+      if (result.success) {
+        // Redirecionamento após registro bem-sucedido
+        navigate('/conta');
+      } else {
+        // Exibe mensagem de erro retornada pelo back-end
+        setError(result.message);
+      }
     } catch (err) {
-      console.error('Erro de cadastro:', err);
-      setError(err.response?.data?.message || 'Erro ao criar conta. Tente novamente.');
+      console.error('Erro durante o cadastro:', err);
+      
+      // Tratamentos específicos de erro do back-end
+      if (err.response) {
+        // O servidor respondeu com um status de erro
+        if (err.response.status === 409) {
+          setError('Este e-mail ou nome de usuário já está em uso');
+        } else if (err.response.data && err.response.data.message) {
+          setError(err.response.data.message);
+        } else {
+          setError('Falha no cadastro. Verifique os dados e tente novamente.');
+        }
+      } else if (err.request) {
+        // A requisição foi feita mas não houve resposta
+        setError('Não foi possível conectar ao servidor. Verifique sua conexão.');
+      } else {
+        // Ocorreu um erro ao configurar a requisição
+        setError('Ocorreu um erro ao processar seu cadastro.');
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -199,15 +210,6 @@ const FormCadastro = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-              />
-              
-              <Input
-                label="Bio (opcional)"
-                type="textarea"
-                name="bio"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="Conte um pouco sobre você"
               />
               
               <Input

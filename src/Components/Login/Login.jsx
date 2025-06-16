@@ -15,7 +15,7 @@ const Login = ({ initialMode = 'login' }) => {
   
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated } = useAuthContext();
+  const { login, register, isAuthenticated } = useAuthContext();
   
   const fromPage = location.state?.from || '/';
 
@@ -66,43 +66,52 @@ const Login = ({ initialMode = 'login' }) => {
       setLoading(true);
       setError('');
       
-      // Simulação de autenticação
-      // Em um ambiente real, aqui você chamaria sua API
+      let result;
+      
       if (isLogin) {
-        // Login demo
-        setTimeout(() => {
-          login(
-            { id: 1, name: 'Usuário Demo', email: email, role: 'user' },
-            'demo-token-12345'
-          );
-          navigate(fromPage, { replace: true });
-        }, 1000);
+        // Login real com o backend
+        result = await login(email, password);
       } else {
-        // Registro demo
-        setTimeout(() => {
-          login(
-            { id: 2, name: name, email: email, role: 'user' },
-            'demo-token-67890'
-          );
-          navigate(fromPage, { replace: true });
-        }, 1000);
+        // Registro real com o backend
+        result = await register({
+          name,
+          email,
+          password
+        });
+      }
+      
+      if (result.success) {
+        navigate(fromPage, { replace: true });
+      } else {
+        setError(result.message);
       }
     } catch (err) {
       console.error('Erro de autenticação:', err);
       setError(err.message || 'Ocorreu um erro durante a autenticação');
+    } finally {
       setLoading(false);
     }
   };
   
-  const handleDemoLogin = () => {
-    // Login demo rápido
-    login(
-      { id: 1, name: 'Usuário Demo', email: 'demo@example.com', role: 'user' },
-      'demo-token-12345'
-    );
-    navigate(fromPage, { replace: true });
+  const handleDemoLogin = async () => {
+    try {
+      setLoading(true);
+      // Substitua pelas credenciais demo que seu back-end aceita
+      const result = await login('demo@example.com', 'senha123');
+      
+      if (result.success) {
+        navigate(fromPage, { replace: true });
+      } else {
+        setError('Não foi possível acessar a conta demo');
+      }
+    } catch (err) {
+      setError('Erro ao acessar conta demo');
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // Resto do componente permanece o mesmo
   return (
     <div className={styles.container}>
       <div className={styles.formWrapper}>

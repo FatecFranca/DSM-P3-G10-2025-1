@@ -1,33 +1,102 @@
 .wrapper {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .label {
   display: block;
+  font-size: 1rem;
+  line-height: 1;
+  padding-bottom: 0.5rem;
+  color: #2d3748; /* Tom de texto mais escuro */
   font-weight: 500;
-  margin-bottom: 0.5rem;
-  color: var(--cor-primaria, #1a1a1a);
 }
 
 .input {
+  border: 1px solid #4a5568; /* Borda mais escura */
   display: block;
   width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  background: white;
   font-size: 1rem;
-  transition: all 0.3s ease;
+  padding: 0.8rem;
+  border-radius: 6px;
+  background: #2d3748; /* Background escuro */
+  color: #e2e8f0; /* Texto claro para constraste */
+  transition: all 0.3s;
 }
 
+.input:hover,
 .input:focus {
   outline: none;
-  border-color: var(--cor-vermelha, #ff0f35);
-  box-shadow: 0 0 0 2px rgba(255, 15, 53, 0.1);
+  border-color: #805ad5; /* Cor de destaque ao focar */
+  background: #1a202c; /* Escurece ainda mais ao interagir */
+  box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.2); /* Sombra sutil na cor de destaque */
+}
+
+.input::placeholder {
+  color: #a0aec0; /* Tom médio para placeholder */
 }
 
 .error {
-  color: #e53935;
+  color: #e53e3e;
   font-size: 0.875rem;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+/* Estilização para inputs inválidos */
+.input.invalid {
+  border-color: #e53e3e;
+  background-color: rgba(229, 62, 62, 0.05);
+}
+
+/* Estilização para inputs de tipo file */
+.input[type="file"] {
+  padding: 0.5rem;
+  background: #2d3748;
+  cursor: pointer;
+}
+
+/* Estilos para inputs tipo checkbox e radio */
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  margin-right: 1rem;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.checkbox input {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  width: 0;
+}
+
+.checkbox span {
+  height: 1.2rem;
+  width: 1.2rem;
+  margin-right: 0.5rem;
+  border: 1px solid #4a5568;
+  display: inline-block;
+  border-radius: 3px;
+  position: relative;
+  background: #2d3748;
+}
+
+.checkbox input:checked + span:after {
+  content: '';
+  position: absolute;
+  left: 0.4rem;
+  top: 0.2rem;
+  width: 0.3rem;
+  height: 0.6rem;
+  border: solid #805ad5;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Estilização para inputs desabilitados */
+.input:disabled {
+  opacity: 0.7;
+  background: #1a202c;
+  cursor: not-allowed;
 }

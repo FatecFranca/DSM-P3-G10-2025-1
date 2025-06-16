@@ -1,65 +1,36 @@
-// src/services/authService.js
-import apiRequest from './api';
+import api from './api';
 
-// Corrigindo para exportar como named export
-export const authService = {
-  // Login
-  async login(credentials) {
-    const response = await apiRequest('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    });
-    
-    if (response.token) {
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+export const AuthService = {
+  // Login de usuário
+  login: async (email, password) => {
+    const response = await api.post('/auth/login', { email, password });
+    if (response.data.token) {
+      localStorage.setItem('gameReviews_token', response.data.token);
+      localStorage.setItem('gameReviews_user', JSON.stringify(response.data.user));
     }
-    
-    return response;
+    return response.data;
   },
 
-  // Registro
-  async register(userData) {
-    const response = await apiRequest('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-    });
-    
-    if (response.token) {
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-    }
-    
-    return response;
-  },
-
-  // Logout
-  logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-  },
-
-  // Verificar se está autenticado
-  isAuthenticated() {
-    return !!localStorage.getItem('token');
+  // Registro de novo usuário
+  register: async (userData) => {
+    const response = await api.post('/auth/register', userData);
+    return response.data;
   },
 
   // Obter usuário atual
-  getCurrentUser() {
-    const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
+  getCurrentUser: () => {
+    const user = localStorage.getItem('gameReviews_user');
+    return user ? JSON.parse(user) : null;
   },
 
-  // Refresh token
-  async refreshToken() {
-    const response = await apiRequest('/auth/refresh', {
-      method: 'POST',
-    });
-    
-    if (response.token) {
-      localStorage.setItem('token', response.token);
-    }
-    
-    return response;
+  // Verificar se usuário está autenticado
+  isAuthenticated: () => {
+    return !!localStorage.getItem('gameReviews_token');
+  },
+
+  // Logout
+  logout: () => {
+    localStorage.removeItem('gameReviews_token');
+    localStorage.removeItem('gameReviews_user');
   },
 };

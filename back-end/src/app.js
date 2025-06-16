@@ -17,9 +17,9 @@ dotenv.config();
 
 const app = express();
 
-// Middlewares
+// No arquivo app.js do back-end
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: 'http://localhost:5173', // URL do seu front-end Vite
   credentials: true
 }));
 app.use(express.json());

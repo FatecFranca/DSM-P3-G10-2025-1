@@ -1,48 +1,42 @@
-// src/services/api.js
-const API_BASE_URL = 'http://localhost:3001/api';
+import axios from 'axios';
 
-// Função para fazer requisições HTTP
-const apiRequest = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
-  
-  const defaultOptions = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
+// Cria uma instância do axios com a configuração base
+const api = axios.create({
+  baseURL: 'http://localhost:5000/api', // Ajuste se necessário para outro ambiente
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-  // Adicionar token de autenticação se existir
-  const token = localStorage.getItem('token');
-  if (token) {
-    defaultOptions.headers.Authorization = `Bearer ${token}`;
-  }
-
-  const config = {
-    ...defaultOptions,
-    ...options,
-    headers: {
-      ...defaultOptions.headers,
-      ...options.headers,
-    },
-  };
-
-  try {
-    const response = await fetch(url, config);
-    
-    // Verificar se a resposta é JSON
-    const contentType = response.headers.get('content-type');
-    const isJson = contentType && contentType.includes('application/json');
-    
-    if (!response.ok) {
-      const errorData = isJson ? await response.json() : { message: response.statusText };
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+// Interceptor para incluir o token de autorização em cada requisição
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('gameReviews_token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
-    
-    return isJson ? await response.json() : response;
-  } catch (error) {
-    console.error(`API Error (${endpoint}):`, error);
-    throw error;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-};
+);
 
-export default apiRequest;
+// Interceptor para tratar respostas e erros comuns
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    // Se o erro for 401 (não autorizado), pode redirecionar para login
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('gameReviews_token');
+      localStorage.removeItem('gameReviews_user');
+      // Se estiver usando React Router, poderia redirecionar para login
+      // window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;

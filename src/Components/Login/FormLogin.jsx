@@ -1,19 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../Form/Input";
 import Button from "../Form/Button";
 import styles from "./FormLogin.module.css";
 import stylesBtn from "../Form/Button.module.css";
-import useForm from "../../hooks/useForm";  // ← Corrigido: hooks (minúsculo)
-import { useUser } from "../../context/UserContext";
+import useForm from "../../hooks/useForm";
+import { useAuthContext } from "../../context/AuthContext";
 
 const FormLogin = () => {
   const email = useForm("email");
   const password = useForm("");
   const navigate = useNavigate();
-  const { login } = useUser();
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState("");
+  const { login } = useAuthContext();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -26,10 +26,15 @@ const FormLogin = () => {
     setError("");
 
     try {
-      await login(email.value, password.value);
-      navigate("/conta");
+      const result = await login(email.value, password.value);
+      
+      if (result.success) {
+        navigate("/conta");
+      } else {
+        setError(result.message);
+      }
     } catch (error) {
-      setError(error.message);
+      setError(error.message || 'Erro ao fazer login');
     } finally {
       setLoading(false);
     }
@@ -61,4 +66,3 @@ const FormLogin = () => {
 };
 
 export default FormLogin;
-
