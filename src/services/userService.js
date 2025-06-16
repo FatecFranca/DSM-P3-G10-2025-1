@@ -1,54 +1,43 @@
-import api from "../services/api";  // Corrigido para importar do local correto
+// src/services/userService.js
+import apiRequest from './api';
 
-const userService = {
-  getUserProfile: async () => {
-    const response = await api.get("/users/me");
-    return response.data;
+export const userService = {
+  // Obter todos os usuários
+  async getUsers(params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const endpoint = queryString ? `/users?${queryString}` : '/users';
+    return await apiRequest(endpoint);
   },
 
-  updateProfile: async (userData) => {
-    const response = await api.put("/users/me", userData);
-    return response.data;
-  },
-  
-  updatePassword: async (passwordData) => {
-    const response = await api.put("/users/me/password", passwordData);
-    return response.data;
+  // Obter usuário por ID
+  async getUserById(id) {
+    return await apiRequest(`/users/${id}`);
   },
 
-  uploadAvatar: async (formData) => {
-    const response = await api.post("/users/me/avatar", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+  // Atualizar perfil do usuário
+  async updateProfile(id, userData) {
+    return await apiRequest(`/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData),
     });
-    return response.data;
   },
 
-  getUserReviews: async () => {
-    const response = await api.get("/users/me/reviews");
-    return response.data;
+  // Deletar usuário
+  async deleteUser(id) {
+    return await apiRequest(`/users/${id}`, {
+      method: 'DELETE',
+    });
   },
-  
-  getFavoriteGames: async () => {
-    const response = await api.get("/users/me/favorites");
-    return response.data;
+
+  // Upload de avatar
+  async uploadAvatar(file) {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    
+    return await apiRequest('/users/avatar', {
+      method: 'POST',
+      headers: {}, // Remove Content-Type para FormData
+      body: formData,
+    });
   },
-  
-  addToFavorites: async (gameId) => {
-    const response = await api.post(`/users/me/favorites/${gameId}`);
-    return response.data;
-  },
-  
-  removeFromFavorites: async (gameId) => {
-    const response = await api.delete(`/users/me/favorites/${gameId}`);
-    return response.data;
-  },
-  
-  deleteAccount: async () => {
-    const response = await api.delete("/users/me");
-    return response.data;
-  }
 };
-
-export default userService;

@@ -1,48 +1,63 @@
-import api from "../Hooks/useApi";
+// src/services/reviewService.js
+import apiRequest from './api';
 
 export const reviewService = {
-  getAllReviews: async (params) => {
-    const response = await api.get("/reviews", { params });
-    return response.data;
+  // Obter todas as reviews
+  async getReviews(params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const endpoint = queryString ? `/reviews?${queryString}` : '/reviews';
+    return await apiRequest(endpoint);
   },
 
-  getReviewById: async (id) => {
-    const response = await api.get(`/reviews/${id}`);
-    return response.data;
-  },
-  
-  getRecentReviews: async (limit = 10) => {
-    const response = await api.get("/reviews/recent", { params: { limit } });
-    return response.data;
+  // Obter review por ID
+  async getReviewById(id) {
+    return await apiRequest(`/reviews/${id}`);
   },
 
-  getPopularReviews: async (limit = 10) => {
-    const response = await api.get("/reviews/popular", { params: { limit } });
-    return response.data;
+  // Obter reviews por jogo
+  async getReviewsByGame(gameId, params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const endpoint = queryString ? `/reviews/game/${gameId}?${queryString}` : `/reviews/game/${gameId}`;
+    return await apiRequest(endpoint);
   },
 
-  createReview: async (reviewData) => {
-    const response = await api.post("/reviews", reviewData);
-    return response.data;
+  // Obter reviews por usuário
+  async getReviewsByUser(userId, params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const endpoint = queryString ? `/reviews/user/${userId}?${queryString}` : `/reviews/user/${userId}`;
+    return await apiRequest(endpoint);
   },
 
-  updateReview: async (id, reviewData) => {
-    const response = await api.put(`/reviews/${id}`, reviewData);
-    return response.data;
+  // Criar nova review
+  async createReview(reviewData) {
+    return await apiRequest('/reviews', {
+      method: 'POST',
+      body: JSON.stringify(reviewData),
+    });
   },
 
-  deleteReview: async (id) => {
-    const response = await api.delete(`/reviews/${id}`);
-    return response.data;
+  // Atualizar review
+  async updateReview(id, reviewData) {
+    return await apiRequest(`/reviews/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(reviewData),
+    });
   },
-  
-  likeReview: async (id) => {
-    const response = await api.post(`/reviews/${id}/like`);
-    return response.data;
+
+  // Deletar review
+  async deleteReview(id) {
+    return await apiRequest(`/reviews/${id}`, {
+      method: 'DELETE',
+    });
   },
-  
-  unlikeReview: async (id) => {
-    const response = await api.delete(`/reviews/${id}/like`);
-    return response.data;
-  }
+
+  // Obter reviews populares
+  async getPopularReviews(limit = 10) {
+    return await apiRequest(`/reviews/popular?limit=${limit}`);
+  },
+
+  // Obter reviews recentes
+  async getRecentReviews(limit = 10) {
+    return await apiRequest(`/reviews/recent?limit=${limit}`);
+  },
 };

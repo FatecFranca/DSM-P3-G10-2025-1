@@ -1,168 +1,135 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 import styles from "./Header.module.css";
 
 const Header = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const location = useLocation();
-  
-  // Controla o efeito de scroll no header
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-  
-  // Fecha o menu quando a rota muda
-  useEffect(() => {
-    setMenuOpen(false);
-    setSearchOpen(false);
-  }, [location]);
-  
-  const handleSearchSubmit = (e) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { isAuthenticated, user, logout } = useAuthContext();
+  const navigate = useNavigate();
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsDropdownOpen(false);
+    setIsMenuOpen(false);
+  };
+
+  const handleSearch = (e) => {
     e.preventDefault();
-    // Implementar lógica de busca
-    console.log(`Buscando por: ${searchQuery}`);
-    setSearchOpen(false);
-    setSearchQuery('');
+    const query = e.target.elements.search.value.trim();
+    if (query) {
+      navigate(`/jogos/buscar?q=${encodeURIComponent(query)}`);
+      setIsMenuOpen(false);
+    }
   };
 
   return (
-    <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
+    <header className={styles.header}>
       <div className={styles.container}>
-        <Link className={styles.logoLink} to="/" aria-label="GameReviews - Página Inicial">
-          <div className={styles.logoIcon}>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path 
-                d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-                fill="currentColor"
-                fillOpacity="0.1"
-              />
-              <circle 
-                cx="12" 
-                cy="12" 
-                r="3" 
-                stroke="currentColor" 
-                strokeWidth="2"
-                fill="none"
-              />
-            </svg>
-          </div>
-          <h1 className={styles.logoText}>GameReviews</h1>
+        <Link to="/" className={styles.logo}>
+          GameReviews
         </Link>
         
-        <div className={styles.navbarActions}>
-          <button 
-            className={styles.searchToggle} 
-            onClick={() => setSearchOpen(!searchOpen)}
-            aria-label="Buscar no site"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </button>
-          
-          <button 
-            className={`${styles.mobileMenuBtn} ${menuOpen ? styles.open : ''}`} 
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
-            aria-expanded={menuOpen}
-          >
-            <span className={styles.hamburgerLine}></span>
-            <span className={styles.hamburgerLine}></span>
-            <span className={styles.hamburgerLine}></span>
-          </button>
-        </div>
+        <button 
+          className={`${styles.menuButton} ${isMenuOpen ? styles.active : ''}`} 
+          onClick={toggleMenu}
+          aria-label="Menu"
+          aria-expanded={isMenuOpen}
+        >
+          <span className={styles.menuIcon}></span>
+        </button>
         
-        <div className={`${styles.navWrapper} ${menuOpen ? styles.active : ''}`}>
-          <nav className={styles.mainNav}>
-            <ul className={styles.navLinks}>
-              <li className={location.pathname === "/" ? styles.active : ""}>
-                <Link to="/">Home</Link>
-              </li>
-              <li className={location.pathname.includes("/reviews") ? styles.active : ""}>
-                <Link to="/reviews">Reviews</Link>
-              </li>
-              <li className={location.pathname.includes("/noticias") ? styles.active : ""}>
-                <Link to="/noticias">Notícias</Link>
-              </li>
-              <li className={location.pathname.includes("/top-games") ? styles.active : ""}>
-                <Link to="/top-games">Top Games</Link>
-              </li>
-              <li className={location.pathname.includes("/lancamentos") ? styles.active : ""}>
-                <Link to="/lancamentos">Lançamentos</Link>
-              </li>
-              <li className={styles.dropdown}>
-                <button className={styles.dropdownToggle}>
-                  Categorias
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </button>
-                <ul className={styles.dropdownMenu}>
-                  <li><Link to="/categoria/acao">Ação & Aventura</Link></li>
-                  <li><Link to="/categoria/rpg">RPG & MMO</Link></li>
-                  <li><Link to="/categoria/fps">FPS & Shooter</Link></li>
-                  <li><Link to="/categoria/estrategia">Estratégia</Link></li>
-                  <li><Link to="/categoria/indie">Indie Games</Link></li>
-                </ul>
-              </li>
-            </ul>
-          </nav>
+        <nav className={`${styles.nav} ${isMenuOpen ? styles.active : ''}`}>
+          <ul className={styles.navList}>
+            <li>
+              <Link to="/jogos" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Jogos</Link>
+            </li>
+            <li>
+              <Link to="/reviews" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Reviews</Link>
+            </li>
+            <li>
+              <Link to="/generos" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Gêneros</Link>
+            </li>
+          </ul>
           
-          <div className={styles.authButtons}>
-            <Link className={styles.loginBtn} to="/login">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-              Login
-            </Link>
-            <Link className={styles.signupBtn} to="/login/cadastro">
-              Cadastrar
-            </Link>
+          <div className={styles.searchContainer}>
+            <form onSubmit={handleSearch}>
+              <input 
+                type="search" 
+                name="search"
+                placeholder="Buscar jogos..." 
+                className={styles.searchInput}
+              />
+              <button 
+                type="submit" 
+                className={styles.searchButton}
+                aria-label="Buscar"
+              >
+                🔍
+              </button>
+            </form>
           </div>
-        </div>
-        
-        <div className={`${styles.searchOverlay} ${searchOpen ? styles.active : ''}`}>
-          <form className={styles.searchForm} onSubmit={handleSearchSubmit}>
-            <input 
-              type="text" 
-              placeholder="Buscar jogos, notícias, reviews..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              autoFocus={searchOpen}
-              className={styles.searchInput}
-            />
-            <button type="submit" className={styles.searchButton}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </button>
-            <button 
-              type="button" 
-              className={styles.closeSearch}
-              onClick={() => setSearchOpen(false)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </form>
-        </div>
+          
+          <div className={styles.authContainer}>
+            {isAuthenticated ? (
+              <div className={styles.userDropdown}>
+                <button 
+                  className={styles.userButton} 
+                  onClick={toggleDropdown}
+                  aria-haspopup="true" 
+                  aria-expanded={isDropdownOpen}
+                >
+                  <span className={styles.userName}>
+                    {user?.name?.split(' ')[0] || 'Usuário'}
+                  </span>
+                  <span className={styles.userAvatar}>
+                    {user?.name?.charAt(0) || 'U'}
+                  </span>
+                </button>
+                
+                {isDropdownOpen && (
+                  <div className={styles.dropdownContent}>
+                    <div className={styles.dropdownHeader}>
+                      <strong>{user?.name || 'Usuário'}</strong>
+                      <small>{user?.email || 'usuário@exemplo.com'}</small>
+                    </div>
+                    <Link to="/conta" className={styles.dropdownLink} onClick={() => {setIsDropdownOpen(false); setIsMenuOpen(false);}}>
+                      Meu Perfil
+                    </Link>
+                    <Link to="/conta/reviews" className={styles.dropdownLink} onClick={() => {setIsDropdownOpen(false); setIsMenuOpen(false);}}>
+                      Minhas Reviews
+                    </Link>
+                    <Link to="/conta/favoritos" className={styles.dropdownLink} onClick={() => {setIsDropdownOpen(false); setIsMenuOpen(false);}}>
+                      Jogos Favoritos
+                    </Link>
+                    <button onClick={handleLogout} className={styles.logoutButton}>
+                      Sair
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className={styles.loginButtons}>
+                <Link to="/login" className={styles.loginLink} onClick={() => setIsMenuOpen(false)}>
+                  Entrar
+                </Link>
+                <Link to="/registro" className={styles.registerLink} onClick={() => setIsMenuOpen(false)}>
+                  Registrar
+                </Link>
+              </div>
+            )}
+          </div>
+        </nav>
       </div>
     </header>
   );

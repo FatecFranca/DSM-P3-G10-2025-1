@@ -1,97 +1,7 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Criar o contexto
-const AuthContext = createContext(null);
-
-// Provider component
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Verificar autenticação quando o componente for montado
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          // Aqui você pode verificar a validade do token 
-          // com uma chamada à API, por exemplo
-          setUser({ id: 1, name: 'Usuário', email: 'usuario@exemplo.com' }); // Temporário
-        }
-      } catch (error) {
-        console.error("Erro ao verificar autenticação:", error);
-        localStorage.removeItem('token');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  // Funções de autenticação
-  const login = async (email, password) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulando login (substitua por chamada API real)
-      if (email === 'teste@teste.com' && password === '123456') {
-        const userData = { id: 1, name: 'Usuário Teste', email };
-        localStorage.setItem('token', 'token-simulado');
-        setUser(userData);
-        return true;
-      } else {
-        throw new Error('Credenciais inválidas');
-      }
-    } catch (err) {
-      setError(err.message);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const register = async (userData) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulando registro (substitua por chamada API real)
-      const newUser = { id: Date.now(), ...userData };
-      localStorage.setItem('token', 'token-simulado');
-      setUser(newUser);
-      return true;
-    } catch (err) {
-      setError(err.message);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-  };
-
-  const value = {
-    user,
-    isAuthenticated: !!user,
-    loading,
-    error,
-    login,
-    register,
-    logout
-  };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+const AuthContext = createContext();
 
 // Hook personalizado para usar o contexto
 export const useAuthContext = () => {
@@ -101,3 +11,64 @@ export const useAuthContext = () => {
   }
   return context;
 };
+
+// Provedor do contexto
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Verificar se há um usuário logado ao carregar
+  useEffect(() => {
+    const checkAuth = () => {
+      try {
+        const storedUser = localStorage.getItem('user');
+        const token = localStorage.getItem('token');
+        
+        if (storedUser && token) {
+          setUser(JSON.parse(storedUser));
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error("Erro ao verificar autenticação:", error);
+        // Limpar dados inválidos se houver erro
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, []);
+
+  // Funções de autenticação
+  const login = (userData, token) => {
+    setUser(userData);
+    setIsAuthenticated(true);
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', token);
+  };
+
+  const logout = () => {
+    setUser(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+  };
+  
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated,
+        loading,
+        login,
+        logout
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+

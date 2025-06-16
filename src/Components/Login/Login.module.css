@@ -1,38 +1,234 @@
-
-.login {
+.container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: 100vh;
-
+  min-height: calc(100vh - 140px);
+  background: linear-gradient(to right, white 50%, #f5f5f5 50%);
 }
 
-.login::before {
-  content: '';
-  display: block;
-  background: url('../../../Assets/testeLogin.jpg') no-repeat center center;
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.formHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.formHeader h1 {
+  font-size: 2rem;
+  color: var(--cor-primaria, #1a1a1a);
+  margin-bottom: 0.5rem;
+}
+
+.formHeader p {
+  color: var(--text-secondary, #666);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  font-weight: 500;
+  color: var(--cor-primaria, #1a1a1a);
+}
+
+.formGroup input {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--cor-vermelha, #ff0f35);
+  box-shadow: 0 0 0 2px rgba(255, 15, 53, 0.1);
+}
+
+.inputError {
+  border-color: #e53935 !important;
+  background-color: rgba(229, 57, 53, 0.05);
+}
+
+.errorText {
+  color: #e53935;
+  font-size: 0.875rem;
+}
+
+.errorMessage {
+  background: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  color: #c62828;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.submitButton {
+  background: var(--cor-vermelha, #ff0f35);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3.25rem;
+}
+
+.submitButton:hover {
+  background: #d70029;
+}
+
+.submitButton:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+.loadingSpinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.switchFormContainer {
+  margin: 1.5rem 0;
+  text-align: center;
+  color: var(--text-secondary, #666);
+}
+
+.switchButton {
+  background: none;
+  border: none;
+  color: var(--cor-vermelha, #ff0f35);
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.switchButton:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.demoButtonContainer {
+  margin-top: 1rem;
+}
+
+.demoButton {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--cor-vermelha, #ff0f35);
+  color: var(--cor-vermelha, #ff0f35);
+  border-radius: 0.5rem;
+  padding: 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.demoButton:hover {
+  background: rgba(255, 15, 53, 0.05);
+}
+
+.returnHome {
+  margin-top: auto;
+  text-align: center;
+}
+
+.homeLink {
+  color: var(--text-secondary, #666);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.homeLink:hover {
+  color: var(--cor-vermelha, #ff0f35);
+}
+
+.imageWrapper {
+  position: relative;
+  background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop');
   background-size: cover;
+  background-position: center;
 }
-.forms {
-    padding: 2rem;
-    border-left: none;
-    max-width: 600px;
-    background-color: #fff;
-    border-radius: 5px;
-    align-self: center;
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.imageContent {
+  color: white;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.imageContent h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.imageContent p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 768px) {
-  .login {
+  .container {
     grid-template-columns: 1fr;
-    padding: 0;
+    background: white;
   }
-  .login::before {
+  
+  .imageWrapper {
     display: none;
   }
-  .forms {
-    border: none;
-    padding: 2rem 1rem;
-    margin: 0 auto;
-    min-width: 400px;
+  
+  .formWrapper {
+    padding: 1.5rem;
   }
 }

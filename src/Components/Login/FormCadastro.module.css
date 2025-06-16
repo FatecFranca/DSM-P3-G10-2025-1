@@ -1,7 +1,48 @@
-.form {
-    margin-block: 2rem;
-  }
+.section {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
 
-.content {
-  padding-bottom: 10rem;
+.title {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  font-weight: 600;
+  color: var(--cor-primaria, #1a1a1a);
+}
+
+.title::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: var(--cor-vermelha, #ff0f35);
+  margin-top: 0.5rem;
+}
+
+.form {
+  margin-bottom: 2rem;
+}
+
+.login {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.login p {
+  color: var(--text-secondary, #666);
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
 }

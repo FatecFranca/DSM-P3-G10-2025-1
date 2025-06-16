@@ -1,40 +1,33 @@
 .wrapper {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .label {
   display: block;
-  font-size: 0.875rem;
-  line-height: 1;
-  padding-bottom: 0.5rem;
-  color: #333;
-  font-weight: 600;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--cor-primaria, #1a1a1a);
 }
 
 .input {
-  border: 1px solid #ddd;
   display: block;
   width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: white;
   font-size: 1rem;
-  padding: 0.8rem;
-  border-radius: 0.4rem;
-  background: #fff;
-  transition: 0.2s;
-  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
-
-.inputError {
-  border-color: #dc3545;
+  border-color: var(--cor-vermelha, #ff0f35);
+  box-shadow: 0 0 0 2px rgba(255, 15, 53, 0.1);
 }
 
 .error {
-  color: #dc3545;
+  color: #e53935;
   font-size: 0.875rem;
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
 }

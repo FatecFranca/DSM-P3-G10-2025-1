@@ -1,43 +1,23 @@
-import api from "../Hooks/useApi";
-
+// src/services/gameService.js - verificar se tem estes métodos
 export const gameService = {
-  getAllGames: async (params) => {
-    const response = await api.get("/games", { params });
-    return response.data;
+  // ...outros métodos
+
+  // Obter jogos em destaque
+  async getFeaturedGames() {
+    return await apiRequest('/games/featured');
   },
 
-  getGameById: async (id) => {
-    const response = await api.get(`/games/${id}`);
-    return response.data;
+  // Buscar jogos
+  async searchGames(query, filters = {}) {
+    const params = { search: query, ...filters };
+    const queryString = new URLSearchParams(params).toString();
+    return await apiRequest(`/games/search?${queryString}`);
   },
 
-  getFeaturedGames: async () => {
-    const response = await api.get("/games/featured");
-    return response.data;
+  // Obter todos os jogos
+  async getGames(params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const endpoint = queryString ? `/games?${queryString}` : '/games';
+    return await apiRequest(endpoint);
   },
-
-  getGamesByCategory: async (categoryId) => {
-    const response = await api.get(`/categories/${categoryId}/games`);
-    return response.data;
-  },
-
-  searchGames: async (query) => {
-    const response = await api.get("/games/search", { params: { q: query } });
-    return response.data;
-  },
-  
-  getGameReviews: async (gameId) => {
-    const response = await api.get(`/games/${gameId}/reviews`);
-    return response.data;
-  },
-
-  getUpcomingGames: async () => {
-    const response = await api.get("/games/upcoming");
-    return response.data;
-  },
-  
-  getTopRatedGames: async () => {
-    const response = await api.get("/games/top-rated");
-    return response.data;
-  }
 };

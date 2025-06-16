@@ -1,18 +1,42 @@
-import api from "../Hooks/useApi";
+// src/services/genreService.js
+import apiRequest from './api';
 
 export const genreService = {
-  getAllGenres: async () => {
-    const response = await api.get("/genres");
-    return response.data;
+  // Obter todos os gêneros
+  async getGenres() {
+    return await apiRequest('/genres');
   },
-  
-  getGenreById: async (id) => {
-    const response = await api.get(`/genres/${id}`);
-    return response.data;
+
+  // Obter gênero por ID
+  async getGenreById(id) {
+    return await apiRequest(`/genres/${id}`);
   },
-  
-  getGenreBySlug: async (slug) => {
-    const response = await api.get(`/genres/slug/${slug}`);
-    return response.data;
-  }
+
+  // Obter gênero por slug
+  async getGenreBySlug(slug) {
+    return await apiRequest(`/genres/slug/${slug}`);
+  },
+
+  // Criar novo gênero (admin)
+  async createGenre(genreData) {
+    return await apiRequest('/genres', {
+      method: 'POST',
+      body: JSON.stringify(genreData),
+    });
+  },
+
+  // Atualizar gênero (admin)
+  async updateGenre(id, genreData) {
+    return await apiRequest(`/genres/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(genreData),
+    });
+  },
+
+  // Deletar gênero (admin)
+  async deleteGenre(id) {
+    return await apiRequest(`/genres/${id}`, {
+      method: 'DELETE',
+    });
+  },
 };

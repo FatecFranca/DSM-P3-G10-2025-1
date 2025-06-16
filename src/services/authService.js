@@ -1,52 +1,65 @@
-import api from "../services/api";  // Corrigido para importar do local correto
+// src/services/authService.js
+import apiRequest from './api';
 
-const TOKEN_KEY = "token";
-const USER_KEY = "user";
-
-const authService = {
-  login: async (credentials) => {
-    const response = await api.post("/auth/login", credentials);
-    if (response.data.token) {
-      localStorage.setItem("token", response.data.token);
+// Corrigindo para exportar como named export
+export const authService = {
+  // Login
+  async login(credentials) {
+    const response = await apiRequest('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
+    
+    if (response.token) {
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
     }
-    return response.data;
+    
+    return response;
   },
 
-  register: async (userData) => {
-    const response = await api.post("/auth/register", userData);
-    return response.data;
-  },
-
-  logout: () => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-  },
-
-  isAuthenticated: () => {
-    return !!localStorage.getItem(TOKEN_KEY);
-  },
-
-  getCurrentUser: () => {
-    const userStr = localStorage.getItem(USER_KEY);
-    if (!userStr) return null;
-    try {
-      return JSON.parse(userStr);
-    } catch (e) {
-      return null;
+  // Registro
+  async register(userData) {
+    const response = await apiRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+    
+    if (response.token) {
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
     }
+    
+    return response;
   },
 
-  getToken: () => {
-    return localStorage.getItem(TOKEN_KEY);
+  // Logout
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   },
-  
-  refreshToken: async () => {
-    const response = await api.post("/auth/refresh-token");
-    if (response.data && response.data.token) {
-      localStorage.setItem(TOKEN_KEY, response.data.token);
+
+  // Verificar se está autenticado
+  isAuthenticated() {
+    return !!localStorage.getItem('token');
+  },
+
+  // Obter usuário atual
+  getCurrentUser() {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+  },
+
+  // Refresh token
+  async refreshToken() {
+    const response = await apiRequest('/auth/refresh', {
+      method: 'POST',
+    });
+    
+    if (response.token) {
+      localStorage.setItem('token', response.token);
     }
-    return response.data;
-  }
+    
+    return response;
+  },
 };
-
-export default authService;
