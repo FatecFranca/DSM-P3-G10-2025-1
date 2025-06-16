@@ -1,48 +1,72 @@
 .section {
-  max-width: 500px;
-  margin: 0 auto;
   padding: 2rem 1rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.container {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .title {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  position: relative;
-  font-weight: 600;
+  font-size: 1.8rem;
   color: var(--cor-primaria, #1a1a1a);
+  margin-bottom: 0.5rem;
+  position: relative;
 }
 
-.title::after {
-  content: "";
-  display: block;
-  width: 40px;
-  height: 3px;
-  background: var(--cor-vermelha, #ff0f35);
-  margin-top: 0.5rem;
+.subtitle {
+  color: var(--text-secondary, #666);
+  margin-bottom: 1.5rem;
 }
 
 .form {
-  margin-bottom: 2rem;
-}
-
-.login {
-  margin-top: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 1rem;
 }
 
-.login p {
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.buttonGroup button {
+  flex: 1;
+}
+
+.loginLink {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
   color: var(--text-secondary, #666);
 }
 
+.loginLink a {
+  color: var(--cor-vermelha, #ff0f35);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.loginLink a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
-  .section {
-    padding: 1rem;
+  .container {
+    padding: 1.5rem;
   }
   
   .title {
     font-size: 1.5rem;
+  }
+  
+  .buttonGroup {
+    flex-direction: column;
   }
 }

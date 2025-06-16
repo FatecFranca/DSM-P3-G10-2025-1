@@ -7,10 +7,23 @@ import { AuthProvider } from './context/AuthContext';
 import Home from './Components/Home';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
-import Login from './Components/Login/Login';
-import FormCadastro from "./Components/Login/FormCadastro";
 
-// ... outros imports ...
+// Componentes de autenticação
+import Login from './Components/Login/Login';
+import FormCadastro from './Components/Login/FormCadastro';
+
+// Componentes de jogos
+import GamesList from './Components/Games/GamesList';
+import GenresList from './Components/Genres/GenresList';
+
+// Componentes de usuário
+
+import UserAccount from './Components/User/UserAccount';
+
+// Componentes de reviews
+import Reviews from './Components/Reviews/Reviews';
+import ReviewDetail from './Components/Reviews/ReviewDetail';
+import CreateReview from './Components/Reviews/CreateReview';
 
 const App = () => {
   return (
@@ -20,10 +33,25 @@ const App = () => {
           <Header />
           <main className="main-content">
             <Routes>
+              {/* Rota principal */}
               <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/cadastro" element={<FormCadastro />} />
-              {/* ... outras rotas ... */}
+              
+              {/* Rotas de autenticação */}
+              <Route path="/login" element={<Login initialMode="login" />} />
+              <Route path="/registro" element={<FormCadastro />} />
+              
+              {/* Rotas de jogos */}
+              <Route path="/jogos" element={<GamesList />} />
+              <Route path="/generos" element={<GenresList />} />
+              
+              {/* Rotas de reviews */}
+              <Route path="/reviews" element={<Reviews />} />
+              <Route path="/review/:id" element={<ReviewDetail />} />
+              <Route path="/criar/review" element={<CreateReview />} />
+              
+              {/* Rotas de usuário */}
+              <Route path="/conta" element={<UserAccount />} />
+              {/* Outras rotas */}
             </Routes>
           </main>
           <Footer />

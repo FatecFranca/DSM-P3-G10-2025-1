@@ -17,17 +17,33 @@ const Input = ({
       <label htmlFor={name} className={styles.label}>
         {label}
       </label>
-      <input
-        id={name}
-        name={name}
-        className={styles.input}
-        type={type}
-        value={value}
-        onChange={onChange}
-        onBlur={onBlur}
-        placeholder={placeholder}
-        required={required}
-      />
+      
+      {type === 'textarea' ? (
+        <textarea
+          id={name}
+          name={name}
+          className={styles.textarea}
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+          placeholder={placeholder}
+          required={required}
+          rows={4}
+        />
+      ) : (
+        <input
+          id={name}
+          name={name}
+          className={styles.input}
+          type={type}
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+          placeholder={placeholder}
+          required={required}
+        />
+      )}
+      
       {error && <p className={styles.error}>{error}</p>}
     </div>
   );

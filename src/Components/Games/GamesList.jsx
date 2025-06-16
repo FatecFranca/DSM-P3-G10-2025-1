@@ -1,164 +1,109 @@
-// src/Components/Games/GamesList.jsx
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { gameService } from '../../services';
-import { useApi } from '../../Hooks/useApi';
+import { Link } from 'react-router-dom';
 import styles from './GamesList.module.css';
 
-const GamesList = ({ featured = false, searchMode = false }) => {
+const GamesList = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchParams] = useSearchParams();
-  const search = searchParams.get('q');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchGames = async () => {
       try {
         setLoading(true);
-        setError(null);
         
-        let data;
+        // Exemplo de como buscar dados do backend
+        // const response = await fetch('http://localhost:5000/api/games');
+        // const data = await response.json();
         
-        if (featured) {
-          data = await gameService.getFeaturedGames();
-        } else if (search && searchMode) {
-          data = await gameService.searchGames(search);
-        } else {
-          data = await gameService.getGames();
-        }
+        // Dados de exemplo para teste
+        const data = {
+          games: [
+            { id: '1', title: 'The Last of Us Part II', coverUrl: 'https://example.com/tlou2.jpg', averageRating: 4.8 },
+            { id: '2', title: 'God of War Ragnarök', coverUrl: 'https://example.com/gow.jpg', averageRating: 4.7 },
+            { id: '3', title: 'Elden Ring', coverUrl: 'https://example.com/elden.jpg', averageRating: 4.9 },
+            { id: '4', title: 'Horizon Forbidden West', coverUrl: 'https://example.com/horizon.jpg', averageRating: 4.5 },
+            { id: '5', title: 'Cyberpunk 2077', coverUrl: 'https://example.com/cyberpunk.jpg', averageRating: 3.8 },
+            { id: '6', title: 'Spider-Man Miles Morales', coverUrl: 'https://example.com/spiderman.jpg', averageRating: 4.6 },
+          ]
+        };
         
-        setGames(data || []);
-      } catch (err) {
-        console.error('Erro ao buscar jogos:', err);
-        setError(err.message);
-        // Fallback para dados mockados se a API falhar
-        setGames(mockGames);
-      } finally {
+        setGames(data.games);
+        setLoading(false);
+      } catch (error) {
+        console.error('Erro ao buscar jogos:', error);
+        setError('Não foi possível carregar a lista de jogos. Por favor, tente novamente mais tarde.');
         setLoading(false);
       }
     };
-
+    
     fetchGames();
-  }, [featured, search, searchMode]);
+  }, []);
+  
+  // Filtrar jogos com base no termo de pesquisa
+  const filteredGames = games.filter(game => 
+    game.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  // Dados mockados como fallback
-  const mockGames = [
-    {
-      id: 1,
-      titulo: "CyberStrike 2077",
-      imagem: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop",
-      avaliacao: "9.2",
-      descricao: "Um RPG futurista com elementos cyberpunk",
-      genero: "RPG",
-      desenvolvedor: "CD Projekt Red",
-      dataLancamento: "2024-12-01"
-    },
-    {
-      id: 2,
-      titulo: "Fantasy Realms",
-      imagem: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop",
-      avaliacao: "8.7",
-      descricao: "Aventure-se em um mundo mágico",
-      genero: "Aventura",
-      desenvolvedor: "Fantasy Studios",
-      dataLancamento: "2024-11-15"
-    },
-    {
-      id: 3,
-      titulo: "Speed Horizon",
-      imagem: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=600&fit=crop",
-      avaliacao: "9.0",
-      descricao: "Corridas em alta velocidade",
-      genero: "Corrida",
-      desenvolvedor: "Speed Games",
-      dataLancamento: "2024-10-20"
-    }
-  ];
-
-  if (loading) {
-    return (
-      <div className={styles.container}>
+  return (
+    <div className={styles.container}>
+      <section className={styles.hero}>
+        <h1 className={styles.title}>Catálogo de Jogos</h1>
+        <p className={styles.subtitle}>Explore nossa coleção completa de jogos</p>
+        
+        <div className={styles.searchContainer}>
+          <input
+            type="text"
+            placeholder="Buscar jogos..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={styles.searchInput}
+          />
+        </div>
+      </section>
+      
+      {loading ? (
         <div className={styles.loading}>
           <div className={styles.spinner}></div>
           <p>Carregando jogos...</p>
         </div>
-      </div>
-    );
-  }
-
-  if (error && games.length === 0) {
-    return (
-      <div className={styles.container}>
+      ) : error ? (
         <div className={styles.error}>
-          <h2>Erro ao carregar jogos</h2>
           <p>{error}</p>
-          <button onClick={() => window.location.reload()}>
-            Tentar novamente
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>
-          {featured ? '🌟 Jogos em Destaque' : 
-           searchMode ? `🔍 Resultados para: "${search}"` : 
-           '🎮 Todos os Jogos'}
-        </h1>
-        
-        {search && (
-          <p className={styles.searchInfo}>
-            {games.length > 0 
-              ? `${games.length} jogo(s) encontrado(s)`
-              : 'Nenhum jogo encontrado'
-            }
-          </p>
-        )}
-      </div>
-      
-      {games.length === 0 ? (
-        <div className={styles.noResults}>
-          <div className={styles.noResultsIcon}>🎮</div>
-          <h3>Nenhum jogo encontrado</h3>
-          <p>Tente buscar por outro termo ou explore nossas categorias.</p>
-          <Link to="/generos" className={styles.exploreButton}>
-            Explorar Gêneros
-          </Link>
+          <button onClick={() => window.location.reload()}>Tentar novamente</button>
         </div>
       ) : (
         <div className={styles.gamesGrid}>
-          {games.map(game => (
-            <Link to={`/jogo/${game.id}`} key={game.id} className={styles.gameCard}>
-              <div className={styles.imageWrapper}>
-                <img 
-                  src={game.imagem || game.capa} 
-                  alt={game.titulo || game.nome}
-                  onError={(e) => {
-                    e.target.src = `https://via.placeholder.com/400x600/1a1a1a/ffffff?text=${encodeURIComponent(game.titulo || game.nome)}`;
-                  }}
-                />
-                <div className={styles.ratingBadge}>
-                  ⭐ {game.avaliacao}
+          {filteredGames.length > 0 ? (
+            filteredGames.map(game => (
+              <Link to={`/jogo/${game.id}`} key={game.id} className={styles.gameCard}>
+                <div className={styles.gameImage}>
+                  <img 
+                    src={game.coverUrl || 'https://via.placeholder.com/300x400?text=Sem+Imagem'} 
+                    alt={game.title}
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/300x400?text=Sem+Imagem';
+                    }}
+                  />
                 </div>
-                <div className={styles.overlay}>
-                  <span className={styles.playButton}>▶️</span>
-                  <span className={styles.viewDetails}>Ver Detalhes</span>
-                </div>
-              </div>
-              <div className={styles.cardContent}>
-                <h3 className={styles.gameTitle}>{game.titulo || game.nome}</h3>
-                <p className={styles.description}>{game.descricao}</p>
                 <div className={styles.gameInfo}>
-                  <span className={styles.genre}>{game.genero}</span>
-                  <span className={styles.developer}>{game.desenvolvedor}</span>
+                  <h3 className={styles.gameTitle}>{game.title}</h3>
+                  <div className={styles.gameRating}>
+                    <span className={styles.starIcon}>★</span>
+                    <span>{game.averageRating?.toFixed(1) || 'N/A'}</span>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))
+          ) : (
+            <p className={styles.noGames}>
+              {searchTerm 
+                ? `Nenhum jogo encontrado para "${searchTerm}".`
+                : 'Nenhum jogo disponível no momento.'
+              }
+            </p>
+          )}
         </div>
       )}
     </div>
