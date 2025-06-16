@@ -1,36 +1,71 @@
 import api from './api';
 
-export const AuthService = {
-  // Login de usuário
+const AuthService = {
+  // Login usando o novo endpoint de login
   login: async (email, password) => {
-    const response = await api.post('/auth/login', { email, password });
-    if (response.data.token) {
-      localStorage.setItem('gameReviews_token', response.data.token);
-      localStorage.setItem('gameReviews_user', JSON.stringify(response.data.user));
+    try {
+      // 1. Tenta fazer o login pelo novo endpoint
+      const response = await api.post('/login', { email, password });
+      
+      // 2. Extrai dados da resposta
+      const { user, token } = response.data;
+      
+      // 3. Armazena token e informações do usuário
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      return { user, token };
+    } catch (error) {
+      // 4. Trata erros específicos
+      if (error.response && error.response.status === 401) {
+        throw new Error('Email ou senha incorretos');
+      } else {
+        throw new Error('Erro ao conectar com o servidor. Tente novamente mais tarde.');
+      }
     }
-    return response.data;
   },
 
-  // Registro de novo usuário
+  // Registro usando o endpoint correto
   register: async (userData) => {
-    const response = await api.post('/auth/register', userData);
+    const response = await api.post('/users', userData);
+    
+    // Se o back-end não retornar um token, crie um mock
+    if (!response.data.token) {
+      const user = response.data;
+      const mockToken = btoa(`${user.id}:${user.email}:${Date.now()}`);
+      
+      localStorage.setItem('token', mockToken);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      return {
+        user,
+        token: mockToken
+      };
+    }
+    
+    // Caso contrário, use o token do back-end
+    const { token, user } = response.data;
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+    
     return response.data;
   },
 
-  // Obter usuário atual
+  // Outros métodos
+  isAuthenticated: () => {
+    const token = localStorage.getItem('token');
+    return !!token;
+  },
+
   getCurrentUser: () => {
-    const user = localStorage.getItem('gameReviews_user');
+    const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   },
 
-  // Verificar se usuário está autenticado
-  isAuthenticated: () => {
-    return !!localStorage.getItem('gameReviews_token');
-  },
-
-  // Logout
   logout: () => {
-    localStorage.removeItem('gameReviews_token');
-    localStorage.removeItem('gameReviews_user');
-  },
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  }
 };
+
+export default AuthService;

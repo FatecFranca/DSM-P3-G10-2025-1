@@ -12,18 +12,6 @@ export const ReviewService = {
     const response = await api.get(`/reviews/${id}`);
     return response.data;
   },
-  
-  // Obter reviews populares
-  getPopularReviews: async (limit = 10) => {
-    const response = await api.get(`/reviews/popular`, { params: { limit } });
-    return response.data;
-  },
-  
-  // Obter reviews recentes
-  getRecentReviews: async (params = {}) => {
-    const response = await api.get(`/reviews/recent`, { params });
-    return response.data;
-  },
 
   // Criar nova review (requer autenticação)
   createReview: async (reviewData) => {

@@ -1,7 +1,6 @@
-// src/services/gameService.js - verificar se tem estes métodos
-export const gameService = {
-  // ...outros métodos
+import api from './api';
 
+export const GameService = {
   // Obter jogos em destaque
   async getFeaturedGames() {
     return await apiRequest('/games/featured');
@@ -19,5 +18,20 @@ export const gameService = {
     const queryString = new URLSearchParams(params).toString();
     const endpoint = queryString ? `/games?${queryString}` : '/games';
     return await apiRequest(endpoint);
+  },
+
+  getAllGames: async (params = {}) => {
+    const response = await api.get('/games', { params });
+    return response.data;
+  },
+
+  getGameById: async (id) => {
+    const response = await api.get(`/games/${id}`);
+    return response.data;
+  },
+
+  createGame: async (gameData) => {
+    const response = await api.post('/games', gameData);
+    return response.data;
   },
 };

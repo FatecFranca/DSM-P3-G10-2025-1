@@ -1,65 +1,411 @@
 .section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 2rem 1rem;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+  background-color: #f5f5f5;
 }
 
 .container {
-  background: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.header {
+  margin-bottom: 2rem;
 }
 
 .title {
   font-size: 1.8rem;
-  color: var(--cor-primaria, #1a1a1a);
-  margin-bottom: 0.5rem;
-  position: relative;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
-.subtitle {
-  color: var(--text-secondary, #666);
+/* Progress bar and steps */
+.progressBar {
+  height: 6px;
+  background-color: #e0e0e0;
+  border-radius: 3px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--cor-vermelha, #ff0f35);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  color: #777;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.step span {
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  white-space: nowrap;
+}
+
+.stepNumber {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  color: #777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.step.active {
+  color: #333;
+}
+
+.step.active .stepNumber {
+  background-color: var(--cor-vermelha, #ff0f35);
+  color: white;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 15px;
+  right: -50%;
+  width: 100%;
+  height: 2px;
+  background-color: #e0e0e0;
+  z-index: -1;
+}
+
+/* Form styles */
+.form {
   margin-bottom: 1.5rem;
 }
 
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.formStep {
+  animation: fadeIn 0.3s ease;
 }
 
+.inputGroup {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.fieldError {
+  color: #ff3d3d;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  animation: shake 0.3s ease;
+}
+
+.hint {
+  display: block;
+  color: #777;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Password field with toggle */
+.passwordField {
+  position: relative;
+}
+
+.passwordField input {
+  padding-right: 40px;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  transition: color 0.2s;
+}
+
+.togglePassword:hover {
+  color: #333;
+}
+
+/* Password strength indicator */
+.passwordStrength {
+  margin-top: 0.75rem;
+}
+
+.strengthBar {
+  display: flex;
+  height: 5px;
+  gap: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.strengthSegment {
+  flex: 1;
+  height: 100%;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+.strengthSegment.active {
+  background-color: var(--cor-vermelha, #ff0f35);
+}
+
+.strengthText {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Avatar preview */
+.avatarPreview {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.avatarPreview img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+}
+
+/* Terms checkbox */
+.termsCheck {
+  margin-bottom: 1.5rem;
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  cursor: pointer;
+  font-size: 0.9rem;
+  user-select: none;
+}
+
+.checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  height: 20px;
+  width: 20px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  margin-right: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-top: 2px;
+}
+
+.checkbox:hover input ~ .checkmark {
+  background-color: #e0e0e0;
+}
+
+.checkbox input:checked ~ .checkmark {
+  background-color: var(--cor-vermelha, #ff0f35);
+}
+
+.checkmark:after {
+  content: "✓";
+  display: none;
+  color: white;
+  font-size: 0.8rem;
+}
+
+.checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox span {
+  line-height: 1.4;
+  color: #555;
+}
+
+.checkbox a {
+  color: var(--cor-vermelha, #ff0f35);
+  text-decoration: none;
+}
+
+.checkbox a:hover {
+  text-decoration: underline;
+}
+
+/* Button styles */
 .buttonGroup {
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .buttonGroup button {
   flex: 1;
 }
 
+.nextButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonIcon {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+}
+
+button:hover .buttonIcon {
+  transform: translateX(3px);
+}
+
+button:hover .buttonIcon:first-child {
+  transform: translateX(-3px);
+}
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s ease infinite;
+  margin-right: 0.5rem;
+}
+
+/* Login link */
 .loginLink {
-  margin-top: 2rem;
   text-align: center;
-  font-size: 0.9rem;
-  color: var(--text-secondary, #666);
+  border-top: 1px solid #eee;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  color: #666;
 }
 
-.loginLink a {
+.highlightLink {
   color: var(--cor-vermelha, #ff0f35);
+  font-weight: 600;
   text-decoration: none;
-  font-weight: 500;
 }
 
-.loginLink a:hover {
+.highlightLink:hover {
   text-decoration: underline;
 }
 
-@media (max-width: 768px) {
+/* Error and success messages */
+.errorContainer, .successContainer {
+  margin-bottom: 1.5rem;
+}
+
+.success {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 8px;
+}
+
+.successIcon {
+  width: 24px;
+  height: 24px;
+  fill: #2e7d32;
+  margin-right: 10px;
+}
+
+/* Security info */
+.securityInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  color: #777;
+  font-size: 0.85rem;
+}
+
+.securityIcon {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
   .container {
     padding: 1.5rem;
+    border-radius: 8px;
   }
   
   .title {

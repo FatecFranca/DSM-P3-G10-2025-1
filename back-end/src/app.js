@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 // Importar rotas
-import authRoutes from './routes/authRoutes.js';
+
 import userRoutes from './routes/userRoutes.js';
 import gameRoutes from './routes/gameRoutes.js';
 import genreRoutes from './routes/genreRoutes.js';
@@ -13,6 +13,9 @@ import commentReactionRoutes from './routes/commentReactionRoutes.js';
 import reviewReactionRoutes from './routes/reviewReactionRoutes.js';
 import gameProgressRoutes from './routes/gameProgressRoutes.js';
 
+
+const authRoutes = require('./routes/authRoutes');
+// Configurar variáveis de ambiente
 dotenv.config();
 
 const app = express();
@@ -33,15 +36,11 @@ app.use((req, res, next) => {
 
 // Rota de teste
 app.get('/api/test', (req, res) => {
-  res.json({ 
-    message: 'GameReviews API funcionando!',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
-  });
+  res.json({ message: 'API está funcionando!' });
 });
 
 // Rotas da API
-app.use('/api/auth', authRoutes);
+app.use('/api', authRoutes); // /api/login será o endpoint
 app.use('/api/users', userRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/genres', genreRoutes);

@@ -1,78 +1,84 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { AuthService } from '../services/authService';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import AuthService from '../services/authService';
 
 // Criando o contexto
-const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
-// Provider component
+// Hook personalizado para usar o contexto
+export const useAuthContext = () => {
+  const context = useContext(AuthContext);
+  
+  if (!context) {
+    throw new Error("useAuthContext deve ser usado dentro de um AuthProvider");
+  }
+  
+  return context;
+};
+
+// Provider do contexto
 export const AuthProvider = ({ children }) => {
+  const [authenticated, setAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar se o usuário está autenticado ao carregar a aplicação
     const checkAuth = () => {
       if (AuthService.isAuthenticated()) {
-        const currentUser = AuthService.getCurrentUser();
-        setUser(currentUser);
-        setIsAuthenticated(true);
+        setAuthenticated(true);
+        setUser(AuthService.getCurrentUser());
       }
       setLoading(false);
     };
-
+    
     checkAuth();
   }, []);
 
-  // Função de login
   const login = async (email, password) => {
     try {
       const data = await AuthService.login(email, password);
+      setAuthenticated(true);
       setUser(data.user);
-      setIsAuthenticated(true);
-      return { success: true };
+      return data;
     } catch (error) {
       console.error('Erro no login:', error);
-      return {
-        success: false,
-        message: error.response?.data?.error || 'Falha no login. Verifique suas credenciais.'
-      };
+      throw error;
     }
   };
 
-  // Função de registro
   const register = async (userData) => {
     try {
-      await AuthService.register(userData);
-      return { success: true };
+      const data = await AuthService.register(userData);
+      setAuthenticated(true);
+      setUser(data.user);
+      return data;
     } catch (error) {
       console.error('Erro no registro:', error);
-      return {
-        success: false,
-        message: error.response?.data?.error || 'Falha no registro. Tente novamente.'
-      };
+      throw error;
     }
   };
 
-  // Função de logout
   const logout = () => {
     AuthService.logout();
+    setAuthenticated(false);
     setUser(null);
-    setIsAuthenticated(false);
   };
 
-  const value = {
-    user,
-    isAuthenticated,
-    loading,
-    login,
-    register,
-    logout,
-    setUser
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ 
+      authenticated, 
+      user, 
+      loading, 
+      login, 
+      logout, 
+      register,
+      updateUser
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
-
-// Custom hook para utilizar o contexto
-export const useAuthContext = () => useContext(AuthContext);

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import styles from './UserAccount.module.css';
 
 const UserAccount = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated, logout } = useAuthContext();
+  const { user, isAuthenticated, logout, updateUser } = useContext(AuthContext);
   
   // Estados para os dados do perfil
   const [name, setName] = useState('');

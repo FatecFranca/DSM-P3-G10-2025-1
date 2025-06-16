@@ -1,17 +1,19 @@
 import axios from 'axios';
 
-// Configuração da API com depuração aprimorada
+// Cliente API com timeout mais longo e tratamento de erro
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api', // Ajuste para a URL correta do seu back-end
+  baseURL: 'http://localhost:3001/api',
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000 // 10 segundos de timeout
+  // Aumentar o tempo limite para diagnóstico
+  timeout: 10000 
 });
 
-// Interceptador para adicionar o token JWT nas requisições
+// Interceptor para adicionar o token nas requisições
 api.interceptors.request.use(
   (config) => {
+    console.log(`Fazendo requisição para: ${config.url}`);
     const token = localStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
@@ -19,30 +21,27 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.error('Erro na configuração da requisição:', error);
     return Promise.reject(error);
   }
 );
 
-// Interceptador para facilitar o debug de erros
+// Interceptor para tratar respostas e erros
 api.interceptors.response.use(
   (response) => {
+    console.log(`Resposta recebida de: ${response.config.url}`, response.status);
     return response;
-  }, 
+  },
   (error) => {
-    // Log detalhado do erro
     if (error.response) {
-      // O servidor respondeu com um status de erro
-      console.error('Erro na resposta da API:', {
-        status: error.response.status,
-        data: error.response.data,
-        headers: error.response.headers
-      });
+      // O servidor respondeu com um código de erro
+      console.error(`Erro ${error.response.status} em ${error.config?.url}:`, error.response.data);
     } else if (error.request) {
       // A requisição foi feita mas não houve resposta
-      console.error('Sem resposta do servidor:', error.request);
+      console.error('Sem resposta do servidor:', error.message);
     } else {
       // Erro na configuração da requisição
-      console.error('Erro na configuração da requisição:', error.message);
+      console.error('Erro de requisição:', error.message);
     }
     
     return Promise.reject(error);
