@@ -1,15 +1,17 @@
+import { apiRequest } from './api';
+
 class ReviewsService {
   constructor() {
     this.baseURL = this.getBaseURL();
   }
 
   getBaseURL() {
-    if (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_URL) {
-      return process.env.REACT_APP_API_URL;
+    if (typeof window !== 'undefined' && window.location) {
+      return window.location.hostname === 'localhost' 
+        ? 'http://localhost:3001/api'
+        : '/api';
     }
-    return window.location.hostname === 'localhost' 
-      ? 'http://localhost:3001/api'
-      : '/api';
+    return 'http://localhost:3001/api';
   }
 
   // Buscar reviews com filtros e paginação
@@ -23,16 +25,12 @@ class ReviewsService {
         }
       });
 
-      const response = await fetch(`${this.baseURL}/reviews?${queryParams}`);
+      console.log('Buscando reviews em:', `${this.baseURL}/reviews?${queryParams}`);
       
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const reviews = await apiRequest(`/reviews?${queryParams}`);
       return {
         success: true,
-        data: data
+        data: reviews
       };
 
     } catch (error) {
@@ -55,16 +53,10 @@ class ReviewsService {
         }
       });
 
-      const response = await fetch(`${this.baseURL}/reviews/popular?${queryParams}`);
-      
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const reviews = await apiRequest(`/reviews/popular?${queryParams}`);
       return {
         success: true,
-        data: data
+        data: reviews
       };
 
     } catch (error) {
@@ -87,16 +79,10 @@ class ReviewsService {
         }
       });
 
-      const response = await fetch(`${this.baseURL}/reviews/recent?${queryParams}`);
-      
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const reviews = await apiRequest(`/reviews/recent?${queryParams}`);
       return {
         success: true,
-        data: data
+        data: reviews
       };
 
     } catch (error) {
@@ -111,16 +97,10 @@ class ReviewsService {
   // Buscar uma review específica
   async getReview(id) {
     try {
-      const response = await fetch(`${this.baseURL}/reviews/${id}`);
-      
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const review = await apiRequest(`/reviews/${id}`);
       return {
         success: true,
-        data: data
+        data: review
       };
 
     } catch (error) {
@@ -133,25 +113,16 @@ class ReviewsService {
   }
 
   // Criar nova review
-  async createReview(reviewData, token) {
+  async createReview(reviewData) {
     try {
-      const response = await fetch(`${this.baseURL}/reviews`, {
+      const newReview = await apiRequest('/reviews', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
         body: JSON.stringify(reviewData)
       });
 
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
       return {
         success: true,
-        data: data
+        data: newReview
       };
 
     } catch (error) {
@@ -164,25 +135,16 @@ class ReviewsService {
   }
 
   // Atualizar review
-  async updateReview(reviewId, reviewData, token) {
+  async updateReview(reviewId, reviewData) {
     try {
-      const response = await fetch(`${this.baseURL}/reviews/${reviewId}`, {
+      const updatedReview = await apiRequest(`/reviews/${reviewId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
         body: JSON.stringify(reviewData)
       });
 
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
       return {
         success: true,
-        data: data
+        data: updatedReview
       };
 
     } catch (error) {
@@ -195,18 +157,11 @@ class ReviewsService {
   }
 
   // Deletar review
-  async deleteReview(reviewId, token) {
+  async deleteReview(reviewId) {
     try {
-      const response = await fetch(`${this.baseURL}/reviews/${reviewId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      await apiRequest(`/reviews/${reviewId}`, {
+        method: 'DELETE'
       });
-
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
 
       return {
         success: true,
@@ -223,28 +178,19 @@ class ReviewsService {
   }
 
   // Reagir a uma review (like/dislike)
-  async reactToReview(reviewId, type, token) {
+  async reactToReview(reviewId, type) {
     try {
-      const response = await fetch(`${this.baseURL}/review-reactions`, {
+      const reaction = await apiRequest('/review-reactions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
         body: JSON.stringify({
           reviewId,
           type // 'like' ou 'dislike'
         })
       });
 
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
       return {
         success: true,
-        data: data
+        data: reaction
       };
 
     } catch (error) {
@@ -259,16 +205,10 @@ class ReviewsService {
   // Buscar reações de uma review
   async getReviewReactions(reviewId) {
     try {
-      const response = await fetch(`${this.baseURL}/review-reactions/review/${reviewId}`);
-      
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const reactions = await apiRequest(`/review-reactions/review/${reviewId}`);
       return {
         success: true,
-        data: data
+        data: reactions
       };
 
     } catch (error) {
@@ -281,18 +221,11 @@ class ReviewsService {
   }
 
   // Remover reação
-  async removeReaction(reactionId, token) {
+  async removeReaction(reactionId) {
     try {
-      const response = await fetch(`${this.baseURL}/review-reactions/${reactionId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      await apiRequest(`/review-reactions/${reactionId}`, {
+        method: 'DELETE'
       });
-
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
 
       return {
         success: true,
@@ -311,16 +244,10 @@ class ReviewsService {
   // Buscar comentários de uma review
   async getReviewComments(reviewId) {
     try {
-      const response = await fetch(`${this.baseURL}/comments/review/${reviewId}`);
-      
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const comments = await apiRequest(`/comments/review/${reviewId}`);
       return {
         success: true,
-        data: data
+        data: comments
       };
 
     } catch (error) {
@@ -333,25 +260,16 @@ class ReviewsService {
   }
 
   // Criar comentário
-  async createComment(commentData, token) {
+  async createComment(commentData) {
     try {
-      const response = await fetch(`${this.baseURL}/comments`, {
+      const newComment = await apiRequest('/comments', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
         body: JSON.stringify(commentData)
       });
 
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
       return {
         success: true,
-        data: data
+        data: newComment
       };
 
     } catch (error) {

@@ -1,51 +1,110 @@
-import api from './api';
+import { apiRequest } from './api';
 
-export const UserService = {
+class UserService {
+  constructor() {
+    this.baseURL = this.getBaseURL();
+  }
+
+  getBaseURL() {
+    if (typeof window !== 'undefined' && window.location) {
+      return window.location.hostname === 'localhost' 
+        ? 'http://localhost:3001/api'
+        : '/api';
+    }
+    return 'http://localhost:3001/api';
+  }
+
   // Obter perfil do usuário
-  getUserProfile: async (id) => {
-    const response = await api.get(`/users/${id}`);
-    return response.data;
-  },
+  async getUserProfile(id) {
+    try {
+      const user = await apiRequest(`/users/${id}`);
+      return {
+        success: true,
+        data: user
+      };
+    } catch (error) {
+      console.error('Erro ao buscar perfil do usuário:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
 
-  // Obter perfil do usuário autenticado
-  getMyProfile: async () => {
-    const response = await api.get('/users/me');
-    return response.data;
-  },
+  // Atualizar perfil do usuário
+  async updateUserProfile(id, userData) {
+    try {
+      const updatedUser = await apiRequest(`/users/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(userData)
+      });
 
-  // Atualizar perfil do usuário (requer autenticação)
-  updateProfile: async (userData) => {
-    const response = await api.put('/users/me', userData);
-    return response.data;
-  },
+      return {
+        success: true,
+        data: updatedUser
+      };
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
 
-  // Alterar senha (requer autenticação)
-  changePassword: async (passwordData) => {
-    const response = await api.put('/users/me/password', passwordData);
-    return response.data;
-  },
+  // Deletar usuário
+  async deleteUser(id) {
+    try {
+      await apiRequest(`/users/${id}`, {
+        method: 'DELETE'
+      });
 
-  // Excluir conta (requer autenticação)
-  deleteAccount: async () => {
-    const response = await api.delete('/users/me');
-    return response.data;
-  },
-  
-  // Obter jogos favoritos do usuário
-  getFavorites: async () => {
-    const response = await api.get('/users/me/favorites');
-    return response.data;
-  },
-  
-  // Adicionar jogo aos favoritos
-  addFavorite: async (gameId) => {
-    const response = await api.post(`/users/me/favorites/${gameId}`);
-    return response.data;
-  },
-  
-  // Remover jogo dos favoritos
-  removeFavorite: async (gameId) => {
-    const response = await api.delete(`/users/me/favorites/${gameId}`);
-    return response.data;
-  },
-};
+      return {
+        success: true,
+        message: 'Usuário deletado com sucesso'
+      };
+    } catch (error) {
+      console.error('Erro ao deletar usuário:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
+
+  // Listar todos os usuários
+  async getUsers() {
+    try {
+      const users = await apiRequest('/users');
+      return {
+        success: true,
+        data: users
+      };
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
+
+  // Buscar progresso de jogos do usuário
+  async getUserGameProgress(userId) {
+    try {
+      const progress = await apiRequest(`/game-progress/user/${userId}`);
+      return {
+        success: true,
+        data: progress
+      };
+    } catch (error) {
+      console.error('Erro ao buscar progresso de jogos:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
+}
+
+export default new UserService();
