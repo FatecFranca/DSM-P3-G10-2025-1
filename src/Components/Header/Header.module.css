@@ -1,0 +1,432 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.header.scrolled {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  gap: 2rem;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ff4f59;
+  transition: all 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.logoIcon {
+  font-size: 1.75rem;
+}
+
+.logoText {
+  background: linear-gradient(135deg, #ff4f59, #ff7f35);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Navegação */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #666;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.navLink:hover {
+  color: #ff4f59;
+  background: rgba(255, 79, 89, 0.05);
+}
+
+.navIcon {
+  font-size: 1.1rem;
+}
+
+/* Busca */
+.searchForm {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border-radius: 25px;
+  padding: 0.5rem;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  max-width: 400px;
+  flex: 1;
+}
+
+.searchForm:focus-within {
+  border-color: #ff4f59;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(255, 79, 89, 0.1);
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: #999;
+}
+
+.searchButton {
+  background: #ff4f59;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.searchButton:hover {
+  background: #e73f48;
+  transform: scale(1.1);
+}
+
+.searchIcon {
+  color: white;
+  font-size: 1rem;
+}
+
+/* Área do usuário */
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.userDropdown {
+  position: relative;
+}
+
+.userButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 2px solid #e5e7eb;
+  border-radius: 25px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.userButton:hover {
+  border-color: #ff4f59;
+  background: rgba(255, 79, 89, 0.05);
+}
+
+.userIcon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #ff4f59, #ff7f35);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.dropdownArrow {
+  color: #666;
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+/* Menu dropdown */
+.userMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  min-width: 280px;
+  overflow: hidden;
+  z-index: 1001;
+}
+
+.animeDown {
+  animation: animeDown 0.3s ease;
+}
+
+@keyframes animeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.userMenuHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #ff4f59, #ff7f35);
+  color: white;
+}
+
+.userMenuAvatar {
+  flex-shrink: 0;
+}
+
+.menuIcon {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.userMenuInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.userName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  color: white;
+}
+
+.userEmail {
+  font-size: 0.9rem;
+  margin: 0;
+  opacity: 0.9;
+  color: white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userMenuDivider {
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.userMenuNav {
+  padding: 0.5rem 0;
+}
+
+.userMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  color: #374151;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.userMenuItem:hover {
+  background: rgba(255, 79, 89, 0.05);
+  color: #ff4f59;
+}
+
+.userMenuItem .menuIcon {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: inherit;
+}
+
+.logoutMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  color: #dc2626;
+}
+
+.logoutMenuItem:hover {
+  background: rgba(220, 38, 38, 0.05);
+}
+
+.logoutMenuItem .menuIcon {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: inherit;
+}
+
+/* Botões de autenticação */
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loginButton {
+  text-decoration: none;
+  color: #666;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.loginButton:hover {
+  color: #ff4f59;
+  background: rgba(255, 79, 89, 0.05);
+}
+
+.registerButton {
+  text-decoration: none;
+  background: linear-gradient(135deg, #ff4f59, #ff7f35);
+  color: white;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 79, 89, 0.3);
+}
+
+.registerButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 79, 89, 0.4);
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
+
+  .nav {
+    gap: 1rem;
+  }
+
+  .searchForm {
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    height: 60px;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .searchForm {
+    max-width: 200px;
+  }
+
+  .logoText {
+    display: none;
+  }
+
+  .userMenu {
+    right: -10px;
+    min-width: 260px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .searchForm {
+    max-width: 150px;
+  }
+
+  .searchInput {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .userMenu {
+    right: -20px;
+    min-width: 240px;
+  }
+
+  .authButtons {
+    gap: 0.5rem;
+  }
+
+  .loginButton,
+  .registerButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}

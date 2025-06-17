@@ -11,98 +11,134 @@ const Login = ({ initialMode = 'login' }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [formErrors, setFormErrors] = useState({});
+  const [success, setSuccess] = useState('');
   
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, register, isAuthenticated } = useAuthContext();
+  const { login, register, authenticated } = useAuthContext();
   
   const fromPage = location.state?.from || '/';
 
   useEffect(() => {
-    // Redirecionar se já estiver autenticado
-    if (isAuthenticated) {
+    if (authenticated) {
       navigate(fromPage, { replace: true });
     }
-  }, [isAuthenticated, navigate, fromPage]);
-
-  const validateForm = () => {
-    const errors = {};
-    
-    if (!email) {
-      errors.email = 'E-mail é obrigatório';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      errors.email = 'Email inválido';
-    }
-    
-    if (!password) {
-      errors.password = 'Senha é obrigatória';
-    } else if (password.length < 6) {
-      errors.password = 'Senha deve ter pelo menos 6 caracteres';
-    }
-    
-    if (!isLogin) {
-      if (!name) {
-        errors.name = 'Nome é obrigatório';
-      }
-      
-      if (password !== confirmPassword) {
-        errors.confirmPassword = 'Senhas não conferem';
-      }
-    }
-    
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+  }, [authenticated, navigate, fromPage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
+    setLoading(true);
+    setError('');
+    setSuccess('');
     
     try {
-      setLoading(true);
-      setError('');
-      
       let result;
       
       if (isLogin) {
-        // Login real com o backend
+        if (!email || !password) {
+          throw new Error('Por favor, preencha todos os campos');
+        }
+        
+        console.log('Tentando fazer login...');
         result = await login(email, password);
+        
+        if (result.success) {
+          setSuccess('Login realizado com sucesso! Redirecionando...');
+          setTimeout(() => {
+            navigate(fromPage, { replace: true });
+          }, 1000);
+        } else {
+          setError(result.message);
+        }
       } else {
-        // Registro real com o backend
-        result = await register({
-          name,
-          email,
-          password
-        });
-      }
-      
-      if (result.success) {
-        navigate(fromPage, { replace: true });
-      } else {
-        setError(result.message);
+        if (!name || !email || !password || !confirmPassword) {
+          throw new Error('Por favor, preencha todos os campos');
+        }
+        if (password !== confirmPassword) {
+          throw new Error('As senhas não conferem');
+        }
+        if (password.length < 6) {
+          throw new Error('A senha deve ter pelo menos 6 caracteres');
+        }
+        
+        console.log('Tentando registrar usuário...');
+        result = await register({ name, email, password });
+        
+        if (result.success) {
+          setSuccess('Conta criada com sucesso! Redirecionando...');
+          setTimeout(() => {
+            navigate(fromPage, { replace: true });
+          }, 1000);
+        } else {
+          setError(result.message);
+        }
       }
     } catch (err) {
-      console.error('Erro de autenticação:', err);
-      setError(err.message || 'Ocorreu um erro durante a autenticação');
+      console.error('Erro:', err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
-  
+
+  const handleTestConnection = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      setSuccess('');
+      
+      console.log('Testando conexão com API...');
+      
+      const response = await fetch('http://localhost:3001/api');
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('API conectada:', data);
+        setSuccess('✅ API conectada com sucesso!');
+        
+        // Testar endpoint de usuários
+        const usersResponse = await fetch('http://localhost:3001/api/users');
+        if (usersResponse.ok) {
+          const users = await usersResponse.json();
+          console.log('Usuários encontrados:', users.length);
+          setSuccess(`✅ API conectada! ${users.length} usuários encontrados.`);
+        }
+      } else {
+        setError(`❌ API retornou erro: ${response.status}`);
+      }
+    } catch (err) {
+      console.error('Erro de conexão:', err);
+      setError(`❌ Erro de conexão: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDemoLogin = async () => {
     try {
       setLoading(true);
-      // Substitua pelas credenciais demo que seu back-end aceita
-      const result = await login('demo@example.com', 'senha123');
+      setError('');
+      setSuccess('');
       
-      if (result.success) {
-        navigate(fromPage, { replace: true });
+      // Tentar login com conta demo
+      const result = await login('demo@gamereviews.com', 'demo123');
+      
+      if (!result.success) {
+        // Se não conseguir, criar conta demo
+        console.log('Criando conta demo...');
+        const registerResult = await register({
+          name: 'Usuário Demo',
+          email: 'demo@gamereviews.com',
+          password: 'demo123'
+        });
+        
+        if (registerResult.success) {
+          setSuccess('Conta demo criada e login realizado!');
+        } else {
+          setError('Não foi possível criar conta demo');
+        }
       } else {
-        setError('Não foi possível acessar a conta demo');
+        setSuccess('Login demo realizado com sucesso!');
       }
     } catch (err) {
       setError('Erro ao acessar conta demo');
@@ -111,7 +147,6 @@ const Login = ({ initialMode = 'login' }) => {
     }
   };
 
-  // Resto do componente permanece o mesmo
   return (
     <div className={styles.container}>
       <div className={styles.formWrapper}>
@@ -124,7 +159,17 @@ const Login = ({ initialMode = 'login' }) => {
           </p>
         </div>
         
-        {error && <div className={styles.errorMessage}>{error}</div>}
+        {error && (
+          <div className={styles.errorMessage}>
+            {error}
+          </div>
+        )}
+        
+        {success && (
+          <div className={styles.successMessage}>
+            {success}
+          </div>
+        )}
         
         <form onSubmit={handleSubmit} className={styles.form}>
           {!isLogin && (
@@ -136,11 +181,8 @@ const Login = ({ initialMode = 'login' }) => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Digite seu nome"
-                className={formErrors.name ? styles.inputError : ''}
+                required
               />
-              {formErrors.name && (
-                <span className={styles.errorText}>{formErrors.name}</span>
-              )}
             </div>
           )}
           
@@ -152,11 +194,8 @@ const Login = ({ initialMode = 'login' }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Digite seu e-mail"
-              className={formErrors.email ? styles.inputError : ''}
+              required
             />
-            {formErrors.email && (
-              <span className={styles.errorText}>{formErrors.email}</span>
-            )}
           </div>
           
           <div className={styles.formGroup}>
@@ -167,11 +206,8 @@ const Login = ({ initialMode = 'login' }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Digite sua senha"
-              className={formErrors.password ? styles.inputError : ''}
+              required
             />
-            {formErrors.password && (
-              <span className={styles.errorText}>{formErrors.password}</span>
-            )}
           </div>
           
           {!isLogin && (
@@ -183,11 +219,8 @@ const Login = ({ initialMode = 'login' }) => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Digite sua senha novamente"
-                className={formErrors.confirmPassword ? styles.inputError : ''}
+                required
               />
-              {formErrors.confirmPassword && (
-                <span className={styles.errorText}>{formErrors.confirmPassword}</span>
-              )}
             </div>
           )}
           
@@ -196,17 +229,25 @@ const Login = ({ initialMode = 'login' }) => {
             className={styles.submitButton}
             disabled={loading}
           >
-            {loading ? (
-              <span className={styles.loadingSpinner}></span>
-            ) : (
-              isLogin ? 'Entrar' : 'Criar Conta'
-            )}
+            {loading ? 'Carregando...' : (isLogin ? 'Entrar' : 'Criar Conta')}
           </button>
         </form>
         
-        <div className={styles.demoButtonContainer}>
-          <button onClick={handleDemoLogin} className={styles.demoButton}>
-            Entrar com Conta Demo
+        <div className={styles.actionButtons}>
+          <button 
+            onClick={handleTestConnection}
+            className={styles.testButton}
+            disabled={loading}
+          >
+            {loading ? 'Testando...' : 'Testar Conexão API'}
+          </button>
+          
+          <button 
+            onClick={handleDemoLogin}
+            className={styles.demoButton}
+            disabled={loading}
+          >
+            {loading ? 'Carregando...' : 'Login Demo'}
           </button>
         </div>
         
@@ -248,7 +289,7 @@ const Login = ({ initialMode = 'login' }) => {
             <p>
               {isLogin
                 ? 'Avalie jogos, compartilhe suas opiniões e descubra novas experiências'
-                : 'Crie uma conta para participar da nossa comunidade de gamers e entusiastas'}
+                : 'Crie uma conta para participar da nossa comunidade de gamers'}
             </p>
           </div>
         </div>

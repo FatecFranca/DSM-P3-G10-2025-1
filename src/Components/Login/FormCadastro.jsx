@@ -1,6 +1,6 @@
+Login/FormCadastro.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion'; // Para animações suaves
 import Input from '../Form/Input';
 import Button from '../Form/Button';
 import Error from '../Helper/Error';
@@ -242,224 +242,185 @@ const FormCadastro = () => {
         </div>
         
         {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={styles.errorContainer}
-          >
+          <div className={styles.errorContainer}>
             <Error error={error} />
-          </motion.div>
+          </div>
         )}
         
         {success && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={styles.successContainer}
-          >
+          <div className={styles.successContainer}>
             <div className={styles.success}>
               <svg viewBox="0 0 24 24" className={styles.successIcon}>
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
               </svg>
               <p>{success}</p>
             </div>
-          </motion.div>
+          </div>
         )}
         
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, x: step === 1 ? -20 : 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: step === 1 ? 20 : -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <form onSubmit={step === 1 ? nextStep : handleSubmit} className={styles.form}>
-              {step === 1 ? (
-                <div className={styles.formStep}>
-                  <div className={styles.inputGroup}>
+        <div className={styles.formContainer}>
+          <form onSubmit={step === 1 ? nextStep : handleSubmit} className={styles.form}>
+            {step === 1 ? (
+              <div className={styles.formStep}>
+                <div className={styles.inputGroup}>
+                  <Input
+                    label="Nome completo"
+                    type="text"
+                    name="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onBlur={() => handleBlur('name')}
+                    error={nameError}
+                    required
+                    autoFocus
+                  />
+                  <small className={styles.hint}>Como você quer ser chamado na comunidade</small>
+                </div>
+                
+                <div className={styles.inputGroup}>
+                  <Input
+                    label="E-mail"
+                    type="email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onBlur={() => handleBlur('email')}
+                    error={emailError}
+                    required
+                  />
+                  <small className={styles.hint}>
+                    Usamos seu e-mail para login e notificações importantes
+                  </small>
+                </div>
+                
+                <div className={styles.inputGroup}>
+                  <Input
+                    label="Nome de usuário (opcional)"
+                    type="text"
+                    name="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ''))}
+                    onBlur={() => handleBlur('username')}
+                    error={usernameError}
+                    placeholder="Ex: gamer_123"
+                  />
+                  <small className={styles.hint}>
+                    Seu identificador único na plataforma (sem espaços)
+                  </small>
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  className={styles.nextButton}
+                >
+                  Continuar <span className={styles.buttonIcon}>→</span>
+                </Button>
+              </div>
+            ) : (
+              <div className={styles.formStep}>
+                <div className={styles.inputGroup}>
+                  <div className={styles.passwordField}>
                     <Input
-                      label="Nome completo"
-                      type="text"
-                      name="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      onBlur={() => handleBlur('name')}
-                      error={nameError}
+                      label="Senha"
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onBlur={() => handleBlur('password')}
+                      error={passwordError}
                       required
                       autoFocus
-                      aria-describedby="nameHint"
                     />
-                    {nameError && <p className={styles.fieldError}>{nameError}</p>}
-                    <small id="nameHint" className={styles.hint}>Como você quer ser chamado na comunidade</small>
+                    <button 
+                      type="button" 
+                      className={styles.togglePassword}
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? "👁️" : "👁️‍🗨️"}
+                    </button>
                   </div>
-                  
-                  <div className={styles.inputGroup}>
+                  <small className={styles.hint}>
+                    Mínimo de 6 caracteres. Utilize letras, números e símbolos para maior segurança
+                  </small>
+                  <PasswordStrength password={password} />
+                </div>
+                
+                <div className={styles.inputGroup}>
+                  <div className={styles.passwordField}>
                     <Input
-                      label="E-mail"
-                      type="email"
-                      name="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      onBlur={() => handleBlur('email')}
-                      error={emailError}
+                      label="Confirmar senha"
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      onBlur={() => handleBlur('confirmPassword')}
+                      error={confirmPasswordError}
                       required
-                      aria-describedby="emailHint"
                     />
-                    {emailError && <p className={styles.fieldError}>{emailError}</p>}
-                    <small id="emailHint" className={styles.hint}>
-                      Usamos seu e-mail para login e notificações importantes
-                    </small>
+                    <button 
+                      type="button" 
+                      className={styles.togglePassword}
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                    </button>
                   </div>
+                </div>
+                
+                <div className={styles.inputGroup}>
+                  <Input
+                    label="URL da foto de perfil (opcional)"
+                    type="url"
+                    name="avatarUrl"
+                    value={avatarUrl}
+                    onChange={(e) => setAvatarUrl(e.target.value)}
+                    placeholder="https://sua-foto.com/imagem.jpg"
+                  />
+                  <small className={styles.hint}>
+                    Link para sua imagem de perfil
+                  </small>
                   
-                  <div className={styles.inputGroup}>
-                    <Input
-                      label="Nome de usuário (opcional)"
-                      type="text"
-                      name="username"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ''))}
-                      onBlur={() => handleBlur('username')}
-                      error={usernameError}
-                      placeholder="Ex: gamer_123"
-                      aria-describedby="usernameHint"
-                    />
-                    {usernameError && <p className={styles.fieldError}>{usernameError}</p>}
-                    <small id="usernameHint" className={styles.hint}>
-                      Seu identificador único na plataforma (sem espaços)
-                    </small>
-                  </div>
+                  {avatarUrl && (
+                    <div className={styles.avatarPreview}>
+                      <img 
+                        src={avatarUrl} 
+                        alt="Preview da foto de perfil" 
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://via.placeholder.com/100?text=Erro";
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+                
+                <div className={styles.buttonGroup}>
+                  <Button 
+                    type="button" 
+                    onClick={prevStep} 
+                    variant="secondary"
+                  >
+                    <span className={styles.buttonIcon}>←</span> Voltar
+                  </Button>
                   
                   <Button 
                     type="submit" 
-                    className={styles.nextButton}
-                    aria-label="Continuar para configuração de senha"
+                    disabled={loading}
                   >
-                    Continuar <span className={styles.buttonIcon}>→</span>
+                    {loading ? (
+                      <>
+                        <span className={styles.spinner}></span>
+                        Cadastrando...
+                      </>
+                    ) : (
+                      'Criar conta'
+                    )}
                   </Button>
                 </div>
-              ) : (
-                <div className={styles.formStep}>
-                  <div className={styles.inputGroup}>
-                    <div className={styles.passwordField}>
-                      <Input
-                        label="Senha"
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        onBlur={() => handleBlur('password')}
-                        error={passwordError}
-                        required
-                        autoFocus
-                        aria-describedby="passwordHint"
-                      />
-                      <button 
-                        type="button" 
-                        className={styles.togglePassword}
-                        onClick={() => setShowPassword(!showPassword)}
-                        aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
-                      >
-                        {showPassword ? "👁️" : "👁️‍🗨️"}
-                      </button>
-                    </div>
-                    {passwordError && <p className={styles.fieldError}>{passwordError}</p>}
-                    <small id="passwordHint" className={styles.hint}>
-                      Mínimo de 6 caracteres. Utilize letras, números e símbolos para maior segurança
-                    </small>
-                    <PasswordStrength password={password} />
-                  </div>
-                  
-                  <div className={styles.inputGroup}>
-                    <div className={styles.passwordField}>
-                      <Input
-                        label="Confirmar senha"
-                        type={showConfirmPassword ? "text" : "password"}
-                        name="confirmPassword"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        onBlur={() => handleBlur('confirmPassword')}
-                        error={confirmPasswordError}
-                        required
-                      />
-                      <button 
-                        type="button" 
-                        className={styles.togglePassword}
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        aria-label={showConfirmPassword ? "Esconder senha" : "Mostrar senha"}
-                      >
-                        {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
-                      </button>
-                    </div>
-                    {confirmPasswordError && <p className={styles.fieldError}>{confirmPasswordError}</p>}
-                  </div>
-                  
-                  <div className={styles.inputGroup}>
-                    <Input
-                      label="URL da foto de perfil (opcional)"
-                      type="url"
-                      name="avatarUrl"
-                      value={avatarUrl}
-                      onChange={(e) => setAvatarUrl(e.target.value)}
-                      placeholder="https://sua-foto.com/imagem.jpg"
-                      aria-describedby="avatarHint"
-                    />
-                    <small id="avatarHint" className={styles.hint}>
-                      Link para sua imagem de perfil
-                    </small>
-                    
-                    {avatarUrl && (
-                      <div className={styles.avatarPreview}>
-                        <img 
-                          src={avatarUrl} 
-                          alt="Preview da foto de perfil" 
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "https://via.placeholder.com/100?text=Erro";
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className={styles.termsCheck}>
-                    <label className={styles.checkbox}>
-                      <input type="checkbox" required />
-                      <span className={styles.checkmark}></span>
-                      <span>Concordo com os <a href="/termos" target="_blank">Termos de Uso</a> e <a href="/privacidade" target="_blank">Política de Privacidade</a></span>
-                    </label>
-                  </div>
-                  
-                  <div className={styles.buttonGroup}>
-                    <Button 
-                      type="button" 
-                      onClick={prevStep} 
-                      variant="secondary"
-                      aria-label="Voltar para dados pessoais"
-                    >
-                      <span className={styles.buttonIcon}>←</span> Voltar
-                    </Button>
-                    
-                    <Button 
-                      type="submit" 
-                      disabled={loading}
-                      aria-label="Finalizar cadastro"
-                    >
-                      {loading ? (
-                        <>
-                          <span className={styles.spinner}></span>
-                          Cadastrando...
-                        </>
-                      ) : (
-                        'Criar conta'
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </form>
-          </motion.div>
-        </AnimatePresence>
+              </div>
+            )}
+          </form>
+        </div>
         
         <div className={styles.loginLink}>
           <p>

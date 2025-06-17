@@ -1,49 +1,45 @@
 import axios from 'axios';
 
-// Cliente API com timeout mais longo e tratamento de erro
+// Criando instância do axios com configuração base
 const api = axios.create({
   baseURL: 'http://localhost:3001/api',
+  timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
-  },
-  // Aumentar o tempo limite para diagnóstico
-  timeout: 10000 
+    'Content-Type': 'application/json'
+  }
 });
 
-// Interceptor para adicionar o token nas requisições
+// Interceptador para logs de debug
 api.interceptors.request.use(
-  (config) => {
-    console.log(`Fazendo requisição para: ${config.url}`);
+  config => {
+    console.log(`[API] Fazendo requisição: ${config.method?.toUpperCase()} ${config.url}`);
+    
     const token = localStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    console.error('Erro na configuração da requisição:', error);
+  error => {
+    console.error('[API] Erro na requisição:', error);
     return Promise.reject(error);
   }
 );
 
-// Interceptor para tratar respostas e erros
+// Interceptador para tratar erros nas respostas
 api.interceptors.response.use(
-  (response) => {
-    console.log(`Resposta recebida de: ${response.config.url}`, response.status);
+  response => {
+    console.log(`[API] Resposta recebida: ${response.status} - ${response.config.url}`);
     return response;
   },
-  (error) => {
+  error => {
     if (error.response) {
-      // O servidor respondeu com um código de erro
-      console.error(`Erro ${error.response.status} em ${error.config?.url}:`, error.response.data);
+      console.error(`[API] Erro ${error.response.status}: ${error.response.data?.message || 'Erro no servidor'}`);
     } else if (error.request) {
-      // A requisição foi feita mas não houve resposta
-      console.error('Sem resposta do servidor:', error.message);
+      console.error('[API] Sem resposta do servidor:', error.message);
     } else {
-      // Erro na configuração da requisição
-      console.error('Erro de requisição:', error.message);
+      console.error('[API] Erro na configuração:', error.message);
     }
-    
     return Promise.reject(error);
   }
 );

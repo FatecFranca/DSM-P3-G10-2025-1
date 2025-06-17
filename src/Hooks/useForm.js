@@ -1,42 +1,50 @@
 import { useState } from 'react';
 
-const types = {
-  email: {
-    regex: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-    message: 'Preencha um email válido',
-  },
-};
-
-const useForm = (type) => {
+const useForm = (type = '') => {
   const [value, setValue] = useState('');
   const [error, setError] = useState(null);
 
-  function validate(value) {
-    if (type === false) return true;
-    if (value.length === 0) {
-      setError('Preencha um valor.');
-      return false;
-    } else if (types[type] && !types[type].regex.test(value)) {
-      setError(types[type].message);
-      return false;
+  const validate = (val = value) => {
+    if (type === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!val.trim()) {
+        setError('E-mail é obrigatório');
+        return false;
+      } else if (!emailRegex.test(val)) {
+        setError('E-mail inválido');
+        return false;
+      }
+    } else if (type === 'password') {
+      if (!val.trim()) {
+        setError('Senha é obrigatória');
+        return false;
+      } else if (val.length < 6) {
+        setError('Senha deve ter pelo menos 6 caracteres');
+        return false;
+      }
     } else {
-      setError(null);
-      return true;
+      if (!val.trim()) {
+        setError('Campo é obrigatório');
+        return false;
+      }
     }
-  }
+    
+    setError(null);
+    return true;
+  };
 
-  function onChange({ target }) {
+  const onChange = ({ target }) => {
     if (error) validate(target.value);
     setValue(target.value);
-  }
+  };
 
   return {
     value,
     setValue,
     onChange,
     error,
-    validate: () => validate(value),
-    onBlur: () => validate(value),
+    validate,
+    onBlur: () => validate()
   };
 };
 

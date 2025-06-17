@@ -3,48 +3,39 @@ import styles from './Input.module.css';
 
 const Input = ({ 
   label, 
+  type = 'text', 
   name, 
-  type, 
   value, 
   onChange, 
-  error, 
   onBlur,
+  error, 
+  required = false,
   placeholder,
-  required = false
+  autoFocus = false,
+  ...props 
 }) => {
   return (
-    <div className={styles.wrapper}>
-      <label htmlFor={name} className={styles.label}>
-        {label}
-      </label>
-      
-      {type === 'textarea' ? (
-        <textarea
-          id={name}
-          name={name}
-          className={styles.textarea}
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-          placeholder={placeholder}
-          required={required}
-          rows={4}
-        />
-      ) : (
-        <input
-          id={name}
-          name={name}
-          className={styles.input}
-          type={type}
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-          placeholder={placeholder}
-          required={required}
-        />
+    <div className={styles.inputGroup}>
+      {label && (
+        <label htmlFor={name} className={styles.label}>
+          {label}
+          {required && <span className={styles.required}>*</span>}
+        </label>
       )}
-      
-      {error && <p className={styles.error}>{error}</p>}
+      <input
+        type={type}
+        id={name}
+        name={name}
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+        placeholder={placeholder}
+        required={required}
+        autoFocus={autoFocus}
+        className={`${styles.input} ${error ? styles.inputError : ''}`}
+        {...props}
+      />
+      {error && <span className={styles.errorText}>{error}</span>}
     </div>
   );
 };
