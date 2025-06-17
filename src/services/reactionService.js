@@ -1,44 +1,140 @@
-// src/services/reactionService.js
-import apiRequest from './api';
+import { apiRequest } from './api';
 
-export const reactionService = {
+class ReactionService {
+  constructor() {
+    this.baseURL = this.getBaseURL();
+  }
+
+  getBaseURL() {
+    if (typeof window !== 'undefined' && window.location) {
+      return window.location.hostname === 'localhost' 
+        ? 'http://localhost:3001/api'
+        : '/api';
+    }
+    return 'http://localhost:3001/api';
+  }
+
   // Reagir a uma review
-  async reactToReview(reviewId, reactionType) {
-    return await apiRequest('/review-reactions', {
-      method: 'POST',
-      body: JSON.stringify({ reviewId, type: reactionType }),
-    });
-  },
+  async reactToReview(reviewId, type) {
+    try {
+      const reaction = await apiRequest('/review-reactions', {
+        method: 'POST',
+        body: JSON.stringify({
+          reviewId,
+          type // 'like' ou 'dislike'
+        })
+      });
 
-  // Remover reação de uma review
-  async removeReviewReaction(reviewId) {
-    return await apiRequest(`/review-reactions/${reviewId}`, {
-      method: 'DELETE',
-    });
-  },
+      return {
+        success: true,
+        data: reaction
+      };
+    } catch (error) {
+      console.error('Erro ao reagir à review:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
 
-  // Obter reações de uma review
+  // Buscar reações de uma review
   async getReviewReactions(reviewId) {
-    return await apiRequest(`/review-reactions/review/${reviewId}`);
-  },
+    try {
+      const reactions = await apiRequest(`/review-reactions/review/${reviewId}`);
+      return {
+        success: true,
+        data: reactions
+      };
+    } catch (error) {
+      console.error('Erro ao buscar reações da review:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
+
+  // Remover reação de review
+  async removeReviewReaction(reactionId) {
+    try {
+      await apiRequest(`/review-reactions/${reactionId}`, {
+        method: 'DELETE'
+      });
+
+      return {
+        success: true,
+        message: 'Reação removida com sucesso'
+      };
+    } catch (error) {
+      console.error('Erro ao remover reação:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
 
   // Reagir a um comentário
-  async reactToComment(commentId, reactionType) {
-    return await apiRequest('/comment-reactions', {
-      method: 'POST',
-      body: JSON.stringify({ commentId, type: reactionType }),
-    });
-  },
+  async reactToComment(commentId, type) {
+    try {
+      const reaction = await apiRequest('/comment-reactions', {
+        method: 'POST',
+        body: JSON.stringify({
+          commentId,
+          type // 'like' ou 'dislike'
+        })
+      });
 
-  // Remover reação de um comentário
-  async removeCommentReaction(commentId) {
-    return await apiRequest(`/comment-reactions/${commentId}`, {
-      method: 'DELETE',
-    });
-  },
+      return {
+        success: true,
+        data: reaction
+      };
+    } catch (error) {
+      console.error('Erro ao reagir ao comentário:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
 
-  // Obter reações de um comentário
+  // Buscar reações de um comentário
   async getCommentReactions(commentId) {
-    return await apiRequest(`/comment-reactions/comment/${commentId}`);
-  },
-};
+    try {
+      const reactions = await apiRequest(`/comment-reactions/comment/${commentId}`);
+      return {
+        success: true,
+        data: reactions
+      };
+    } catch (error) {
+      console.error('Erro ao buscar reações do comentário:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
+
+  // Remover reação de comentário
+  async removeCommentReaction(reactionId) {
+    try {
+      await apiRequest(`/comment-reactions/${reactionId}`, {
+        method: 'DELETE'
+      });
+
+      return {
+        success: true,
+        message: 'Reação removida com sucesso'
+      };
+    } catch (error) {
+      console.error('Erro ao remover reação:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
+}
+
+export default new ReactionService();

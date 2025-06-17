@@ -1,47 +1,97 @@
-// src/services/commentService.js
-import apiRequest from './api';
+import { apiRequest } from './api';
 
-export const commentService = {
-  // Obter comentários de uma review
-  async getCommentsByReview(reviewId, params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    const endpoint = queryString ? `/comments/review/${reviewId}?${queryString}` : `/comments/review/${reviewId}`;
-    return await apiRequest(endpoint);
-  },
+class CommentService {
+  constructor() {
+    this.baseURL = this.getBaseURL();
+  }
 
-  // Obter comentário por ID
-  async getCommentById(id) {
-    return await apiRequest(`/comments/${id}`);
-  },
+  getBaseURL() {
+    if (typeof window !== 'undefined' && window.location) {
+      return window.location.hostname === 'localhost' 
+        ? 'http://localhost:3001/api'
+        : '/api';
+    }
+    return 'http://localhost:3001/api';
+  }
+
+  // Buscar comentários de uma review
+  async getReviewComments(reviewId) {
+    try {
+      const comments = await apiRequest(`/comments/review/${reviewId}`);
+      return {
+        success: true,
+        data: comments
+      };
+    } catch (error) {
+      console.error('Erro ao buscar comentários:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
 
   // Criar novo comentário
   async createComment(commentData) {
-    return await apiRequest('/comments', {
-      method: 'POST',
-      body: JSON.stringify(commentData),
-    });
-  },
+    try {
+      const newComment = await apiRequest('/comments', {
+        method: 'POST',
+        body: JSON.stringify(commentData)
+      });
+
+      return {
+        success: true,
+        data: newComment
+      };
+    } catch (error) {
+      console.error('Erro ao criar comentário:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
 
   // Atualizar comentário
-  async updateComment(id, commentData) {
-    return await apiRequest(`/comments/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(commentData),
-    });
-  },
+  async updateComment(commentId, commentData) {
+    try {
+      const updatedComment = await apiRequest(`/comments/${commentId}`, {
+        method: 'PUT',
+        body: JSON.stringify(commentData)
+      });
+
+      return {
+        success: true,
+        data: updatedComment
+      };
+    } catch (error) {
+      console.error('Erro ao atualizar comentário:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
 
   // Deletar comentário
-  async deleteComment(id) {
-    return await apiRequest(`/comments/${id}`, {
-      method: 'DELETE',
-    });
-  },
+  async deleteComment(commentId) {
+    try {
+      await apiRequest(`/comments/${commentId}`, {
+        method: 'DELETE'
+      });
 
-  // Responder a um comentário
-  async replyToComment(parentId, commentData) {
-    return await apiRequest(`/comments/${parentId}/reply`, {
-      method: 'POST',
-      body: JSON.stringify(commentData),
-    });
-  },
-};
+      return {
+        success: true,
+        message: 'Comentário deletado com sucesso'
+      };
+    } catch (error) {
+      console.error('Erro ao deletar comentário:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  }
+}
+
+export default new CommentService();
