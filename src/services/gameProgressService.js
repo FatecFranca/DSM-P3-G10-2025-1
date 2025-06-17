@@ -20,7 +20,7 @@ class GameProgressService {
       const progress = await apiRequest('/game-progress', {
         method: 'POST',
         body: JSON.stringify(progressData)
-      });s
+      });
 
       return {
         success: true,

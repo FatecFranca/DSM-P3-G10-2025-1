@@ -1,12 +1,11 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
-import SideBar from './SideBar';
 import UserProfile from './UserProfile';
 import UserReviews from './UserReviews';
 import UserFavorites from './UserFavorites';
 import UserSettings from './UserSettings';
-import GamePost from './GamePost';
+
 import styles from './User.module.css';
 
 const User = () => {
