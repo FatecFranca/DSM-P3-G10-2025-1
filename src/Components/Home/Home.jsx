@@ -97,7 +97,7 @@ const Home = () => {
   return (
     <div className={styles.home}>
       {/* Hero Section com Parallax */}
-      <section className={styles.hero} style={{ transform: `translateY(${scrollY * 0.5}px)` }}>
+      <section className={styles.hero} style={{ transform: `translateY(${scrollY * 0.3}px)` }}>
         <div className={styles.heroOverlay}></div>
         <div className={styles.heroContent}>
           <div className={styles.heroAnimation}>
@@ -124,19 +124,21 @@ const Home = () => {
                 </Link>
               </div>
             ) : (
-              <div className={styles.heroButtons}>
+              <>
                 <p className={styles.welcomeMessage}>
                   Bem-vindo de volta, <strong>{user?.name}!</strong>
                 </p>
-                <Link to="/conta" className={styles.primaryButton}>
-                  <span className={styles.buttonIcon}>👤</span>
-                  Meu Perfil
-                </Link>
-                <Link to="/jogos" className={styles.secondaryButton}>
-                  <span className={styles.buttonIcon}>🎮</span>
-                  Explorar Jogos
-                </Link>
-              </div>
+                <div className={styles.heroButtons}>
+                  <Link to="/conta" className={styles.primaryButton}>
+                    <span className={styles.buttonIcon}>👤</span>
+                    Meu Perfil
+                  </Link>
+                  <Link to="/jogos" className={styles.secondaryButton}>
+                    <span className={styles.buttonIcon}>🎮</span>
+                    Explorar Jogos
+                  </Link>
+                </div>
+              </>
             )}
           </div>
         </div>
