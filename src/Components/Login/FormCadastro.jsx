@@ -1,11 +1,37 @@
-Login/FormCadastro.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Input from '../Form/Input';
 import Button from '../Form/Button';
 import Error from '../Helper/Error';
 import styles from './FormCadastro.module.css';
-import api from '../../services/api';
+
+// URL base da sua API
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
+// Função utilitária para fazer requests
+const apiRequest = async (endpoint, options = {}) => {
+  const url = `${API_BASE_URL}${endpoint}`;
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  const response = await fetch(url, config);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      message: data.message || data.error || 'Erro na requisição',
+      data: data
+    };
+  }
+
+  return data;
+};
 
 // Componente para mostrar força da senha
 const PasswordStrength = ({ password }) => {
@@ -22,7 +48,7 @@ const PasswordStrength = ({ password }) => {
 
   const strength = getStrength(password);
   const strengthText = ['', 'Fraca', 'Razoável', 'Média', 'Forte', 'Muito forte'];
-  const strengthColor = ['', '#ff4d4d', '#ffaa00', '#ffff00', '#aaffaa', '#00cc00'];
+  const strengthColors = ['#e5e7eb', '#ef4444', '#f59e0b', '#eab308', '#22c55e', '#16a34a'];
 
   return (
     <div className={styles.passwordStrength}>
@@ -31,12 +57,15 @@ const PasswordStrength = ({ password }) => {
           <div
             key={index}
             className={`${styles.strengthSegment} ${index <= strength ? styles.active : ''}`}
-            style={{ backgroundColor: index <= strength ? strengthColor[strength] : '' }}
+            style={{ backgroundColor: strengthColors[index <= strength ? strength : 0] }}
           />
         ))}
       </div>
       {password && (
-        <span className={styles.strengthText} style={{ color: strengthColor[strength] }}>
+        <span 
+          className={styles.strengthText} 
+          style={{ color: strengthColors[strength] }}
+        >
           {strengthText[strength]}
         </span>
       )}
@@ -55,114 +84,322 @@ const FormCadastro = () => {
   const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   
-  // Estados para validações em tempo real
-  const [nameError, setNameError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [usernameError, setUsernameError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  // Estados para validação
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
   
   // Estados para controle do formulário
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [step, setStep] = useState(1);
   const [success, setSuccess] = useState(null);
+  const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [touched, setTouched] = useState({
-    name: false,
-    email: false,
-    username: false,
-    password: false,
-    confirmPassword: false
-  });
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [backendStatus, setBackendStatus] = useState(null);
   
   const navigate = useNavigate();
   
-  // Validação em tempo real
-  useEffect(() => {
-    if (touched.name) {
-      if (!name.trim()) setNameError('Nome é obrigatório');
-      else if (name.trim().length < 3) setNameError('Nome deve ter pelo menos 3 caracteres');
-      else setNameError('');
-    }
-    
-    if (touched.email) {
-      if (!email.trim()) setEmailError('Email é obrigatório');
-      else {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) setEmailError('Email inválido');
-        else setEmailError('');
+  // Teste de conexão com o backend
+  const testBackendConnection = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/`);
+      const data = await response.json();
+      
+      if (response.ok && data.status === 'Online') {
+        setBackendStatus('✅ Backend conectado com sucesso!');
+        setSuccess(`🎮 ${data.message} - Versão ${data.version}`);
+      } else {
+        setBackendStatus('❌ Backend retornou status inválido');
       }
+    } catch (err) {
+      setBackendStatus('❌ Não foi possível conectar ao backend');
+      console.error('Erro de conexão:', err);
+    } finally {
+      setLoading(false);
     }
-    
-    if (touched.username && username) {
-      if (username.length < 3) setUsernameError('Nome de usuário deve ter pelo menos 3 caracteres');
-      else setUsernameError('');
-    }
-    
-    if (touched.password) {
-      if (password.length < 6) setPasswordError('A senha precisa ter no mínimo 6 caracteres');
-      else setPasswordError('');
-    }
-    
-    if (touched.confirmPassword) {
-      if (password !== confirmPassword) setConfirmPasswordError('As senhas não conferem');
-      else setConfirmPasswordError('');
-    }
-  }, [name, email, username, password, confirmPassword, touched]);
+  };
   
-  // Validação do formulário
+  // Verificar se email já existe
+  const checkEmailExists = async (email) => {
+    try {
+      const users = await apiRequest('/api/users');
+      return users.some(user => user.email.toLowerCase() === email.toLowerCase());
+    } catch (err) {
+      console.warn('Não foi possível verificar email duplicado:', err);
+      return false; // Em caso de erro, permite continuar
+    }
+  };
+  
+  // Verificar se username já existe
+  const checkUsernameExists = async (username) => {
+    try {
+      const users = await apiRequest('/api/users');
+      return users.some(user => user.username && user.username.toLowerCase() === username.toLowerCase());
+    } catch (err) {
+      console.warn('Não foi possível verificar username duplicado:', err);
+      return false; // Em caso de erro, permite continuar
+    }
+  };
+  
+  // Validação em tempo real
+  const validateField = async (field, value) => {
+    const newErrors = { ...errors };
+    
+    switch (field) {
+      case 'name':
+        if (!value.trim()) {
+          newErrors.name = 'Nome é obrigatório';
+        } else if (value.trim().length < 2) {
+          newErrors.name = 'Nome deve ter pelo menos 2 caracteres';
+        } else if (value.trim().length > 100) {
+          newErrors.name = 'Nome deve ter no máximo 100 caracteres';
+        } else {
+          delete newErrors.name;
+        }
+        break;
+        
+      case 'email':
+        if (!value.trim()) {
+          newErrors.email = 'Email é obrigatório';
+        } else {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(value)) {
+            newErrors.email = 'Email inválido';
+          } else {
+            // Verificar se email já existe (apenas se válido)
+            const emailExists = await checkEmailExists(value);
+            if (emailExists) {
+              newErrors.email = 'Este email já está cadastrado';
+            } else {
+              delete newErrors.email;
+            }
+          }
+        }
+        break;
+        
+      case 'username':
+        if (value.trim()) {
+          if (value.length < 3) {
+            newErrors.username = 'Nome de usuário deve ter pelo menos 3 caracteres';
+          } else if (value.length > 50) {
+            newErrors.username = 'Nome de usuário deve ter no máximo 50 caracteres';
+          } else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+            newErrors.username = 'Use apenas letras, números e underscore';
+          } else {
+            // Verificar se username já existe
+            const usernameExists = await checkUsernameExists(value);
+            if (usernameExists) {
+              newErrors.username = 'Este nome de usuário já está em uso';
+            } else {
+              delete newErrors.username;
+            }
+          }
+        } else {
+          delete newErrors.username;
+        }
+        break;
+        
+      case 'password':
+        if (!value) {
+          newErrors.password = 'Senha é obrigatória';
+        } else if (value.length < 6) {
+          newErrors.password = 'A senha deve ter pelo menos 6 caracteres';
+        } else if (value.length > 128) {
+          newErrors.password = 'A senha deve ter no máximo 128 caracteres';
+        } else {
+          delete newErrors.password;
+        }
+        
+        // Revalidar confirmação se já foi preenchida
+        if (confirmPassword && value !== confirmPassword) {
+          newErrors.confirmPassword = 'As senhas não conferem';
+        } else if (confirmPassword && value === confirmPassword) {
+          delete newErrors.confirmPassword;
+        }
+        break;
+        
+      case 'confirmPassword':
+        if (value !== password) {
+          newErrors.confirmPassword = 'As senhas não conferem';
+        } else {
+          delete newErrors.confirmPassword;
+        }
+        break;
+        
+      case 'avatarUrl':
+        if (value.trim()) {
+          try {
+            new URL(value);
+            const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+            const hasValidExtension = validExtensions.some(ext => 
+              value.toLowerCase().includes(ext)
+            );
+            if (!hasValidExtension) {
+              newErrors.avatarUrl = 'URL deve apontar para uma imagem (jpg, png, gif, webp)';
+            } else {
+              delete newErrors.avatarUrl;
+            }
+          } catch {
+            newErrors.avatarUrl = 'URL inválida';
+          }
+        } else {
+          delete newErrors.avatarUrl;
+        }
+        break;
+        
+      default:
+        break;
+    }
+    
+    setErrors(newErrors);
+  };
+  
+  // Handlers para mudança nos campos
+  const handleFieldChange = (field, value) => {
+    switch (field) {
+      case 'name':
+        setName(value);
+        break;
+      case 'email':
+        setEmail(value.toLowerCase().trim());
+        break;
+      case 'username':
+        setUsername(value.toLowerCase().replace(/[^a-z0-9_]/g, ''));
+        break;
+      case 'password':
+        setPassword(value);
+        break;
+      case 'confirmPassword':
+        setConfirmPassword(value);
+        break;
+      case 'avatarUrl':
+        setAvatarUrl(value.trim());
+        break;
+      default:
+        break;
+    }
+    
+    // Validar campo após delay (debounce)
+    if (touched[field]) {
+      setTimeout(() => validateField(field, value), 500);
+    }
+  };
+  
+  // Marcar campo como tocado
+  const handleBlur = async (field, value) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    await validateField(field, value);
+  };
+  
+  // Validar step 1
   const validateStep1 = () => {
-    setTouched({
-      ...touched,
-      name: true,
-      email: true,
-      username: true
+    const requiredFields = ['name', 'email'];
+    const optionalFields = ['username'];
+    
+    let isValid = true;
+    
+    // Marcar campos obrigatórios como tocados
+    requiredFields.forEach(field => {
+      setTouched(prev => ({ ...prev, [field]: true }));
     });
     
-    if (nameError || emailError || usernameError) return false;
-    if (!name.trim() || !email.trim()) return false;
+    // Verificar se há erros nos campos obrigatórios
+    requiredFields.forEach(field => {
+      if (errors[field] || !eval(field).trim()) {
+        isValid = false;
+      }
+    });
     
-    return true;
+    // Verificar erros em campos opcionais preenchidos
+    optionalFields.forEach(field => {
+      if (eval(field).trim() && errors[field]) {
+        isValid = false;
+      }
+    });
+    
+    return isValid;
   };
   
+  // Validar step 2
   const validateStep2 = () => {
-    setTouched({
-      ...touched,
-      password: true,
-      confirmPassword: true
+    const requiredFields = ['password', 'confirmPassword'];
+    const optionalFields = ['avatarUrl'];
+    
+    let isValid = true;
+    
+    // Marcar campos como tocados
+    requiredFields.forEach(field => {
+      setTouched(prev => ({ ...prev, [field]: true }));
     });
     
-    if (passwordError || confirmPasswordError) return false;
-    if (password.length < 6 || password !== confirmPassword) return false;
+    // Verificar campos obrigatórios
+    if (!password || !confirmPassword || password !== confirmPassword) {
+      isValid = false;
+    }
     
-    return true;
+    // Verificar se há erros
+    requiredFields.forEach(field => {
+      if (errors[field]) {
+        isValid = false;
+      }
+    });
+    
+    // Verificar campos opcionais
+    optionalFields.forEach(field => {
+      if (eval(field).trim() && errors[field]) {
+        isValid = false;
+      }
+    });
+    
+    // Verificar termos
+    if (!acceptTerms) {
+      setError('Você deve aceitar os termos de uso para continuar');
+      isValid = false;
+    }
+    
+    return isValid;
   };
-
-  // Avançar para a próxima etapa
-  const nextStep = (e) => {
+  
+  // Avançar para próxima etapa
+  const nextStep = async (e) => {
     e.preventDefault();
+    
+    // Validar todos os campos do step 1
+    await Promise.all([
+      validateField('name', name),
+      validateField('email', email),
+      username && validateField('username', username)
+    ].filter(Boolean));
+    
     if (validateStep1()) {
       setStep(2);
+      setError(null);
+    } else {
+      setError('Por favor, corrija os erros antes de continuar');
     }
   };
-
-  // Voltar para a etapa anterior
+  
+  // Voltar para etapa anterior
   const prevStep = () => {
     setStep(1);
+    setError(null);
   };
-
-  // Marcar campo como tocado quando o usuário interage
-  const handleBlur = (field) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-  };
-
-  // Envio do formulário
+  
+  // Submeter formulário
   const handleSubmit = async (event) => {
     event.preventDefault();
     
+    // Validar todos os campos
+    await Promise.all([
+      validateField('password', password),
+      validateField('confirmPassword', confirmPassword),
+      avatarUrl && validateField('avatarUrl', avatarUrl)
+    ].filter(Boolean));
+    
     if (!validateStep2()) {
+      setError('Por favor, corrija os erros antes de continuar');
       return;
     }
     
@@ -170,57 +407,81 @@ const FormCadastro = () => {
       setLoading(true);
       setError(null);
       
+      // Preparar dados para envio
       const userData = {
-        name,
-        email,
-        password,
+        name: name.trim(),
+        email: email.trim(),
+        password: password,
+        // Campos opcionais
         ...(username && { username: username.trim() }),
         ...(avatarUrl && { avatarUrl: avatarUrl.trim() })
       };
       
-      const response = await api.post('/users', userData);
+      console.log('Enviando dados para /api/users:', {
+        ...userData,
+        password: '[OCULTA]'
+      });
       
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user || response.data));
-        
-        setSuccess('Cadastro realizado com sucesso!');
-        setTimeout(() => {
-          navigate('/conta');
-        }, 1500);
-      } else {
-        setSuccess('Cadastro realizado com sucesso! Redirecionando para login...');
-        setTimeout(() => {
-          navigate('/login');
-        }, 1500);
-      }
+      // Enviar para sua API
+      const result = await apiRequest('/api/users', {
+        method: 'POST',
+        body: JSON.stringify(userData)
+      });
+      
+      console.log('Usuário criado com sucesso:', result);
+      
+      // Sucesso
+      setSuccess('Cadastro realizado com sucesso! 🎉 Redirecionando...');
+      
+      // Limpar formulário
+      setName('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+      setUsername('');
+      setAvatarUrl('');
+      setAcceptTerms(false);
+      setErrors({});
+      setTouched({});
+      
+      // Redirecionar após 2 segundos
+      setTimeout(() => {
+        navigate('/login', { 
+          state: { 
+            message: 'Cadastro realizado! Agora você pode fazer login.',
+            email: userData.email 
+          }
+        });
+      }, 2000);
+      
     } catch (err) {
-      if (err.response) {
-        const backendError = err.response.data;
-        
-        if (err.response.status === 409) {
-          setError(backendError.message || 'Email ou nome de usuário já cadastrado');
-        } else if (backendError.message) {
-          setError(backendError.message);
-        } else {
-          setError(`Erro no servidor (${err.response.status})`);
-        }
-      } else if (err.message === 'Network Error') {
-        setError('Não foi possível conectar ao servidor. Verifique sua conexão.');
+      console.error('Erro durante o cadastro:', err);
+      
+      // Tratar diferentes tipos de erro
+      if (err.status === 400) {
+        setError(err.message || 'Dados inválidos. Verifique os campos.');
+      } else if (err.status === 409) {
+        setError('Email ou nome de usuário já cadastrado.');
+      } else if (err.status === 422) {
+        setError('Erro de validação. Verifique os dados enviados.');
+      } else if (err.status >= 500) {
+        setError('Erro interno do servidor. Tente novamente mais tarde.');
+      } else if (err.message === 'Failed to fetch') {
+        setError('Erro de conexão. Verifique sua internet e tente novamente.');
       } else {
-        setError(err.message || 'Erro ao processar o cadastro');
+        setError(err.message || 'Erro inesperado durante o cadastro.');
       }
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        {/* Cabeçalho com título e passos */}
+        {/* Header com título e progresso */}
         <div className={styles.header}>
-          <h1 className={styles.title}>Crie sua conta de gamer</h1>
+          <h1 className={styles.title}>🎮 Crie sua conta GameReviews</h1>
           
           <div className={styles.progressBar}>
             <div 
@@ -232,7 +493,7 @@ const FormCadastro = () => {
           <div className={styles.steps}>
             <div className={`${styles.step} ${step >= 1 ? styles.active : ''}`}>
               <div className={styles.stepNumber}>1</div>
-              <span>Dados pessoais</span>
+              <span>Dados Pessoais</span>
             </div>
             <div className={`${styles.step} ${step >= 2 ? styles.active : ''}`}>
               <div className={styles.stepNumber}>2</div>
@@ -241,6 +502,27 @@ const FormCadastro = () => {
           </div>
         </div>
         
+        {/* Botão de teste em desenvolvimento */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className={styles.devTools}>
+            <Button 
+              type="button" 
+              onClick={testBackendConnection}
+              variant="outline"
+              size="small"
+              disabled={loading}
+            >
+              🔧 Testar Conexão Backend
+            </Button>
+            {backendStatus && (
+              <p className={`${styles.status} ${backendStatus.includes('✅') ? styles.success : styles.error}`}>
+                {backendStatus}
+              </p>
+            )}
+          </div>
+        )}
+        
+        {/* Mensagens de erro e sucesso */}
         {error && (
           <div className={styles.errorContainer}>
             <Error error={error} />
@@ -258,38 +540,46 @@ const FormCadastro = () => {
           </div>
         )}
         
+        {/* Formulário */}
         <div className={styles.formContainer}>
           <form onSubmit={step === 1 ? nextStep : handleSubmit} className={styles.form}>
-            {step === 1 ? (
+            
+            {/* STEP 1: Dados Pessoais */}
+            {step === 1 && (
               <div className={styles.formStep}>
                 <div className={styles.inputGroup}>
                   <Input
-                    label="Nome completo"
+                    label="Nome completo *"
                     type="text"
                     name="name"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    onBlur={() => handleBlur('name')}
-                    error={nameError}
+                    onChange={(e) => handleFieldChange('name', e.target.value)}
+                    onBlur={(e) => handleBlur('name', e.target.value)}
+                    error={touched.name ? errors.name : null}
                     required
                     autoFocus
+                    placeholder="Ex: João Silva"
+                    maxLength={100}
                   />
-                  <small className={styles.hint}>Como você quer ser chamado na comunidade</small>
+                  <small className={styles.hint}>
+                    Como você quer ser chamado na comunidade GameReviews
+                  </small>
                 </div>
                 
                 <div className={styles.inputGroup}>
                   <Input
-                    label="E-mail"
+                    label="E-mail *"
                     type="email"
                     name="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onBlur={() => handleBlur('email')}
-                    error={emailError}
+                    onChange={(e) => handleFieldChange('email', e.target.value)}
+                    onBlur={(e) => handleBlur('email', e.target.value)}
+                    error={touched.email ? errors.email : null}
                     required
+                    placeholder="Ex: joao@email.com"
                   />
                   <small className={styles.hint}>
-                    Usamos seu e-mail para login e notificações importantes
+                    Usaremos para login e notificações importantes
                   </small>
                 </div>
                 
@@ -299,70 +589,81 @@ const FormCadastro = () => {
                     type="text"
                     name="username"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ''))}
-                    onBlur={() => handleBlur('username')}
-                    error={usernameError}
-                    placeholder="Ex: gamer_123"
+                    onChange={(e) => handleFieldChange('username', e.target.value)}
+                    onBlur={(e) => handleBlur('username', e.target.value)}
+                    error={touched.username ? errors.username : null}
+                    placeholder="Ex: joao_gamer_123"
+                    maxLength={50}
                   />
                   <small className={styles.hint}>
-                    Seu identificador único na plataforma (sem espaços)
+                    Seu identificador único (letras, números e _ apenas)
                   </small>
                 </div>
                 
                 <Button 
                   type="submit" 
                   className={styles.nextButton}
+                  disabled={loading || Object.keys(errors).length > 0}
                 >
-                  Continuar <span className={styles.buttonIcon}>→</span>
+                  {loading ? 'Validando...' : 'Continuar'} →
                 </Button>
               </div>
-            ) : (
+            )}
+            
+            {/* STEP 2: Credenciais */}
+            {step === 2 && (
               <div className={styles.formStep}>
                 <div className={styles.inputGroup}>
                   <div className={styles.passwordField}>
                     <Input
-                      label="Senha"
+                      label="Senha *"
                       type={showPassword ? "text" : "password"}
                       name="password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      onBlur={() => handleBlur('password')}
-                      error={passwordError}
+                      onChange={(e) => handleFieldChange('password', e.target.value)}
+                      onBlur={(e) => handleBlur('password', e.target.value)}
+                      error={touched.password ? errors.password : null}
                       required
                       autoFocus
+                      placeholder="Mínimo 6 caracteres"
+                      maxLength={128}
                     />
                     <button 
                       type="button" 
                       className={styles.togglePassword}
                       onClick={() => setShowPassword(!showPassword)}
+                      title={showPassword ? "Ocultar senha" : "Mostrar senha"}
                     >
-                      {showPassword ? "👁️" : "👁️‍🗨️"}
+                      {showPassword ? "🙈" : "👁️"}
                     </button>
                   </div>
-                  <small className={styles.hint}>
-                    Mínimo de 6 caracteres. Utilize letras, números e símbolos para maior segurança
-                  </small>
                   <PasswordStrength password={password} />
+                  <small className={styles.hint}>
+                    Use letras, números e símbolos para maior segurança
+                  </small>
                 </div>
                 
                 <div className={styles.inputGroup}>
                   <div className={styles.passwordField}>
                     <Input
-                      label="Confirmar senha"
+                      label="Confirmar senha *"
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      onBlur={() => handleBlur('confirmPassword')}
-                      error={confirmPasswordError}
+                      onChange={(e) => handleFieldChange('confirmPassword', e.target.value)}
+                      onBlur={(e) => handleBlur('confirmPassword', e.target.value)}
+                      error={touched.confirmPassword ? errors.confirmPassword : null}
                       required
+                      placeholder="Digite a senha novamente"
+                      maxLength={128}
                     />
                     <button 
                       type="button" 
                       className={styles.togglePassword}
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      title={showConfirmPassword ? "Ocultar senha" : "Mostrar senha"}
                     >
-                      {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                      {showConfirmPassword ? "🙈" : "👁️"}
                     </button>
                   </div>
                 </div>
@@ -373,25 +674,50 @@ const FormCadastro = () => {
                     type="url"
                     name="avatarUrl"
                     value={avatarUrl}
-                    onChange={(e) => setAvatarUrl(e.target.value)}
-                    placeholder="https://sua-foto.com/imagem.jpg"
+                    onChange={(e) => handleFieldChange('avatarUrl', e.target.value)}
+                    onBlur={(e) => handleBlur('avatarUrl', e.target.value)}
+                    error={touched.avatarUrl ? errors.avatarUrl : null}
+                    placeholder="https://exemplo.com/sua-foto.jpg"
                   />
                   <small className={styles.hint}>
-                    Link para sua imagem de perfil
+                    Link para sua imagem de perfil (JPG, PNG, GIF, WebP)
                   </small>
                   
-                  {avatarUrl && (
+                  {avatarUrl && !errors.avatarUrl && (
                     <div className={styles.avatarPreview}>
                       <img 
                         src={avatarUrl} 
                         alt="Preview da foto de perfil" 
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = "https://via.placeholder.com/100?text=Erro";
+                          e.target.src = "https://via.placeholder.com/100x100/6366f1/white?text=Erro";
                         }}
                       />
+                      <span>Preview da sua foto</span>
                     </div>
                   )}
+                </div>
+                
+                <div className={styles.termsCheck}>
+                  <label className={styles.checkbox}>
+                    <input
+                      type="checkbox"
+                      checked={acceptTerms}
+                      onChange={(e) => setAcceptTerms(e.target.checked)}
+                      required
+                    />
+                    <span className={styles.checkmark}></span>
+                    <span>
+                      Eu aceito os{' '}
+                      <Link to="/termos" target="_blank" rel="noopener noreferrer">
+                        termos de uso
+                      </Link>
+                      {' '}e a{' '}
+                      <Link to="/privacidade" target="_blank" rel="noopener noreferrer">
+                        política de privacidade
+                      </Link>
+                    </span>
+                  </label>
                 </div>
                 
                 <div className={styles.buttonGroup}>
@@ -399,13 +725,14 @@ const FormCadastro = () => {
                     type="button" 
                     onClick={prevStep} 
                     variant="secondary"
+                    disabled={loading}
                   >
-                    <span className={styles.buttonIcon}>←</span> Voltar
+                    ← Voltar
                   </Button>
                   
                   <Button 
                     type="submit" 
-                    disabled={loading}
+                    disabled={loading || !acceptTerms || Object.keys(errors).length > 0}
                   >
                     {loading ? (
                       <>
@@ -413,7 +740,7 @@ const FormCadastro = () => {
                         Cadastrando...
                       </>
                     ) : (
-                      'Criar conta'
+                      'Criar conta 🚀'
                     )}
                   </Button>
                 </div>
@@ -422,16 +749,20 @@ const FormCadastro = () => {
           </form>
         </div>
         
+        {/* Link para login */}
         <div className={styles.loginLink}>
           <p>
             Já tem uma conta?{' '}
-            <Link to="/login" className={styles.highlightLink}>Faça login</Link>
+            <Link to="/login" className={styles.highlightLink}>
+              Faça login aqui
+            </Link>
           </p>
         </div>
         
+        {/* Info de segurança */}
         <div className={styles.securityInfo}>
           <div className={styles.securityIcon}>🔒</div>
-          <p>Seus dados estão protegidos e nunca serão compartilhados</p>
+          <p>Seus dados estão protegidos com criptografia de ponta</p>
         </div>
       </div>
     </section>
