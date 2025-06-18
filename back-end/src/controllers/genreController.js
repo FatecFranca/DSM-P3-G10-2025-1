@@ -39,12 +39,9 @@ export const createGenre = async (req, res) => {
 export const getAllGenres = async (req, res) => {
   try {
     const genres = await prisma.genre.findMany({
-      include: {
-        _count: {
-          select: { games: true }
-        }
-      },
-      orderBy: { name: 'asc' }
+      orderBy: {
+        name: 'asc'
+      }
     });
 
     res.json(genres);
@@ -53,7 +50,6 @@ export const getAllGenres = async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar gêneros' });
   }
 };
-
 export const getGenreById = async (req, res) => {
   try {
     const { id } = req.params;

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuthContext } from '../../context/AuthContext';
-import UserIcon from '../User/UserIcon';
-import styles from './Header.module.css';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContext";
+import UserIcon from "../User/UserIcon";
+import styles from "./Header.module.css";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const { authenticated, user, logout } = useAuthContext();
   const navigate = useNavigate();
 
@@ -16,8 +16,8 @@ const Header = () => {
       setIsScrolled(window.scrollY > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Fechar menu ao clicar fora
@@ -28,22 +28,22 @@ const Header = () => {
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, [isUserMenuOpen]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/buscar?q=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery('');
+      setSearchQuery("");
     }
   };
 
   const handleLogout = () => {
     logout();
     setIsUserMenuOpen(false);
-    navigate('/');
+    navigate("/");
   };
 
   const toggleUserMenu = (e) => {
@@ -56,7 +56,7 @@ const Header = () => {
   };
 
   return (
-    <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}>
+    <header className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.container}>
         {/* Logo */}
         <Link to="/" className={styles.logo}>
@@ -98,29 +98,31 @@ const Header = () => {
         <div className={styles.userSection}>
           {authenticated ? (
             <div className={styles.userDropdown}>
-              <button 
+              <button
                 onClick={toggleUserMenu}
                 className={styles.userButton}
                 aria-expanded={isUserMenuOpen}
               >
                 {user?.avatarUrl ? (
-                  <img 
-                    src={user.avatarUrl} 
+                  <img
+                    src={user.avatarUrl}
                     alt={`Avatar de ${user.name}`}
                     className={styles.userAvatar}
                     onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
+                      e.target.style.display = "none";
+                      e.target.nextSibling.style.display = "flex";
                     }}
                   />
                 ) : null}
-                <UserIcon 
-                  initial={user?.name?.charAt(0)?.toUpperCase() || 'U'} 
+                <UserIcon
+                  initial={user?.name?.charAt(0)?.toUpperCase() || "U"}
                   size="small"
-                  className={`${styles.userIcon} ${user?.avatarUrl ? styles.hidden : ''}`}
+                  className={`${styles.userIcon} ${
+                    user?.avatarUrl ? styles.hidden : ""
+                  }`}
                 />
                 <span className={styles.dropdownArrow}>
-                  {isUserMenuOpen ? '▲' : '▼'}
+                  {isUserMenuOpen ? "▲" : "▼"}
                 </span>
               </button>
 
@@ -130,20 +132,22 @@ const Header = () => {
                   <div className={styles.userMenuHeader}>
                     <div className={styles.userMenuAvatar}>
                       {user?.avatarUrl ? (
-                        <img 
-                          src={user.avatarUrl} 
+                        <img
+                          src={user.avatarUrl}
                           alt={`Avatar de ${user.name}`}
                           className={styles.menuAvatar}
                         />
                       ) : (
-                        <UserIcon 
-                          initial={user?.name?.charAt(0)?.toUpperCase() || 'U'} 
+                        <UserIcon
+                          initial={user?.name?.charAt(0)?.toUpperCase() || "U"}
                           size="medium"
                         />
                       )}
                     </div>
                     <div className={styles.userMenuInfo}>
-                      <h4 className={styles.userName}>{user?.name || 'Usuário'}</h4>
+                      <h4 className={styles.userName}>
+                        {user?.name || "Usuário"}
+                      </h4>
                       <p className={styles.userEmail}>{user?.email}</p>
                     </div>
                   </div>
@@ -151,46 +155,51 @@ const Header = () => {
                   <div className={styles.userMenuDivider}></div>
 
                   <nav className={styles.userMenuNav}>
-                    <Link 
-                      to="/conta" 
+                    <Link
+                      to="/conta"
                       className={styles.userMenuItem}
                       onClick={closeUserMenu}
                     >
                       <span className={styles.menuIcon}>👤</span>
                       <span>Meu Perfil</span>
                     </Link>
-                    
-                    <Link 
-                      to="/conta/reviews" 
+                    <Link
+                      to="/conta/reviews"
                       className={styles.userMenuItem}
                       onClick={closeUserMenu}
                     >
                       <span className={styles.menuIcon}>📝</span>
                       <span>Minhas Reviews</span>
                     </Link>
-                    
-                    <Link 
-                      to="/conta/favoritos" 
+                    <Link
+                      to="/conta/favoritos"
                       className={styles.userMenuItem}
                       onClick={closeUserMenu}
                     >
                       <span className={styles.menuIcon}>❤️</span>
                       <span>Jogos Favoritos</span>
-                    </Link>
-
-                    <Link 
-                      to="/conta/configuracoes" 
+                    </Link>{" "}
+                    <Link
+                      to="/conta/configuracoes"
                       className={styles.userMenuItem}
                       onClick={closeUserMenu}
                     >
                       <span className={styles.menuIcon}>⚙️</span>
                       <span>Configurações</span>
                     </Link>
+                    <Link
+                      to="/admin/jogos"
+                      className={styles.userMenuItem}
+                      onClick={closeUserMenu}
+                    >
+                      <span className={styles.menuIcon}>🎮</span>
+                      <span>Gerenciar Jogos</span>
+                    </Link>
                   </nav>
 
                   <div className={styles.userMenuDivider}></div>
 
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className={styles.logoutMenuItem}
                   >

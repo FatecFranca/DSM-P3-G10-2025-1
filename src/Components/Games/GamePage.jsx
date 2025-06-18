@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import SafeImage from "../Helper/SafeImage";
 import styles from "./GamePage.module.css";
 import Comments from "./Comments";
 import Detail from "../Detail";
@@ -39,7 +40,11 @@ const GamePage = () => {
   return (
     <section className={`${styles.container} animeDown`}>
       <div className={styles.info}>
-        <img src={game.imagem} alt={game.titulo} className={styles.image} />
+        <SafeImage
+          src={game.imagem}
+          alt={game.titulo}
+          className={styles.image}
+        />
         <div className={styles.details}>
           <h1 className="title">{game.titulo}</h1>
           <p>

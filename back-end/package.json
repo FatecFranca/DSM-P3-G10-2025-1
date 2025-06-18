@@ -7,7 +7,8 @@
     "start": "node ./src/bin/server.js",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "seed:genres": "node scripts/seedGenres.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

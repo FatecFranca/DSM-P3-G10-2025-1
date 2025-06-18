@@ -71,7 +71,8 @@
   overflow: hidden;
 }
 
-.gameImage img {
+.gameImage img,
+.gameImageElement {
   position: absolute;
   top: 0;
   left: 0;
@@ -81,7 +82,8 @@
   transition: transform 0.5s ease;
 }
 
-.gameCard:hover .gameImage img {
+.gameCard:hover .gameImage img,
+.gameCard:hover .gameImageElement {
   transform: scale(1.05);
 }
 
@@ -95,7 +97,8 @@
   margin-bottom: 0.5rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;  
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
@@ -164,7 +167,7 @@
   .title {
     font-size: 2rem;
   }
-  
+
   .gamesGrid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 1.5rem;

@@ -8,10 +8,10 @@ class GenresService {
   getBaseURL() {
     if (typeof window !== 'undefined' && window.location) {
       return window.location.hostname === 'localhost' 
-        ? 'http://localhost:3001/api'
+        ? 'http://localhost:5000/api'
         : '/api';
     }
-    return 'http://localhost:3001/api';
+    return 'http://localhost:5000/api';
   }
 
   // Buscar todos os gêneros
