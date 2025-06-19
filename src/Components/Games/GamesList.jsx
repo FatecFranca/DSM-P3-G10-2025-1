@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import gamesService from "../../services/gamesService";
 import SafeImage from "../Helper/SafeImage";
 import styles from "./GamesList.module.css";
@@ -9,6 +9,32 @@ const GamesList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState("");
+  const [availableGenres, setAvailableGenres] = useState([]);
+  const location = useLocation();
+
+  // Lista de gêneros disponíveis para filtro
+  const genresList = [
+    "Ação",
+    "RPG",
+    "Aventura",
+    "Estratégia",
+    "FPS",
+    "Simulação",
+    "Terror",
+    "Indie",
+    "Corrida",
+    "Esporte",
+  ];
+
+  // Verificar se há termo de busca na URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchParam = urlParams.get("search");
+    if (searchParam) {
+      setSearchTerm(decodeURIComponent(searchParam));
+    }
+  }, [location.search]);
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -36,16 +62,26 @@ const GamesList = () => {
           );
           allGames = [...allGames, ...featuredGames];
         }
-
         if (allGames.length > 0) {
           setGames(allGames);
+
+          // Extrair gêneros únicos dos jogos para o filtro
+          const genres = new Set();
+          allGames.forEach((game) => {
+            if (game.genres && Array.isArray(game.genres)) {
+              game.genres.forEach((genre) => genres.add(genre));
+            } else if (game.genre) {
+              genres.add(game.genre);
+            } else if (game.genero) {
+              genres.add(game.genero);
+            }
+          });
+          setAvailableGenres([...genres].sort());
         } else {
-          console.error("Nenhum jogo encontrado");
           setGames([]);
           setError("Nenhum jogo disponível no momento");
         }
       } catch (error) {
-        console.error("Erro ao buscar jogos:", error);
         setError(
           "Não foi possível carregar a lista de jogos. Por favor, tente novamente mais tarde."
         );
@@ -58,10 +94,32 @@ const GamesList = () => {
     fetchGames();
   }, []);
 
-  // Filtrar jogos com base no termo de pesquisa
-  const filteredGames = games.filter((game) =>
-    game.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Função para verificar se um jogo contém o gênero selecionado
+  const gameMatchesGenre = (game, genre) => {
+    if (!genre) return true;
+
+    if (game.genres && Array.isArray(game.genres)) {
+      return game.genres.some((g) =>
+        g.toLowerCase().includes(genre.toLowerCase())
+      );
+    }
+    if (game.genre) {
+      return game.genre.toLowerCase().includes(genre.toLowerCase());
+    }
+    if (game.genero) {
+      return game.genero.toLowerCase().includes(genre.toLowerCase());
+    }
+    return false;
+  };
+
+  // Filtrar jogos com base no termo de pesquisa e gênero
+  const filteredGames = games.filter((game) => {
+    const matchesSearch = game.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesGenre = gameMatchesGenre(game, selectedGenre);
+    return matchesSearch && matchesGenre;
+  });
 
   return (
     <div className={styles.container}>
@@ -71,16 +129,54 @@ const GamesList = () => {
           Explore nossa coleção completa de jogos
         </p>
 
-        <div className={styles.searchContainer}>
-          <input
-            type="text"
-            placeholder="Buscar jogos..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={styles.searchInput}
-          />
+        <div className={styles.filtersContainer}>
+          <div className={styles.searchContainer}>
+            <input
+              type="text"
+              placeholder="Buscar jogos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={styles.searchInput}
+            />
+          </div>
+
+          <div className={styles.genreFilters}>
+            <button
+              className={`${styles.genreButton} ${
+                !selectedGenre ? styles.active : ""
+              }`}
+              onClick={() => setSelectedGenre("")}
+            >
+              Todos
+            </button>
+            {genresList.map((genre) => (
+              <button
+                key={genre}
+                className={`${styles.genreButton} ${
+                  selectedGenre === genre ? styles.active : ""
+                }`}
+                onClick={() => setSelectedGenre(genre)}
+              >
+                {genre}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
+
+      {!loading && !error && (
+        <div className={styles.resultsInfo}>
+          <p className={styles.resultsCount}>
+            {filteredGames.length === 0
+              ? "Nenhum jogo encontrado"
+              : `${filteredGames.length} jogo${
+                  filteredGames.length !== 1 ? "s" : ""
+                } encontrado${filteredGames.length !== 1 ? "s" : ""}`}
+            {searchTerm && ` para "${searchTerm}"`}
+            {selectedGenre && ` em ${selectedGenre}`}
+          </p>
+        </div>
+      )}
 
       {loading ? (
         <div className={styles.loading}>

@@ -7,6 +7,7 @@ import {
   updateReview,
   deleteReview,
 } from "../../services/reviewsServiceNew";
+import reactionService from "../../services/reactionService";
 
 const Reviews = ({ gameId }) => {
   const [reviews, setReviews] = useState([]);
@@ -18,15 +19,26 @@ const Reviews = ({ gameId }) => {
   const [editingReview, setEditingReview] = useState(null);
   const [editRating, setEditRating] = useState(0);
   const [editComment, setEditComment] = useState("");
-
+  const [reviewReactions, setReviewReactions] = useState({});
   useEffect(() => {
     loadReviews();
   }, [gameId]);
+
   const loadReviews = async () => {
     try {
       setLoading(true);
       const data = await getReviews(gameId);
       setReviews(data);
+
+      // Carregar reações para cada review
+      const reactionsData = {};
+      for (const review of data) {
+        const result = await reactionService.getReviewReactions(review.id);
+        if (result.success) {
+          reactionsData[review.id] = result.data;
+        }
+      }
+      setReviewReactions(reactionsData);
     } catch (error) {
       console.error("Erro ao carregar reviews:", error);
       setReviews([]);
@@ -183,12 +195,66 @@ const Reviews = ({ gameId }) => {
       alert("Erro ao deletar avaliação. Tente novamente.");
     }
   };
-
   // Função para cancelar edição
   const handleCancelEdit = () => {
     setEditingReview(null);
     setEditRating(0);
     setEditComment("");
+  }; // Função para reagir a uma review
+  const handleReaction = async (reviewId, type) => {
+    console.log("Clicou na reação:", reviewId, type, "User:", user);
+
+    if (!user) {
+      alert("Você precisa estar logado para reagir!");
+      return;
+    }
+
+    try {
+      const result = await reactionService.reactToReviewWithUser(
+        reviewId,
+        type,
+        user.id
+      );
+      if (result.success) {
+        console.log("Reação criada com sucesso:", result.data);
+        // Recarregar reações da review
+        const reactionsResult = await reactionService.getReviewReactions(
+          reviewId
+        );
+        if (reactionsResult.success) {
+          console.log("Reações recarregadas:", reactionsResult.data);
+          setReviewReactions((prev) => ({
+            ...prev,
+            [reviewId]: reactionsResult.data,
+          }));
+        }
+      } else {
+        console.error("Erro no resultado:", result.message);
+        alert("Erro ao reagir: " + result.message);
+      }
+    } catch (error) {
+      console.error("Erro ao reagir:", error);
+      alert("Erro ao reagir. Tente novamente.");
+    }
+  };
+
+  // Função para verificar se usuário já reagiu
+  const getUserReaction = (reviewId) => {
+    const reactions = reviewReactions[reviewId];
+    if (!reactions || !user) return null;
+
+    return reactions.reactions?.find((r) => r.userId === user.id);
+  };
+
+  // Função para contar reações
+  const getReactionCounts = (reviewId) => {
+    const reactions = reviewReactions[reviewId];
+    if (!reactions) return { likes: 0, dislikes: 0 };
+
+    return {
+      likes: reactions.summary?.likes || 0,
+      dislikes: reactions.summary?.dislikes || 0,
+    };
   };
 
   if (loading) {
@@ -329,8 +395,57 @@ const Reviews = ({ gameId }) => {
               </div>
             ) : (
               <>
+                {" "}
                 <div className={styles.reviewContent}>
                   <p>{review.comment}</p>
+                </div>
+                {/* Seção de Reações */}
+                <div className={styles.reactionsSection}>
+                  {user ? (
+                    <div className={styles.reactionButtons}>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log("Clique no like detectado!");
+                          handleReaction(review.id, "LIKE");
+                        }}
+                        className={`${styles.reactionButton} ${
+                          getUserReaction(review.id)?.type === "LIKE"
+                            ? styles.reactionActive
+                            : ""
+                        }`}
+                        type="button"
+                      >
+                        👍 {getReactionCounts(review.id).likes}
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log("Clique no dislike detectado!");
+                          handleReaction(review.id, "DISLIKE");
+                        }}
+                        className={`${styles.reactionButton} ${
+                          getUserReaction(review.id)?.type === "DISLIKE"
+                            ? styles.reactionActive
+                            : ""
+                        }`}
+                        type="button"
+                      >
+                        👎 {getReactionCounts(review.id).dislikes}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className={styles.reactionDisplay}>
+                      <span className={styles.reactionCount}>
+                        👍 {getReactionCounts(review.id).likes}
+                      </span>
+                      <span className={styles.reactionCount}>
+                        👎 {getReactionCounts(review.id).dislikes}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className={styles.reviewDate}>
                   📅 {new Date(review.createdAt).toLocaleDateString("pt-BR")}

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 import UserIcon from "../User/UserIcon";
+import gamesService from "../../services/gamesService";
 import styles from "./Header.module.css";
 
 const Header = () => {
@@ -10,6 +11,14 @@ const Header = () => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [mobileSearchSuggestions, setMobileSearchSuggestions] = useState([]);
+  const [showMobileSuggestions, setShowMobileSuggestions] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const searchInputRef = useRef(null);
+  const mobileSearchInputRef = useRef(null);
   const { authenticated, user, logout } = useAuthContext();
   const navigate = useNavigate();
 
@@ -55,11 +64,108 @@ const Header = () => {
       document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
+
+  // Função para buscar jogos em tempo real
+  const searchGames = async (query) => {
+    if (!query.trim() || query.length < 2) {
+      return [];
+    }
+
+    try {
+      setIsSearching(true);
+      const result = await gamesService.getGames();
+
+      if (result.success && result.data) {
+        const filteredGames = result.data
+          .filter(
+            (game) =>
+              game.title?.toLowerCase().includes(query.toLowerCase()) ||
+              game.titulo?.toLowerCase().includes(query.toLowerCase())
+          )
+          .slice(0, 5); // Mostrar apenas 5 sugestões
+
+        return filteredGames;
+      }
+      return [];
+    } catch (error) {
+      console.error("Erro ao buscar jogos:", error);
+      return [];
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Debounce para busca (evitar muitas requisições)
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (searchQuery.length >= 2) {
+        const suggestions = await searchGames(searchQuery);
+        setSearchSuggestions(suggestions);
+        setShowSuggestions(true);
+      } else {
+        setSearchSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  // Debounce para busca mobile
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (mobileSearchQuery.length >= 2) {
+        const suggestions = await searchGames(mobileSearchQuery);
+        setMobileSearchSuggestions(suggestions);
+        setShowMobileSuggestions(true);
+      } else {
+        setMobileSearchSuggestions([]);
+        setShowMobileSuggestions(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [mobileSearchQuery]);
+
+  // Fechar sugestões ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target)
+      ) {
+        setShowSuggestions(false);
+      }
+      if (
+        mobileSearchInputRef.current &&
+        !mobileSearchInputRef.current.contains(event.target)
+      ) {
+        setShowMobileSuggestions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSuggestionClick = (gameId) => {
+    navigate(`/jogo/${gameId}`);
+    setSearchQuery("");
+    setShowSuggestions(false);
+  };
+
+  const handleMobileSuggestionClick = (gameId) => {
+    navigate(`/jogo/${gameId}`);
+    setMobileSearchQuery("");
+    setShowMobileSuggestions(false);
+    setIsMobileMenuOpen(false);
+  };
   const handleMobileSearch = (e) => {
     e.preventDefault();
     if (mobileSearchQuery.trim()) {
-      navigate(`/buscar?q=${encodeURIComponent(mobileSearchQuery.trim())}`);
+      navigate(`/jogos?search=${encodeURIComponent(mobileSearchQuery.trim())}`);
       setMobileSearchQuery("");
+      setShowMobileSuggestions(false);
       setIsMobileMenuOpen(false);
     }
   };
@@ -67,8 +173,9 @@ const Header = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/buscar?q=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/jogos?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
+      setShowSuggestions(false);
     }
   };
 
@@ -120,20 +227,68 @@ const Header = () => {
                 </li>
               )}
             </ul>
-          </nav>
+          </nav>{" "}
           {/* Busca Desktop */}
-          <form onSubmit={handleSearch} className={styles.searchForm}>
-            <input
-              type="text"
-              placeholder="Buscar jogos, reviews..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={styles.searchInput}
-            />
-            <button type="submit" className={styles.searchButton}>
-              🔍
-            </button>
-          </form>{" "}
+          <div className={styles.searchContainer} ref={searchInputRef}>
+            <form onSubmit={handleSearch} className={styles.searchForm}>
+              <input
+                type="text"
+                placeholder="Buscar jogos..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setShowSuggestions(searchSuggestions.length > 0)}
+                className={styles.searchInput}
+              />
+              <button type="submit" className={styles.searchButton}>
+                🔍
+              </button>
+            </form>
+
+            {/* Sugestões Desktop */}
+            {showSuggestions && searchSuggestions.length > 0 && (
+              <div className={styles.suggestions}>
+                {searchSuggestions.map((game) => (
+                  <div
+                    key={game.id}
+                    className={styles.suggestionItem}
+                    onClick={() => handleSuggestionClick(game.id)}
+                  >
+                    <div className={styles.suggestionImage}>
+                      <img
+                        src={
+                          game.coverUrl ||
+                          game.cover_url ||
+                          game.imageUrl ||
+                          game.image_url
+                        }
+                        alt={game.title || game.titulo}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "flex";
+                        }}
+                      />
+                      <div className={styles.suggestionImageFallback}>🎮</div>
+                    </div>
+                    <div className={styles.suggestionContent}>
+                      <h4>{game.title || game.titulo}</h4>
+                      {game.averageRating && (
+                        <span className={styles.suggestionRating}>
+                          ★ {game.averageRating.toFixed(1)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {isSearching && (
+                  <div className={styles.suggestionItem}>
+                    <div className={styles.searchingIndicator}>
+                      <span>Buscando...</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>{" "}
           {/* Área do usuário Desktop */}
           <div className={styles.userSection}>
             {authenticated ? (
@@ -226,22 +381,76 @@ const Header = () => {
           aria-label="Fechar menu"
         >
           ✕
-        </button>
-
+        </button>{" "}
         {/* Busca mobile */}
-        <form onSubmit={handleMobileSearch} className={styles.mobileSearchForm}>
-          <input
-            type="text"
-            placeholder="Buscar jogos, reviews..."
-            value={mobileSearchQuery}
-            onChange={(e) => setMobileSearchQuery(e.target.value)}
-            className={styles.searchInput}
-          />
-          <button type="submit" className={styles.searchButton}>
-            🔍
-          </button>
-        </form>
+        <div
+          className={styles.mobileSearchContainer}
+          ref={mobileSearchInputRef}
+        >
+          <form
+            onSubmit={handleMobileSearch}
+            className={styles.mobileSearchForm}
+          >
+            <input
+              type="text"
+              placeholder="Buscar jogos..."
+              value={mobileSearchQuery}
+              onChange={(e) => setMobileSearchQuery(e.target.value)}
+              onFocus={() =>
+                setShowMobileSuggestions(mobileSearchSuggestions.length > 0)
+              }
+              className={styles.searchInput}
+            />
+            <button type="submit" className={styles.searchButton}>
+              🔍
+            </button>
+          </form>
 
+          {/* Sugestões Mobile */}
+          {showMobileSuggestions && mobileSearchSuggestions.length > 0 && (
+            <div className={styles.mobileSuggestions}>
+              {mobileSearchSuggestions.map((game) => (
+                <div
+                  key={game.id}
+                  className={styles.suggestionItem}
+                  onClick={() => handleMobileSuggestionClick(game.id)}
+                >
+                  <div className={styles.suggestionImage}>
+                    <img
+                      src={
+                        game.coverUrl ||
+                        game.cover_url ||
+                        game.imageUrl ||
+                        game.image_url
+                      }
+                      alt={game.title || game.titulo}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
+                      }}
+                    />
+                    <div className={styles.suggestionImageFallback}>🎮</div>
+                  </div>
+                  <div className={styles.suggestionContent}>
+                    <h4>{game.title || game.titulo}</h4>
+                    {game.averageRating && (
+                      <span className={styles.suggestionRating}>
+                        ★ {game.averageRating.toFixed(1)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {isSearching && (
+                <div className={styles.suggestionItem}>
+                  <div className={styles.searchingIndicator}>
+                    <span>Buscando...</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
         {/* Navegação mobile */}
         <ul className={styles.mobileNavList}>
           <li>
@@ -287,7 +496,6 @@ const Header = () => {
             </li>
           )}
         </ul>
-
         {/* Seção do usuário mobile */}
         <div className={styles.mobileUserSection}>
           {authenticated ? (
