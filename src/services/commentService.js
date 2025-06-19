@@ -1,4 +1,4 @@
-import { apiRequest } from './api';
+import { apiRequest } from "./api";
 
 class CommentService {
   constructor() {
@@ -6,12 +6,12 @@ class CommentService {
   }
 
   getBaseURL() {
-    if (typeof window !== 'undefined' && window.location) {
-      return window.location.hostname === 'localhost' 
-        ? 'http://localhost:5000/api'
-        : '/api';
+    if (typeof window !== "undefined" && window.location) {
+      return window.location.hostname === "localhost"
+        ? "http://localhost:5000/api"
+        : "/api";
     }
-    return 'http://localhost:5000/api';
+    return "http://localhost:5000/api";
   }
 
   // Buscar comentários de uma review
@@ -20,13 +20,13 @@ class CommentService {
       const comments = await apiRequest(`/comments/review/${reviewId}`);
       return {
         success: true,
-        data: comments
+        data: comments,
       };
     } catch (error) {
-      console.error('Erro ao buscar comentários:', error);
+      console.error("Erro ao buscar comentários:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   }
@@ -34,20 +34,20 @@ class CommentService {
   // Criar novo comentário
   async createComment(commentData) {
     try {
-      const newComment = await apiRequest('/comments', {
-        method: 'POST',
-        body: JSON.stringify(commentData)
+      const newComment = await apiRequest("/comments", {
+        method: "POST",
+        body: JSON.stringify(commentData),
       });
 
       return {
         success: true,
-        data: newComment
+        data: newComment,
       };
     } catch (error) {
-      console.error('Erro ao criar comentário:', error);
+      console.error("Erro ao criar comentário:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   }
@@ -56,19 +56,19 @@ class CommentService {
   async updateComment(commentId, commentData) {
     try {
       const updatedComment = await apiRequest(`/comments/${commentId}`, {
-        method: 'PUT',
-        body: JSON.stringify(commentData)
+        method: "PUT",
+        body: JSON.stringify(commentData),
       });
 
       return {
         success: true,
-        data: updatedComment
+        data: updatedComment,
       };
     } catch (error) {
-      console.error('Erro ao atualizar comentário:', error);
+      console.error("Erro ao atualizar comentário:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   }
@@ -77,18 +77,35 @@ class CommentService {
   async deleteComment(commentId) {
     try {
       await apiRequest(`/comments/${commentId}`, {
-        method: 'DELETE'
+        method: "DELETE",
       });
 
       return {
         success: true,
-        message: 'Comentário deletado com sucesso'
+        message: "Comentário deletado com sucesso",
       };
     } catch (error) {
-      console.error('Erro ao deletar comentário:', error);
+      console.error("Erro ao deletar comentário:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
+      };
+    }
+  }
+
+  // Buscar comentários de um jogo
+  async getCommentsByGameId(gameId) {
+    try {
+      const comments = await apiRequest(`/comments/game/${gameId}`);
+      return {
+        success: true,
+        data: comments,
+      };
+    } catch (error) {
+      console.error("Erro ao buscar comentários do jogo:", error);
+      return {
+        success: false,
+        message: error.message,
       };
     }
   }

@@ -1,10 +1,105 @@
 .wrapper {
-  background: var(--background);
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  color: #f8fafc;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  margin-top: 3rem;
+  border: 1px solid rgba(126, 34, 206, 0.2);
+}
+
+.title {
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #7e22ce, #a855f7, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  text-shadow: 0 0 30px rgba(126, 34, 206, 0.3);
+}
+
+.form {
+  background: linear-gradient(
+    135deg,
+    rgba(126, 34, 206, 0.1),
+    rgba(59, 130, 246, 0.1)
+  );
   padding: 2rem;
   border-radius: 1rem;
-  color: var(--cor-secundaria);
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
-  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(126, 34, 206, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(126, 34, 206, 0.1);
+}
+
+.userLine {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.userName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #a855f7;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 1rem;
+  border: 2px solid rgba(126, 34, 206, 0.3);
+  border-radius: 0.8rem;
+  background: rgba(30, 41, 59, 0.5);
+  color: #f8fafc;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #7e22ce;
+  box-shadow: 0 0 0 3px rgba(126, 34, 206, 0.2),
+    0 0 20px rgba(126, 34, 206, 0.1);
+  background: rgba(30, 41, 59, 0.7);
+}
+
+.textarea::placeholder {
+  color: rgba(248, 250, 252, 0.6);
+}
+
+.form button {
+  background: linear-gradient(135deg, #7e22ce, #a855f7, #3b82f6);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 0.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  min-width: 120px;
+  box-shadow: 0 4px 15px rgba(126, 34, 206, 0.3);
+}
+
+.form button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(126, 34, 206, 0.4),
+    0 0 30px rgba(126, 34, 206, 0.2);
+  filter: brightness(1.1);
+}
+
+.form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .list {
@@ -15,67 +110,101 @@
 }
 
 .card {
-  background: var(--cor-secundaria);
-  padding: 1rem 1.5rem;
-  border-radius: 1rem;
-  color: var(--cor-primaria);
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 59, 0.8),
+    rgba(51, 65, 85, 0.6)
+  );
+  padding: 1.5rem;
+  border-radius: 1.2rem;
+  color: #f8fafc;
+  border: 1px solid rgba(126, 34, 206, 0.2);
+  backdrop-filter: blur(15px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #7e22ce, #a855f7, #3b82f6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(126, 34, 206, 0.2),
+    0 0 30px rgba(126, 34, 206, 0.1);
+  border-color: rgba(126, 34, 206, 0.4);
+}
+
+.card:hover::before {
+  opacity: 1;
 }
 
 .user {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-.inicial {
-  background: linear-gradient(135deg, var(--cor-primaria), var(--cor-vermelha));
-  color: white;
-  width: 3rem;
-  height: 3rem;
-  font-size: 1.2rem;
-  font-weight: bold;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.title {
-    margin-bottom: 2rem;
-}
 .nickname {
-    font-size: 1.2rem;
-}
-.stars {
-  display: flex;
-  gap: 0.2rem;
-
-}
-
-.filled {
-  color: gold;
   font-size: 1.2rem;
-}
-
-.empty {
-  color: #ccc;
-  font-size: 1.2rem;
+  font-weight: 600;
+  color: #a855f7;
 }
 
 .comment {
-  margin-left: 4rem;
-  font-size: 1rem;
-  line-height: 1.4;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+  margin-left: 0;
+  padding-left: 0;
 }
 
 .semComentario {
   font-style: italic;
-  color: #aaa;
+  color: rgba(203, 213, 225, 0.7);
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+
   .title {
     font-size: 2rem;
+  }
+
+  .form {
+    padding: 1.5rem;
+  }
+
+  .card {
+    padding: 1.2rem;
+  }
+
+  .user {
+    gap: 0.8rem;
+  }
+
+  .nickname {
+    font-size: 1.1rem;
+  }
+
+  .comment {
+    font-size: 1rem;
   }
 }

@@ -8,10 +8,10 @@ class AuthService {
   getBaseURL() {
     if (typeof window !== "undefined" && window.location) {
       return window.location.hostname === "localhost"
-        ? "http://localhost:3001/api"
+        ? "http://localhost:5000/api"
         : "/api";
     }
-    return "http://localhost:3001/api";
+    return "http://localhost:5000/api";
   }
 
   // Login usando endpoint /users (baseado na sua API)

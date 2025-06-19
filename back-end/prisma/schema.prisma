@@ -39,7 +39,7 @@ model Game {
   developer   String?   // Desenvolvedor
   publisher   String?   // Publicadora
   platform    String[]  // Plataformas (PS5, Xbox, PC, etc.)
-  genreIds    String[]  @db.ObjectId
+  genres      String[]  // Array de strings dos gêneros
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -60,7 +60,6 @@ model Genre {
 model Review {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   rating    Int      // Validar 1-5
-  title     String?  // Título da review
   comment   String   // Conteúdo da review
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

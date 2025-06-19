@@ -4,63 +4,46 @@ import styles from "./SafeImage.module.css";
 const SafeImage = ({
   src,
   alt,
-  fallbackSrc = "/placeholder-game.jpg",
+  fallbackSrc = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDMwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTcwQzE2MC40NiAxNzAgMTY5IDE2MS40NiAxNjkgMTUxQzE2OSAxNDAuNTQgMTYwLjQ2IDEzMiAxNTAgMTMyQzEzOS41NCAxMzIgMTMxIDE0MC41NCAxMzEgMTUxQzEzMSAxNjEuNDYgMTM5LjU0IDE3MCAxNTAgMTcwWiIgZmlsbD0iIzk3QTNBRiIvPgo8cGF0aCBkPSJNMjEwIDI2OEMxODUgMjU4IDE0NSAyMDAgMTQ1IDI1OEMxNDUgMjU4IDkwIDI1OCA5MCAyNjhIMjEwWiIgZmlsbD0iIzk3QTNBRiIvPgo8dGV4dCB4PSIxNTAiIHk9IjMwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSIjOTdBM0FGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5KT0dPPC90ZXh0Pgo8L3N2Zz4K",
   className = "",
   ...props
 }) => {
-  const [imageSrc, setImageSrc] = useState(src);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const [imageSrc, setImageSrc] = useState(src || fallbackSrc);
+  const [isLoading, setIsLoading] = useState(!!src);
+  const [hasTriedFallback, setHasTriedFallback] = useState(false);
 
   const handleLoad = () => {
     setIsLoading(false);
-    setHasError(false);
   };
 
   const handleError = () => {
+    console.log("Erro ao carregar imagem:", imageSrc);
     setIsLoading(false);
-    setHasError(true);
 
-    // Se a imagem atual não é o fallback e ainda não tentamos o fallback
-    if (imageSrc !== fallbackSrc) {
+    // Se ainda não tentamos o fallback e a imagem atual não é o fallback
+    if (!hasTriedFallback && imageSrc !== fallbackSrc) {
+      console.log("Tentando fallback:", fallbackSrc);
+      setHasTriedFallback(true);
       setImageSrc(fallbackSrc);
-    } else {
-      // Se mesmo o fallback falhou, usar placeholder genérico
-      setImageSrc(
-        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDMwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTUwIDIwMEMxNjUuNDY0IDIwMCAxNzggMTg3LjQ2NCAxNzggMTcyQzE3OCAxNTYuNTM2IDE2NS40NjQgMTQ0IDE1MCAxNDRDMTM0LjUzNiAxNDQgMTIyIDE1Ni41MzYgMTIyIDE3MkMxMjIgMTg3LjQ2NCAxMzQuNTM2IDIwMCAxNTAgMjAwWiIgZmlsbD0iIzk3QTNBRiIvPgo8cGF0aCBkPSJNMjMxIDMwNkMxOTQgMjk0IDEzNCAxODUgMTM0IDI4M0MxMzQgMjgzIDY4IDI4MyA2OCAzMDZIMjMxWiIgZmlsbD0iIzk3QTNBRiIvPgo8L3N2Zz4K"
-      );
-    }
-  };
-
-  const isValidImage = (url) => {
-    // Verificar se é uma URL válida ou data URL
-    try {
-      if (url.startsWith("data:image/")) {
-        return true;
-      }
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  // Se a src não é válida, usar fallback imediatamente
-  React.useEffect(() => {
-    if (!src || !isValidImage(src)) {
-      setImageSrc(fallbackSrc);
-      setHasError(true);
-      setIsLoading(false);
-    } else {
-      setImageSrc(src);
-      setHasError(false);
       setIsLoading(true);
+    }
+  };
+  // Atualizar src quando a prop src mudar
+  React.useEffect(() => {
+    if (src && src !== imageSrc) {
+      setImageSrc(src);
+      setIsLoading(true);
+      setHasTriedFallback(false);
+    } else if (!src && imageSrc !== fallbackSrc) {
+      setImageSrc(fallbackSrc);
+      setIsLoading(false);
+      setHasTriedFallback(true);
     }
   }, [src, fallbackSrc]);
 
   return (
     <div className={`${styles.imageContainer} ${className}`}>
-      {isLoading && !hasError && (
+      {isLoading && (
         <div className={styles.loadingPlaceholder}>
           <div className={styles.spinner}></div>
         </div>
@@ -71,6 +54,7 @@ const SafeImage = ({
         onLoad={handleLoad}
         onError={handleError}
         className={`${styles.image} ${isLoading ? styles.loading : ""}`}
+        style={{ display: isLoading ? "none" : "block" }}
         {...props}
       />
     </div>

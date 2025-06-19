@@ -272,7 +272,7 @@
   font-weight: 800;
   text-align: center;
   margin-bottom: 4rem;
-  color: #1a202c;
+  color: #333;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -375,7 +375,7 @@
   font-weight: 900;
   line-height: 1;
   margin: 0 0 0.5rem 0;
-  background: linear-gradient(45deg, #1a202c, #4a5568);
+  background: white;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -826,7 +826,8 @@
 
 /* ===== REVIEWS RECENTES MELHORADAS ===== */
 .recentReviews {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background-color: rgb(30, 41, 59)
+;
   padding: 5rem 0;
   position: relative;
 }
@@ -1020,7 +1021,7 @@
 
 /* ===== FEATURES SECTION MELHORADA ===== */
 .features {
-  background: white;
+  background-color: rgb(30, 41, 59);
   padding: 5rem 0;
   position: relative;
 }

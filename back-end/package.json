@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "nodemon ./src/bin/server.js",
     "start": "node ./src/bin/server.js",
+    "restart": "npm run stop && npm start",
+    "stop": "taskkill /F /IM node.exe 2>nul || echo Nenhum processo Node encontrado",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",

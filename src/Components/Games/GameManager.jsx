@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import gamesService from "../../services/gamesService";
-import genresService from "../../services/genresService";
+import GAME_GENRES from "../../constants/gameGenres";
+import { GENRE_MAPPING } from "../../constants/genreMapping";
 import ImageUpload from "../Form/ImageUpload";
 import SafeImage from "../Helper/SafeImage";
 import styles from "./GameManager.module.css";
 
 const GameManager = () => {
   const [games, setGames] = useState([]); // Inicializar como array vazio
-  const [genres, setGenres] = useState([]); // Inicializar como array vazio
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null); // Adicionar estado de erro
   const [showForm, setShowForm] = useState(false);
@@ -17,12 +17,12 @@ const GameManager = () => {
     description: "",
     coverUrl: "",
     releaseDate: "",
-    genreIds: [],
+    genres: [],
+    developer: "",
   });
 
   useEffect(() => {
     loadGames();
-    loadGenres();
   }, []);
   const loadGames = async () => {
     setLoading(true);
@@ -46,26 +46,15 @@ const GameManager = () => {
     }
     setLoading(false);
   };
-  const loadGenres = async () => {
-    try {
-      const result = await genresService.getGenres();
-      if (result.success && Array.isArray(result.data)) {
-        setGenres(result.data);
-      } else {
-        console.error("Dados de gêneros inválidos:", result);
-        setGenres([]); // Garantir que genres sempre seja um array
-      }
-    } catch (error) {
-      console.error("Erro ao carregar gêneros:", error);
-      setGenres([]); // Em caso de erro, definir como array vazio
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Debug: verificar os dados antes de enviar
+      console.log("Dados do formulário sendo enviados:", formData);
+      console.log("Gêneros selecionados:", formData.genres);
+
       let result;
       if (editingGame) {
         result = await gamesService.updateGame(editingGame.id, formData);
@@ -89,7 +78,6 @@ const GameManager = () => {
     }
     setLoading(false);
   };
-
   const handleEdit = (game) => {
     setEditingGame(game);
     setFormData({
@@ -97,7 +85,8 @@ const GameManager = () => {
       description: game.description,
       coverUrl: game.coverUrl || "",
       releaseDate: game.releaseDate ? game.releaseDate.split("T")[0] : "",
-      genreIds: game.genreIds || [],
+      genres: game.genres || [],
+      developer: game.developer || "",
     });
     setShowForm(true);
   };
@@ -119,14 +108,13 @@ const GameManager = () => {
       setLoading(false);
     }
   };
-
   const resetForm = () => {
     setFormData({
       title: "",
       description: "",
       coverUrl: "",
       releaseDate: "",
-      genreIds: [],
+      genres: [],
     });
     setEditingGame(null);
     setShowForm(false);
@@ -139,14 +127,13 @@ const GameManager = () => {
       [name]: value,
     }));
   };
-
   const handleGenreChange = (e) => {
     const { value, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      genreIds: checked
-        ? [...prev.genreIds, value]
-        : prev.genreIds.filter((id) => id !== value),
+      genres: checked
+        ? [...prev.genres, value]
+        : prev.genres.filter((genre) => genre !== value),
     }));
   };
 
@@ -201,22 +188,32 @@ const GameManager = () => {
               value={formData.releaseDate}
               onChange={handleInputChange}
             />
-          </div>
+          </div>{" "}
           <div className={styles.formGroup}>
             <label>Gêneros</label>
             <div className={styles.genreList}>
-              {genres.map((genre) => (
-                <label key={genre.id} className={styles.checkboxLabel}>
+              {GAME_GENRES.map((genre) => (
+                <label key={genre} className={styles.checkboxLabel}>
                   <input
                     type="checkbox"
-                    value={genre.id}
-                    checked={formData.genreIds.includes(genre.id)}
+                    value={genre}
+                    checked={formData.genres.includes(genre)}
                     onChange={handleGenreChange}
                   />
-                  {genre.name}
+                  {genre}
                 </label>
               ))}
             </div>
+          </div>
+          <div className={styles.formGroup}>
+            <label>Desenvolvedor</label>
+            <input
+              type="text"
+              name="developer"
+              value={formData.developer}
+              onChange={handleInputChange}
+              required
+            />
           </div>
           <div className={styles.formActions}>
             <button type="submit" disabled={loading}>
@@ -254,29 +251,53 @@ const GameManager = () => {
                   />
                 </div>
                 <div className={styles.gameInfo}>
+                  {" "}
                   <h3>{game.title}</h3>
-                  <p>{game.description}</p>
-
-                  {Array.isArray(game.genreIds) && game.genreIds.length > 0 && (
-                    <div className={styles.gameGenres}>
-                      {game.genreIds.slice(0, 3).map((genreId, index) => {
-                        const genre = Array.isArray(genres)
-                          ? genres.find((g) => g.id === genreId)
-                          : null;
-                        return genre ? (
-                          <span key={index} className={styles.genreTag}>
-                            {genre.name || genreId}
-                          </span>
-                        ) : null;
-                      })}
-                      {game.genreIds.length > 3 && (
-                        <span className={styles.genreTag}>
-                          +{game.genreIds.length - 3}
-                        </span>
-                      )}
-                    </div>
-                  )}
-
+                  <p>{game.description}</p>{" "}
+                  {/* Exibir gêneros - suporte ao formato novo (genres) e antigo (genreIds) */}
+                  {(() => {
+                    // Novo formato: array de strings
+                    if (Array.isArray(game.genres) && game.genres.length > 0) {
+                      return (
+                        <div className={styles.gameGenres}>
+                          {game.genres.slice(0, 3).map((genre, index) => (
+                            <span key={index} className={styles.genreTag}>
+                              {genre}
+                            </span>
+                          ))}
+                          {game.genres.length > 3 && (
+                            <span className={styles.genreTag}>
+                              +{game.genres.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    }
+                    // Formato antigo: array de IDs (fallback com conversão para nomes)
+                    else if (
+                      Array.isArray(game.genreIds) &&
+                      game.genreIds.length > 0
+                    ) {
+                      const genreNames = game.genreIds.map(
+                        (id) => GENRE_MAPPING[id] || `ID:${id}`
+                      );
+                      return (
+                        <div className={styles.gameGenres}>
+                          {genreNames.slice(0, 3).map((genreName, index) => (
+                            <span key={index} className={styles.genreTag}>
+                              {genreName}
+                            </span>
+                          ))}
+                          {genreNames.length > 3 && (
+                            <span className={styles.genreTag}>
+                              +{genreNames.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                   {game.releaseDate && (
                     <p
                       style={{
@@ -289,7 +310,6 @@ const GameManager = () => {
                       {new Date(game.releaseDate).toLocaleDateString("pt-BR")}
                     </p>
                   )}
-
                   <div className={styles.gameActions}>
                     <button onClick={() => handleEdit(game)}>✏️ Editar</button>
                     <button onClick={() => handleDelete(game)}>

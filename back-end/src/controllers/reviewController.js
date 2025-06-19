@@ -1,67 +1,82 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // Criar nova review
 export const createReview = async (req, res) => {
   try {
+    console.log("🚀 Recebendo dados para criar review:", req.body);
     const { rating, comment, userId, gameId } = req.body;
 
     // Validação básica
     if (!rating || !comment || !userId || !gameId) {
+      console.log("❌ Dados obrigatórios faltando:", {
+        rating,
+        comment,
+        userId,
+        gameId,
+      });
       return res.status(400).json({
-        error: 'Rating, comment, userId e gameId são obrigatórios'
+        error: "Rating, comment, userId e gameId são obrigatórios",
       });
     }
 
     if (rating < 1 || rating > 5) {
+      console.log("❌ Rating inválido:", rating);
       return res.status(400).json({
-        error: 'Rating deve estar entre 1 e 5'
+        error: "Rating deve estar entre 1 e 5",
       });
     }
 
     // Verificar se o usuário já fez review para este jogo
+    console.log("🔍 Verificando se já existe review do usuário:", {
+      userId,
+      gameId,
+    });
     const existingReview = await prisma.review.findFirst({
       where: {
         userId,
-        gameId
-      }
+        gameId,
+      },
     });
 
     if (existingReview) {
+      console.log("❌ Usuário já fez review para este jogo");
       return res.status(400).json({
-        error: 'Usuário já fez review para este jogo'
+        error: "Usuário já fez review para este jogo",
       });
     }
 
+    console.log("✅ Criando nova review no banco...");
     const review = await prisma.review.create({
       data: {
         rating: parseInt(rating),
         comment,
         userId,
-        gameId
+        gameId,
       },
       include: {
         user: {
           select: {
             id: true,
             name: true,
-            avatarUrl: true
-          }
+            avatarUrl: true,
+          },
         },
         game: {
           select: {
             id: true,
             title: true,
-            coverUrl: true
-          }
-        }
-      }
+            coverUrl: true,
+          },
+        },
+      },
     });
 
+    console.log("✅ Review criada com sucesso:", review);
     res.status(201).json(review);
   } catch (error) {
-    console.error('Erro ao criar review:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    console.error("❌ Erro ao criar review:", error);
+    res.status(500).json({ error: "Erro interno do servidor" });
   }
 };
 
@@ -69,11 +84,20 @@ export const createReview = async (req, res) => {
 export const getAllReviews = async (req, res) => {
   try {
     const { page = 1, limit = 10, gameId, userId } = req.query;
+    console.log("🔍 Buscando reviews com filtros:", {
+      page,
+      limit,
+      gameId,
+      userId,
+    });
+
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const where = {};
     if (gameId) where.gameId = gameId;
     if (userId) where.userId = userId;
+
+    console.log("📋 Filtros aplicados:", where);
 
     const reviews = await prisma.review.findMany({
       where,
@@ -84,23 +108,31 @@ export const getAllReviews = async (req, res) => {
           select: {
             id: true,
             name: true,
-            avatarUrl: true
-          }
+            avatarUrl: true,
+          },
         },
         game: {
           select: {
             id: true,
             title: true,
-            coverUrl: true
-          }
-        }
+            coverUrl: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     const total = await prisma.review.count({ where });
+
+    console.log(
+      "✅ Reviews encontradas:",
+      reviews.length,
+      "de",
+      total,
+      "total"
+    );
 
     res.json({
       reviews,
@@ -108,19 +140,19 @@ export const getAllReviews = async (req, res) => {
         page: parseInt(page),
         limit: parseInt(limit),
         total,
-        pages: Math.ceil(total / parseInt(limit))
-      }
+        pages: Math.ceil(total / parseInt(limit)),
+      },
     });
   } catch (error) {
-    console.error('Erro ao buscar reviews:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    console.error("❌ Erro ao buscar reviews:", error);
+    res.status(500).json({ error: "Erro interno do servidor" });
   }
 };
 
 // Atualizar o método de busca de review por ID para incluir comentários e reações
 export const getReviewById = async (req, res) => {
   const { id } = req.params;
-  
+
   try {
     const review = await prisma.review.findUnique({
       where: { id },
@@ -130,8 +162,8 @@ export const getReviewById = async (req, res) => {
             id: true,
             name: true,
             username: true,
-            avatarUrl: true
-          }
+            avatarUrl: true,
+          },
         },
         game: true,
         comments: {
@@ -141,32 +173,32 @@ export const getReviewById = async (req, res) => {
                 id: true,
                 name: true,
                 username: true,
-                avatarUrl: true
-              }
+                avatarUrl: true,
+              },
             },
-            reactions: true
+            reactions: true,
           },
-          orderBy: { createdAt: 'desc' }
+          orderBy: { createdAt: "desc" },
         },
-        reactions: true
-      }
+        reactions: true,
+      },
     });
-    
+
     if (!review) {
-      return res.status(404).json({ error: 'Review não encontrada' });
+      return res.status(404).json({ error: "Review não encontrada" });
     }
-    
+
     // Adicionar contagem de reações
     const reactionSummary = {
-      likes: review.reactions.filter(r => r.type === 'LIKE').length,
-      dislikes: review.reactions.filter(r => r.type === 'DISLIKE').length,
-      total: review.reactions.length
+      likes: review.reactions.filter((r) => r.type === "LIKE").length,
+      dislikes: review.reactions.filter((r) => r.type === "DISLIKE").length,
+      total: review.reactions.length,
     };
-    
+
     res.status(200).json({
       ...review,
       reactionSummary,
-      commentCount: review.comments.length
+      commentCount: review.comments.length,
     });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -176,11 +208,20 @@ export const getReviewById = async (req, res) => {
 // Atualizar review
 export const updateReview = async (req, res) => {
   const { id } = req.params;
-  const { content, rating } = req.body;
+  const { comment, rating } = req.body; // Mudado de 'content' para 'comment'
   try {
     const review = await prisma.review.update({
       where: { id },
-      data: { content, rating }
+      data: { comment, rating }, // Mudado de 'content' para 'comment'
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+          },
+        },
+      },
     });
     res.status(200).json(review);
   } catch (error) {
@@ -207,8 +248,8 @@ export const getPopularReviews = async (req, res) => {
     const popularReviews = await prisma.review.findMany({
       where: {
         rating: {
-          gte: 4
-        }
+          gte: 4,
+        },
       },
       take: parseInt(limit),
       include: {
@@ -216,31 +257,31 @@ export const getPopularReviews = async (req, res) => {
           select: {
             id: true,
             name: true,
-            avatarUrl: true
-          }
+            avatarUrl: true,
+          },
         },
         game: {
           select: {
             id: true,
             title: true,
-            coverUrl: true
-          }
-        }
+            coverUrl: true,
+          },
+        },
       },
       orderBy: [
         {
-          rating: 'desc'
+          rating: "desc",
         },
         {
-          createdAt: 'desc'
-        }
-      ]
+          createdAt: "desc",
+        },
+      ],
     });
 
     res.json(popularReviews);
   } catch (error) {
-    console.error('Erro ao buscar reviews populares:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    console.error("Erro ao buscar reviews populares:", error);
+    res.status(500).json({ error: "Erro interno do servidor" });
   }
 };
 
@@ -248,15 +289,15 @@ export const getPopularReviews = async (req, res) => {
 export const getRecentReviews = async (req, res) => {
   try {
     const { limit = 10, days = 7 } = req.query;
-    
+
     const daysAgo = new Date();
     daysAgo.setDate(daysAgo.getDate() - parseInt(days));
 
     const reviews = await prisma.review.findMany({
       where: {
         createdAt: {
-          gte: daysAgo
-        }
+          gte: daysAgo,
+        },
       },
       take: parseInt(limit),
       include: {
@@ -264,29 +305,29 @@ export const getRecentReviews = async (req, res) => {
           select: {
             id: true,
             name: true,
-            avatarUrl: true
-          }
+            avatarUrl: true,
+          },
         },
         game: {
           select: {
             id: true,
             title: true,
-            coverUrl: true
-          }
-        }
+            coverUrl: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     res.json({
       reviews,
       period: `Últimos ${days} dias`,
-      total: reviews.length
+      total: reviews.length,
     });
   } catch (error) {
-    console.error('Erro ao buscar reviews recentes:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    console.error("Erro ao buscar reviews recentes:", error);
+    res.status(500).json({ error: "Erro interno do servidor" });
   }
 };

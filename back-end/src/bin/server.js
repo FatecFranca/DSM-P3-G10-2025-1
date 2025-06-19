@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 // Importar rotas
 import reviewRoutes from "../routes/reviewRoutes.js";
 import gameRoutes from "../routes/gameRoutes.js";
-import genreRoutes from "../routes/genreRoutes.js";
+// import genreRoutes from "../routes/genreRoutes.js"; // REMOVIDO - gêneros agora são strings
 import userRoutes from "../routes/userRoutes.js";
 // Novas rotas
 import commentRoutes from "../routes/commentRoutes.js";
@@ -115,7 +115,7 @@ app.get("/health", (req, res) => {
 // Configurar rotas da API
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/games", gameRoutes);
-app.use("/api/genres", genreRoutes);
+// app.use("/api/genres", genreRoutes); // REMOVIDO - gêneros agora são strings
 app.use("/api/users", userRoutes);
 // Adicionar novas rotas
 app.use("/api/comments", commentRoutes);

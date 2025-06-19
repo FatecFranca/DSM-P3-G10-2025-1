@@ -31,11 +31,7 @@ class GamesService {
       if (!response.ok) {
         throw new Error(`Erro ${response.status}: ${response.statusText}`);
       }
-
       const data = await response.json();
-
-      // Debug: verificar o formato dos dados recebidos
-      console.log("Dados recebidos do backend:", data);
 
       // Garantir que sempre retornamos um array
       const gamesArray = Array.isArray(data)

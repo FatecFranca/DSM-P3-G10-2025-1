@@ -6,7 +6,9 @@ import styles from "./Header.module.css";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [mobileSearchQuery, setMobileSearchQuery] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const { authenticated, user, logout } = useAuthContext();
   const navigate = useNavigate();
@@ -19,18 +21,48 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Fechar menu ao clicar fora
+  // Fechar menu mobile ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isUserMenuOpen && !event.target.closest(`.${styles.userSection}`)) {
-        setIsUserMenuOpen(false);
+      if (
+        isMobileMenuOpen &&
+        !event.target.closest(`.${styles.mobileMenu}`) &&
+        !event.target.closest(`.${styles.mobileMenuButton}`)
+      ) {
+        setIsMobileMenuOpen(false);
+      }
+      if (
+        isUserDropdownOpen &&
+        !event.target.closest(`.${styles.userDropdown}`)
+      ) {
+        setIsUserDropdownOpen(false);
       }
     };
 
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
-  }, [isUserMenuOpen]);
+  }, [isMobileMenuOpen, isUserDropdownOpen]);
+
+  // Prevenir scroll quando menu mobile estiver aberto
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
+  const handleMobileSearch = (e) => {
+    e.preventDefault();
+    if (mobileSearchQuery.trim()) {
+      navigate(`/buscar?q=${encodeURIComponent(mobileSearchQuery.trim())}`);
+      setMobileSearchQuery("");
+      setIsMobileMenuOpen(false);
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -40,188 +72,278 @@ const Header = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    setIsUserMenuOpen(false);
-    navigate("/");
-  };
-
-  const toggleUserMenu = (e) => {
-    e.stopPropagation();
-    setIsUserMenuOpen(!isUserMenuOpen);
-  };
-
-  const closeUserMenu = () => {
-    setIsUserMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setIsMobileMenuOpen(false);
+      navigate("/");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
   };
 
   return (
-    <header className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
-      <div className={styles.container}>
-        {/* Logo */}
-        <Link to="/" className={styles.logo}>
-          <span className={styles.logoIcon}>🎮</span>
-          <span className={styles.logoText}>GameReviews</span>
-        </Link>
-
-        {/* Navegação */}
-        <nav className={styles.nav}>
-          <Link to="/jogos" className={styles.navLink}>
-            <span className={styles.navIcon}>#</span>
-            Jogos
+    <>
+      <header
+        className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}
+      >
+        <div className={styles.container}>
+          {" "}
+          {/* Logo */}
+          <Link to="/" className={styles.logo}>
+            <span className={styles.logoIcon}>🎮</span>
+            <span className={styles.logoText}>GameReviews</span>
           </Link>
-          <Link to="/reviews" className={styles.navLink}>
-            <span className={styles.navIcon}>📝</span>
-            Reviews
-          </Link>
-          <Link to="/generos" className={styles.navLink}>
-            <span className={styles.navIcon}>📊</span>
-            Gêneros
-          </Link>
-        </nav>
-
-        {/* Busca */}
-        <form onSubmit={handleSearch} className={styles.searchForm}>
-          <input
-            type="text"
-            placeholder="Buscar jogos, reviews..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className={styles.searchInput}
-          />
-          <button type="submit" className={styles.searchButton}>
-            <span className={styles.searchIcon}>🔍</span>
-          </button>
-        </form>
-
-        {/* Área do usuário */}
-        <div className={styles.userSection}>
-          {authenticated ? (
-            <div className={styles.userDropdown}>
-              <button
-                onClick={toggleUserMenu}
-                className={styles.userButton}
-                aria-expanded={isUserMenuOpen}
-              >
-                {user?.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={`Avatar de ${user.name}`}
-                    className={styles.userAvatar}
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                      e.target.nextSibling.style.display = "flex";
-                    }}
+          {/* Navegação Desktop */}
+          <nav className={styles.nav}>
+            <ul className={styles.navList}>
+              <li>
+                <Link to="/" className={styles.navLink}>
+                  Início
+                </Link>
+              </li>
+              <li>
+                <Link to="/jogos" className={styles.navLink}>
+                  Jogos
+                </Link>
+              </li>{" "}
+              <li>
+                <Link to="/reviews" className={styles.navLink}>
+                  Reviews
+                </Link>
+              </li>
+              {authenticated && (
+                <li>
+                  <Link to="/admin/jogos" className={styles.navLink}>
+                    Admin Jogos
+                  </Link>
+                </li>
+              )}
+            </ul>
+          </nav>
+          {/* Busca Desktop */}
+          <form onSubmit={handleSearch} className={styles.searchForm}>
+            <input
+              type="text"
+              placeholder="Buscar jogos, reviews..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={styles.searchInput}
+            />
+            <button type="submit" className={styles.searchButton}>
+              🔍
+            </button>
+          </form>{" "}
+          {/* Área do usuário Desktop */}
+          <div className={styles.userSection}>
+            {authenticated ? (
+              <div className={styles.userDropdown}>
+                <button
+                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                  className={styles.userButton}
+                >
+                  <UserIcon
+                    initial={user?.name?.charAt(0)?.toUpperCase() || "U"}
+                    size="medium"
                   />
-                ) : null}
-                <UserIcon
-                  initial={user?.name?.charAt(0)?.toUpperCase() || "U"}
-                  size="small"
-                  className={`${styles.userIcon} ${
-                    user?.avatarUrl ? styles.hidden : ""
-                  }`}
-                />
-                <span className={styles.dropdownArrow}>
-                  {isUserMenuOpen ? "▲" : "▼"}
-                </span>
-              </button>
+                  <span>{user?.name}</span>
+                  <span className={styles.dropdownArrow}>▼</span>
+                </button>
 
-              {/* Menu dropdown */}
-              {isUserMenuOpen && (
-                <div className={styles.userMenu}>
-                  <div className={styles.userMenuHeader}>
-                    <div className={styles.userMenuAvatar}>
-                      {user?.avatarUrl ? (
-                        <img
-                          src={user.avatarUrl}
-                          alt={`Avatar de ${user.name}`}
-                          className={styles.menuAvatar}
-                        />
-                      ) : (
-                        <UserIcon
-                          initial={user?.name?.charAt(0)?.toUpperCase() || "U"}
-                          size="medium"
-                        />
-                      )}
-                    </div>
-                    <div className={styles.userMenuInfo}>
-                      <h4 className={styles.userName}>
-                        {user?.name || "Usuário"}
-                      </h4>
-                      <p className={styles.userEmail}>{user?.email}</p>
-                    </div>
-                  </div>
-
-                  <div className={styles.userMenuDivider}></div>
-
-                  <nav className={styles.userMenuNav}>
+                {isUserDropdownOpen && (
+                  <div className={styles.dropdownMenu}>
                     <Link
                       to="/conta"
-                      className={styles.userMenuItem}
-                      onClick={closeUserMenu}
+                      className={styles.dropdownItem}
+                      onClick={() => setIsUserDropdownOpen(false)}
                     >
-                      <span className={styles.menuIcon}>👤</span>
-                      <span>Meu Perfil</span>
+                      👤 Meu Perfil
                     </Link>
                     <Link
                       to="/conta/reviews"
-                      className={styles.userMenuItem}
-                      onClick={closeUserMenu}
+                      className={styles.dropdownItem}
+                      onClick={() => setIsUserDropdownOpen(false)}
                     >
-                      <span className={styles.menuIcon}>📝</span>
-                      <span>Minhas Reviews</span>
+                      📝 Minhas Reviews
                     </Link>
-                    <Link
-                      to="/conta/favoritos"
-                      className={styles.userMenuItem}
-                      onClick={closeUserMenu}
+                    {user?.role === "admin" && (
+                      <Link
+                        to="/admin/jogos"
+                        className={styles.dropdownItem}
+                        onClick={() => setIsUserDropdownOpen(false)}
+                      >
+                        ⚙️ Admin Jogos
+                      </Link>
+                    )}
+                    <button
+                      onClick={handleLogout}
+                      className={styles.dropdownItem}
                     >
-                      <span className={styles.menuIcon}>❤️</span>
-                      <span>Jogos Favoritos</span>
-                    </Link>{" "}
-                    <Link
-                      to="/conta/configuracoes"
-                      className={styles.userMenuItem}
-                      onClick={closeUserMenu}
-                    >
-                      <span className={styles.menuIcon}>⚙️</span>
-                      <span>Configurações</span>
-                    </Link>
-                    <Link
-                      to="/admin/jogos"
-                      className={styles.userMenuItem}
-                      onClick={closeUserMenu}
-                    >
-                      <span className={styles.menuIcon}>🎮</span>
-                      <span>Gerenciar Jogos</span>
-                    </Link>
-                  </nav>
+                      🚪 Sair
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className={styles.authButtons}>
+                <Link to="/login" className={styles.loginButton}>
+                  Entrar
+                </Link>
+                <Link to="/register" className={styles.registerButton}>
+                  Cadastrar
+                </Link>
+              </div>
+            )}
+          </div>
+          {/* Botão do Menu Mobile */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={styles.mobileMenuButton}
+            aria-label="Menu"
+          >
+            <span className={styles.hamburger}></span>{" "}
+            <span className={styles.hamburger}></span>
+            <span className={styles.hamburger}></span>
+          </button>
+        </div>
+      </header>
+      {/* Overlay do menu mobile - FORA do header */}
+      {isMobileMenuOpen && (
+        <div
+          className={`${styles.mobileMenuOverlay} ${styles.open}`}
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}{" "}
+      {/* Menu mobile - FORA do header */}
+      <div
+        className={`${styles.mobileMenu} ${
+          isMobileMenuOpen ? styles.open : ""
+        }`}
+      >
+        <button
+          className={styles.mobileMenuClose}
+          onClick={() => setIsMobileMenuOpen(false)}
+          aria-label="Fechar menu"
+        >
+          ✕
+        </button>
 
-                  <div className={styles.userMenuDivider}></div>
+        {/* Busca mobile */}
+        <form onSubmit={handleMobileSearch} className={styles.mobileSearchForm}>
+          <input
+            type="text"
+            placeholder="Buscar jogos, reviews..."
+            value={mobileSearchQuery}
+            onChange={(e) => setMobileSearchQuery(e.target.value)}
+            className={styles.searchInput}
+          />
+          <button type="submit" className={styles.searchButton}>
+            🔍
+          </button>
+        </form>
 
-                  <button
-                    onClick={handleLogout}
-                    className={styles.logoutMenuItem}
-                  >
-                    <span className={styles.menuIcon}>🚪</span>
-                    <span>Sair</span>
-                  </button>
+        {/* Navegação mobile */}
+        <ul className={styles.mobileNavList}>
+          <li>
+            <Link
+              to="/"
+              className={styles.mobileNavLink}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <span>🏠</span>
+              Início
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/jogos"
+              className={styles.mobileNavLink}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <span>🎮</span>
+              Jogos
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/reviews"
+              className={styles.mobileNavLink}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <span>📝</span>
+              Reviews{" "}
+            </Link>
+          </li>
+          {authenticated && (
+            <li>
+              <Link
+                to="/admin/jogos"
+                className={styles.mobileNavLink}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <span>⚙️</span>
+                Admin Jogos
+              </Link>
+            </li>
+          )}
+        </ul>
+
+        {/* Seção do usuário mobile */}
+        <div className={styles.mobileUserSection}>
+          {authenticated ? (
+            <div className={styles.mobileUserInfo}>
+              <div className={styles.mobileUserProfile}>
+                <UserIcon
+                  initial={user?.name?.charAt(0)?.toUpperCase() || "U"}
+                  size="medium"
+                />
+                <div>
+                  <p className={styles.mobileUserName}>{user?.name}</p>
+                  <p className={styles.mobileUserEmail}>{user?.email}</p>
                 </div>
-              )}
+              </div>
+              <Link
+                to="/conta"
+                className={styles.mobileNavLink}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <span>👤</span>
+                Meu Perfil
+              </Link>
+              <Link
+                to="/conta/reviews"
+                className={styles.mobileNavLink}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <span>📝</span>
+                Minhas Reviews
+              </Link>
+              <button onClick={handleLogout} className={styles.mobileNavLink}>
+                <span>🚪</span>
+                Sair
+              </button>
             </div>
           ) : (
-            <div className={styles.authButtons}>
-              <Link to="/login" className={styles.loginButton}>
+            <div className={styles.mobileAuthButtons}>
+              <Link
+                to="/login"
+                className={styles.mobileLoginButton}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
                 Entrar
               </Link>
-              <Link to="/register" className={styles.registerButton}>
+              <Link
+                to="/register"
+                className={styles.mobileRegisterButton}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
                 Cadastrar
               </Link>
             </div>
           )}
         </div>
       </div>
-    </header>
+    </>
   );
 };
 

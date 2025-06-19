@@ -5,8 +5,9 @@ import Header from "./Components/Header/Header";
 import Home from "./Components/Home/Home"; // CORRIGIDO: adicionar /Home
 import Login from "./Components/Login/Login";
 import User from "./Components/User/User";
-import Reviews from "./Components/Reviews/Reviews"; // NOVO: Importar Reviews
 import GameManager from "./Components/Games/GameManager"; // NOVO: Importar GameManager
+import GamesList from "./Components/Games/GamesList"; // NOVO: Importar GamesList (catálogo)
+import GamePage from "./Components/Games/GamePage"; // NOVO: Importar GamePage (página individual)
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import Footer from "./Components/Footer/Footer";
 
@@ -24,6 +25,7 @@ function App() {
         >
           <Header />
           <main style={{ paddingTop: "70px", flex: "1" }}>
+            {" "}
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login initialMode="login" />} />
@@ -43,7 +45,6 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
               {/* NOVO: Rota para gerenciar jogos (protegida) */}
               <Route
                 path="/admin/jogos"
@@ -52,69 +53,11 @@ function App() {
                     <GameManager />
                   </ProtectedRoute>
                 }
-              />
-
-              <Route
-                path="/jogos"
-                element={
-                  <div
-                    style={{
-                      padding: "4rem 2rem",
-                      textAlign: "center",
-                      minHeight: "60vh",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <h1
-                      style={{
-                        color: "#ff4f59",
-                        marginBottom: "1rem",
-                        fontSize: "3rem",
-                      }}
-                    >
-                      🎮
-                    </h1>
-                    <h2>Catálogo de Jogos</h2>
-                    <p style={{ color: "#666" }}>Em desenvolvimento...</p>
-                  </div>
-                }
-              />
-
-              {/* ATUALIZADO: Rota Reviews com componente real */}
-              <Route path="/reviews" element={<Reviews />} />
-
-              <Route
-                path="/generos"
-                element={
-                  <div
-                    style={{
-                      padding: "4rem 2rem",
-                      textAlign: "center",
-                      minHeight: "60vh",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <h1
-                      style={{
-                        color: "#ff4f59",
-                        marginBottom: "1rem",
-                        fontSize: "3rem",
-                      }}
-                    >
-                      📊
-                    </h1>
-                    <h2>Gêneros de Jogos</h2>
-                    <p style={{ color: "#666" }}>Em desenvolvimento...</p>
-                  </div>
-                }
-              />
-
+              />{" "}
+              {/* NOVO: Rota para página individual do jogo */}
+              <Route path="/jogo/:id" element={<GamePage />} />
+              {/* NOVO: Rota para catálogo de jogos */}{" "}
+              <Route path="/jogos" element={<GamesList />} />
               <Route
                 path="*"
                 element={

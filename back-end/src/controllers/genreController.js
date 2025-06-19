@@ -1,4 +1,4 @@
-import prisma from '../database/client.js';
+import prisma from "../database/client.js";
 
 export const createGenre = async (req, res) => {
   try {
@@ -7,32 +7,32 @@ export const createGenre = async (req, res) => {
     // Validação básica
     if (!name) {
       return res.status(400).json({
-        error: 'Nome é obrigatório'
+        error: "Nome é obrigatório",
       });
     }
 
     // Verificar se o gênero já existe
     const existingGenre = await prisma.genre.findUnique({
-      where: { name }
+      where: { name },
     });
 
     if (existingGenre) {
       return res.status(400).json({
-        error: 'Gênero já existe'
+        error: "Gênero já existe",
       });
     }
 
     const genre = await prisma.genre.create({
       data: {
         name,
-        description
-      }
+        description,
+      },
     });
 
     res.status(201).json(genre);
   } catch (error) {
-    console.error('Erro ao criar gênero:', error);
-    res.status(500).json({ error: 'Erro ao criar gênero' });
+    console.error("Erro ao criar gênero:", error);
+    res.status(500).json({ error: "Erro ao criar gênero" });
   }
 };
 
@@ -40,14 +40,14 @@ export const getAllGenres = async (req, res) => {
   try {
     const genres = await prisma.genre.findMany({
       orderBy: {
-        name: 'asc'
-      }
+        name: "asc",
+      },
     });
 
     res.json(genres);
   } catch (error) {
-    console.error('Erro ao buscar gêneros:', error);
-    res.status(500).json({ error: 'Erro ao buscar gêneros' });
+    console.error("Erro ao buscar gêneros:", error);
+    res.status(500).json({ error: "Erro ao buscar gêneros" });
   }
 };
 export const getGenreById = async (req, res) => {
@@ -56,52 +56,50 @@ export const getGenreById = async (req, res) => {
 
     const genre = await prisma.genre.findUnique({
       where: { id },
-      include: {
-        _count: {
-          select: { games: true }
-        }
-      }
     });
 
     if (!genre) {
-      return res.status(404).json({ error: 'Gênero não encontrado' });
+      return res.status(404).json({ error: "Gênero não encontrado" });
     }
 
     // Buscar jogos deste gênero
     const games = await prisma.game.findMany({
       where: {
         genreIds: {
-          has: id
-        }
+          has: id,
+        },
       },
       include: {
         reviews: {
           select: {
-            rating: true
-          }
-        }
-      }
+            rating: true,
+          },
+        },
+      },
     });
 
-    const gamesWithRatings = games.map(game => {
-      const avgRating = game.reviews.length > 0
-        ? game.reviews.reduce((sum, review) => sum + review.rating, 0) / game.reviews.length
-        : 0;
-      
+    const gamesWithRatings = games.map((game) => {
+      const avgRating =
+        game.reviews.length > 0
+          ? game.reviews.reduce((sum, review) => sum + review.rating, 0) /
+            game.reviews.length
+          : 0;
+
       return {
         ...game,
         averageRating: Math.round(avgRating * 10) / 10,
-        reviews: undefined
+        reviews: undefined,
       };
     });
 
     res.json({
       ...genre,
-      games: gamesWithRatings
+      gameCount: games.length,
+      games: gamesWithRatings,
     });
   } catch (error) {
-    console.error('Erro ao buscar gênero:', error);
-    res.status(500).json({ error: 'Erro ao buscar gênero' });
+    console.error("Erro ao buscar gênero:", error);
+    res.status(500).json({ error: "Erro ao buscar gênero" });
   }
 };
 
@@ -109,66 +107,69 @@ export const getGenreById = async (req, res) => {
 export const getGenreBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    
+
     // Converter slug para nome (assumindo que slug é o nome em lowercase com hífens)
-    const genreName = slug.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+    const genreName = slug
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
 
     const genre = await prisma.genre.findFirst({
-      where: { 
+      where: {
         name: {
           equals: genreName,
-          mode: 'insensitive'
-        }
+          mode: "insensitive",
+        },
       },
       include: {
         _count: {
-          select: { games: true }
-        }
-      }
+          select: { games: true },
+        },
+      },
     });
 
     if (!genre) {
-      return res.status(404).json({ error: 'Gênero não encontrado' });
+      return res.status(404).json({ error: "Gênero não encontrado" });
     }
 
     // Buscar jogos deste gênero
     const games = await prisma.game.findMany({
       where: {
         genreIds: {
-          has: genre.id
-        }
+          has: genre.id,
+        },
       },
       include: {
         reviews: {
           select: {
-            rating: true
-          }
-        }
-      }
+            rating: true,
+          },
+        },
+      },
     });
 
-    const gamesWithRatings = games.map(game => {
-      const avgRating = game.reviews.length > 0
-        ? game.reviews.reduce((sum, review) => sum + review.rating, 0) / game.reviews.length
-        : 0;
-      
+    const gamesWithRatings = games.map((game) => {
+      const avgRating =
+        game.reviews.length > 0
+          ? game.reviews.reduce((sum, review) => sum + review.rating, 0) /
+            game.reviews.length
+          : 0;
+
       return {
         ...game,
         averageRating: Math.round(avgRating * 10) / 10,
-        reviews: undefined
+        reviews: undefined,
       };
     });
 
     res.json({
       ...genre,
       slug,
-      games: gamesWithRatings
+      games: gamesWithRatings,
     });
   } catch (error) {
-    console.error('Erro ao buscar gênero por slug:', error);
-    res.status(500).json({ error: 'Erro ao buscar gênero' });
+    console.error("Erro ao buscar gênero por slug:", error);
+    res.status(500).json({ error: "Erro ao buscar gênero" });
   }
 };
 
@@ -179,45 +180,45 @@ export const updateGenre = async (req, res) => {
 
     if (!name) {
       return res.status(400).json({
-        error: 'Nome é obrigatório'
+        error: "Nome é obrigatório",
       });
     }
 
     // Verificar se o gênero existe
     const existingGenre = await prisma.genre.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!existingGenre) {
-      return res.status(404).json({ error: 'Gênero não encontrado' });
+      return res.status(404).json({ error: "Gênero não encontrado" });
     }
 
     // Verificar se o novo nome já existe (exceto para o próprio gênero)
     const nameExists = await prisma.genre.findFirst({
       where: {
         name,
-        NOT: { id }
-      }
+        NOT: { id },
+      },
     });
 
     if (nameExists) {
       return res.status(400).json({
-        error: 'Nome já está em uso'
+        error: "Nome já está em uso",
       });
     }
 
     const updatedGenre = await prisma.genre.update({
       where: { id },
-      data: { name, description }
+      data: { name, description },
     });
 
     res.json(updatedGenre);
   } catch (error) {
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Gênero não encontrado' });
+    if (error.code === "P2025") {
+      return res.status(404).json({ error: "Gênero não encontrado" });
     }
-    console.error('Erro ao atualizar gênero:', error);
-    res.status(500).json({ error: 'Erro ao atualizar gênero' });
+    console.error("Erro ao atualizar gênero:", error);
+    res.status(500).json({ error: "Erro ao atualizar gênero" });
   }
 };
 
@@ -229,37 +230,37 @@ export const deleteGenre = async (req, res) => {
     const gamesCount = await prisma.game.count({
       where: {
         genreIds: {
-          has: id
-        }
-      }
+          has: id,
+        },
+      },
     });
 
     if (gamesCount > 0) {
-      return res.status(400).json({ 
-        error: 'Não é possível excluir gênero que possui jogos associados' 
+      return res.status(400).json({
+        error: "Não é possível excluir gênero que possui jogos associados",
       });
     }
 
     // Verificar se o gênero existe
     const existingGenre = await prisma.genre.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!existingGenre) {
-      return res.status(404).json({ error: 'Gênero não encontrado' });
+      return res.status(404).json({ error: "Gênero não encontrado" });
     }
 
     await prisma.genre.delete({
-      where: { id }
+      where: { id },
     });
 
     res.status(204).send();
   } catch (error) {
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Gênero não encontrado' });
+    if (error.code === "P2025") {
+      return res.status(404).json({ error: "Gênero não encontrado" });
     }
-    console.error('Erro ao deletar gênero:', error);
-    res.status(500).json({ error: 'Erro ao deletar gênero' });
+    console.error("Erro ao deletar gênero:", error);
+    res.status(500).json({ error: "Erro ao deletar gênero" });
   }
 };
 
@@ -271,9 +272,9 @@ export const getPopularGenres = async (req, res) => {
     const genres = await prisma.genre.findMany({
       include: {
         _count: {
-          select: { games: true }
-        }
-      }
+          select: { games: true },
+        },
+      },
     });
 
     // Ordenar por número de jogos (descendente)
@@ -283,8 +284,8 @@ export const getPopularGenres = async (req, res) => {
 
     res.json(popularGenres);
   } catch (error) {
-    console.error('Erro ao buscar gêneros populares:', error);
-    res.status(500).json({ error: 'Erro ao buscar gêneros populares' });
+    console.error("Erro ao buscar gêneros populares:", error);
+    res.status(500).json({ error: "Erro ao buscar gêneros populares" });
   }
 };
 
@@ -294,9 +295,9 @@ export const getGenreStats = async (req, res) => {
     const genres = await prisma.genre.findMany({
       include: {
         _count: {
-          select: { games: true }
-        }
-      }
+          select: { games: true },
+        },
+      },
     });
 
     // Calcular estatísticas para cada gênero
@@ -306,47 +307,50 @@ export const getGenreStats = async (req, res) => {
         const games = await prisma.game.findMany({
           where: {
             genreIds: {
-              has: genre.id
-            }
+              has: genre.id,
+            },
           },
           include: {
             reviews: {
               select: {
-                rating: true
-              }
-            }
-          }
+                rating: true,
+              },
+            },
+          },
         });
 
         // Calcular média de rating dos jogos do gênero
         let totalRatings = 0;
         let totalReviews = 0;
 
-        games.forEach(game => {
+        games.forEach((game) => {
           if (game.reviews.length > 0) {
-            const gameAvg = game.reviews.reduce((sum, review) => sum + review.rating, 0) / game.reviews.length;
+            const gameAvg =
+              game.reviews.reduce((sum, review) => sum + review.rating, 0) /
+              game.reviews.length;
             totalRatings += gameAvg;
             totalReviews += game.reviews.length;
           }
         });
 
-        const averageRating = games.length > 0 ? totalRatings / games.length : 0;
+        const averageRating =
+          games.length > 0 ? totalRatings / games.length : 0;
 
         return {
           ...genre,
           statistics: {
             totalGames: games.length,
             totalReviews,
-            averageRating: Math.round(averageRating * 10) / 10
-          }
+            averageRating: Math.round(averageRating * 10) / 10,
+          },
         };
       })
     );
 
     res.json(genreStats);
   } catch (error) {
-    console.error('Erro ao buscar estatísticas dos gêneros:', error);
-    res.status(500).json({ error: 'Erro ao buscar estatísticas dos gêneros' });
+    console.error("Erro ao buscar estatísticas dos gêneros:", error);
+    res.status(500).json({ error: "Erro ao buscar estatísticas dos gêneros" });
   }
 };
 
@@ -357,7 +361,7 @@ export const searchGenres = async (req, res) => {
 
     if (!q || q.trim().length < 2) {
       return res.status(400).json({
-        error: 'Termo de busca deve ter pelo menos 2 caracteres'
+        error: "Termo de busca deve ter pelo menos 2 caracteres",
       });
     }
 
@@ -367,33 +371,33 @@ export const searchGenres = async (req, res) => {
           {
             name: {
               contains: q.trim(),
-              mode: 'insensitive'
-            }
+              mode: "insensitive",
+            },
           },
           {
             description: {
               contains: q.trim(),
-              mode: 'insensitive'
-            }
-          }
-        ]
+              mode: "insensitive",
+            },
+          },
+        ],
       },
       include: {
         _count: {
-          select: { games: true }
-        }
+          select: { games: true },
+        },
       },
       take: parseInt(limit),
-      orderBy: { name: 'asc' }
+      orderBy: { name: "asc" },
     });
 
     res.json({
       genres,
       searchTerm: q.trim(),
-      total: genres.length
+      total: genres.length,
     });
   } catch (error) {
-    console.error('Erro ao pesquisar gêneros:', error);
-    res.status(500).json({ error: 'Erro ao pesquisar gêneros' });
+    console.error("Erro ao pesquisar gêneros:", error);
+    res.status(500).json({ error: "Erro ao pesquisar gêneros" });
   }
 };

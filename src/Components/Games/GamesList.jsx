@@ -15,14 +15,34 @@ const GamesList = () => {
         setLoading(true);
         setError(null);
 
-        const result = await gamesService.getGames();
+        // Buscar jogos regulares e em destaque
+        const [gamesResult, featuredResult] = await Promise.all([
+          gamesService.getGames(),
+          gamesService.getFeaturedGames(),
+        ]);
 
-        if (result.success && Array.isArray(result.data)) {
-          setGames(result.data);
+        let allGames = [];
+
+        // Adicionar jogos regulares
+        if (gamesResult.success && Array.isArray(gamesResult.data)) {
+          allGames = [...gamesResult.data];
+        }
+
+        // Adicionar jogos em destaque (se não estiverem já na lista)
+        if (featuredResult.success && Array.isArray(featuredResult.data)) {
+          const featuredGames = featuredResult.data.filter(
+            (featuredGame) =>
+              !allGames.some((game) => game.id === featuredGame.id)
+          );
+          allGames = [...allGames, ...featuredGames];
+        }
+
+        if (allGames.length > 0) {
+          setGames(allGames);
         } else {
-          console.error("Dados de jogos inválidos:", result);
+          console.error("Nenhum jogo encontrado");
           setGames([]);
-          setError("Formato de dados inválido recebido do servidor");
+          setError("Nenhum jogo disponível no momento");
         }
       } catch (error) {
         console.error("Erro ao buscar jogos:", error);
@@ -83,15 +103,26 @@ const GamesList = () => {
                 key={game.id}
                 className={styles.gameCard}
               >
+                {" "}
                 <div className={styles.gameImage}>
                   <SafeImage
-                    src={game.coverUrl}
-                    alt={game.title}
+                    src={
+                      game.coverUrl ||
+                      game.cover_url ||
+                      game.imageUrl ||
+                      game.image_url ||
+                      game.imagem ||
+                      game.image
+                    }
+                    alt={game.title || game.titulo || "Imagem do jogo"}
                     className={styles.gameImageElement}
+                    fallbackSrc="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIwIiBoZWlnaHQ9IjI5MyIgdmlld0JveD0iMCAwIDIyMCAyOTMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMjAiIGhlaWdodD0iMjkzIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMTAgMTMwQzEyMC40NiAxMzAgMTI5IDEyMS40NiAxMjkgMTExQzEyOSAxMDAuNTQgMTIwLjQ2IDkyIDExMCA5MkM5OS41NCA5MiA5MSAxMDAuNTQgOTEgMTExQzkxIDEyMS40NiA5OS41NCAxMzAgMTEwIDEzMFoiIGZpbGw9IiM5N0EzQUYiLz4KPHA+PHBhdGggZD0iTTE1NSAxODBDMTQwIDE3MyAxMTAgMTQwIDExMCAxNzNDMTEwIDE3MyA4MCAxNzMgODAgMTgwSDE1NVoiIGZpbGw9IiM5N0EzQUYiLz4KPHA+PHRleHQgeD0iMTEwIiB5PSIyMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk3QTNBRiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Sk9HTzwvdGV4dD4KPC9zdmc+Cg=="
                   />
-                </div>
+                </div>{" "}
                 <div className={styles.gameInfo}>
-                  <h3 className={styles.gameTitle}>{game.title}</h3>
+                  <h3 className={styles.gameTitle}>
+                    {game.title || game.titulo || "Jogo sem título"}
+                  </h3>
                   <div className={styles.gameRating}>
                     <span className={styles.starIcon}>★</span>
                     <span>{game.averageRating?.toFixed(1) || "N/A"}</span>

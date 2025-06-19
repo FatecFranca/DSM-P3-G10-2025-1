@@ -1,74 +1,94 @@
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  min-height: 80vh;
 }
 
 .hero {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
+  padding: 2rem 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 79, 89, 0.05),
+    rgba(255, 127, 53, 0.05)
+  );
+  border-radius: 16px;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 3rem;
   margin-bottom: 0.5rem;
-  color: var(--cor-primaria, #1a1a1a);
+  background: linear-gradient(135deg, #ff4f59, #ff7f35);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: bold;
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   color: var(--text-secondary, #666);
   margin-bottom: 2rem;
+  font-weight: 300;
 }
 
 .searchContainer {
   max-width: 600px;
   margin: 0 auto;
+  position: relative;
 }
 
 .searchInput {
   width: 100%;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 2rem;
-  font-size: 1rem;
+  padding: 1.2rem 1.5rem;
+  border: 2px solid transparent;
+  border-radius: 30px;
+  font-size: 1.1rem;
   background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 
 .searchInput:focus {
   outline: none;
-  border-color: var(--cor-vermelha, #ff0f35);
-  box-shadow: 0 0 0 2px rgba(255, 15, 53, 0.1);
+  border-color: #ff4f59;
+  box-shadow: 0 4px 20px rgba(255, 79, 89, 0.2);
+  transform: translateY(-2px);
 }
 
 .gamesGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3rem;
 }
 
 .gameCard {
   text-decoration: none;
   color: inherit;
   background: white;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .gameCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 79, 89, 0.2);
 }
 
 .gameImage {
   position: relative;
   width: 100%;
   height: 0;
-  padding-top: 133%; /* Proporção de aspecto 3:4 */
+  padding-top: 140%; /* Proporção de aspecto mais alta para covers de jogos */
   overflow: hidden;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
 }
 
 .gameImage img,
@@ -79,38 +99,44 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.6s ease;
 }
 
 .gameCard:hover .gameImage img,
 .gameCard:hover .gameImageElement {
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 .gameInfo {
-  padding: 1rem;
+  padding: 1.5rem;
+  background: white;
 }
 
 .gameTitle {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  color: #1a1a1a;
+  line-height: 1.4;
 }
 
 .gameRating {
   display: flex;
   align-items: center;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  color: #666;
+  font-weight: 500;
 }
 
 .starIcon {
   color: #ffd700;
-  margin-right: 0.3rem;
+  margin-right: 0.4rem;
+  font-size: 1.1rem;
 }
 
 .loading {
@@ -164,12 +190,72 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 1.5rem 1rem;
+  }
+
+  .hero {
+    margin-bottom: 3rem;
+    padding: 1.5rem;
+  }
+
   .title {
-    font-size: 2rem;
+    font-size: 2.2rem;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+  }
+
+  .searchInput {
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
   }
 
   .gamesGrid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .gameInfo {
+    padding: 1.25rem;
+  }
+
+  .gameTitle {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem 0.5rem;
+  }
+
+  .hero {
+    padding: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .gamesGrid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 1.5rem;
+  }
+
+  .gameInfo {
+    padding: 1rem;
+  }
+
+  .gameTitle {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .gameRating {
+    font-size: 0.85rem;
   }
 }
