@@ -1,14 +1,47 @@
 /* UserProfile.module.css */
 .userProfile {
-  padding: 2rem;
-  max-width: 900px;
-  margin: 0 auto;
+  padding: 3rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  min-height: 100vh;
+  color: #f8fafc;
+  position: relative;
+  overflow: hidden;
+}
+
+.userProfile::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+      circle at 20% 80%,
+      rgba(126, 34, 206, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(59, 130, 246, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 40%,
+      rgba(168, 85, 247, 0.05) 0%,
+      transparent 50%
+    );
+  z-index: 0;
+  pointer-events: none;
 }
 
 .profileContainer {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .profileHeader {
@@ -25,7 +58,7 @@
 .title {
   font-size: 2.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #ff4f59, #ff7f35);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -34,7 +67,7 @@
 }
 
 .subtitle {
-  color: #666;
+  color: #94a3b8;
   font-size: 1.1rem;
   margin: 0;
 }
@@ -43,7 +76,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #ff4f59, #ff7f35);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: white;
   border: none;
   padding: 1rem 1.5rem;
@@ -51,12 +84,12 @@
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255, 79, 89, 0.3);
+  box-shadow: 0 4px 15px rgba(126, 34, 206, 0.3);
 }
 
 .editButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 79, 89, 0.4);
+  box-shadow: 0 6px 20px rgba(126, 34, 206, 0.4);
 }
 
 .editIcon {
@@ -95,9 +128,11 @@
   align-items: center;
   gap: 2rem;
   padding: 2rem;
-  background: rgba(255, 79, 89, 0.02);
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(10px);
   border-radius: 20px;
-  border: 2px solid rgba(255, 79, 89, 0.1);
+  border: 1px solid rgba(126, 34, 206, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .avatarContainer {
@@ -110,12 +145,12 @@
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #ff4f59;
-  box-shadow: 0 8px 25px rgba(255, 79, 89, 0.3);
+  border: 4px solid var(--primary);
+  box-shadow: 0 8px 25px rgba(126, 34, 206, 0.3);
 }
 
 .avatarFallback {
-  box-shadow: 0 8px 25px rgba(255, 79, 89, 0.3);
+  box-shadow: 0 8px 25px rgba(126, 34, 206, 0.3);
 }
 
 .avatarFallback.hidden {
@@ -129,7 +164,7 @@
 .userName {
   font-size: 2rem;
   font-weight: 600;
-  color: #333;
+  color: #fff;
   margin: 0 0 0.5rem;
 }
 
@@ -143,12 +178,13 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 79, 89, 0.1);
-  color: #ff4f59;
+  background: rgba(126, 34, 206, 0.1);
+  color: var(--primary-light);
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 500;
+  border: 1px solid rgba(126, 34, 206, 0.2);
 }
 
 .profileContent {
@@ -158,12 +194,14 @@
 }
 
 .infoCard,
-.statsCard {
-  background: white;
+.statsCard,
+.bioCard {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  border: 2px solid rgba(0, 0, 0, 0.02);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(126, 34, 206, 0.2);
 }
 
 .cardHeader {
@@ -176,7 +214,7 @@
   gap: 0.75rem;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #333;
+  color: #f8fafc;
   margin: 0;
 }
 
@@ -198,29 +236,48 @@
 
 .infoLabel {
   font-weight: 500;
-  color: #666;
+  color: #94a3b8;
   font-size: 0.9rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.5px;
 }
 
 .infoValue {
+  color: #f8fafc;
   font-size: 1.1rem;
-  color: #333;
   font-weight: 500;
 }
 
+.bioContent {
+  padding: 1rem 0;
+}
+
 .bioText {
-  font-size: 1.1rem;
-  line-height: 1.7;
-  color: #555;
+  color: #cbd5e1;
+  font-size: 1rem;
+  line-height: 1.6;
   margin: 0;
+  text-align: justify;
+}
+
+.bioTextEmpty {
+  color: #94a3b8;
+  font-style: italic;
+  text-align: center;
+}
+
+.bioText:empty::before {
+  content: "Nenhuma biografia adicionada ainda.";
+  color: #94a3b8;
+  font-style: italic;
 }
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .statItem {
@@ -262,11 +319,12 @@
 
 /* Formulário de Edição */
 .editForm {
-  background: white;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  border: 2px solid rgba(0, 0, 0, 0.02);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(126, 34, 206, 0.2);
 }
 
 .formGrid {
@@ -292,7 +350,7 @@
   align-items: center;
   gap: 0.25rem;
   font-weight: 500;
-  color: #333;
+  color: #cbd5e1;
   font-size: 0.95rem;
 }
 
@@ -301,26 +359,32 @@
 }
 
 .required {
-  color: #ff4f59;
+  color: var(--primary-light);
   font-weight: bold;
 }
 
 .input,
 .textarea {
   padding: 1rem 1.25rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid rgba(126, 34, 206, 0.2);
   border-radius: 12px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: #fafafa;
+  background: rgba(15, 23, 42, 0.6);
+  color: #f8fafc;
 }
 
 .input:focus,
 .textarea:focus {
   outline: none;
-  border-color: #ff4f59;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(255, 79, 89, 0.1);
+  border-color: var(--primary);
+  background: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 0 0 3px rgba(126, 34, 206, 0.1);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #94a3b8;
 }
 
 .textarea {
@@ -334,7 +398,7 @@
   gap: 1rem;
   justify-content: flex-end;
   padding-top: 2rem;
-  border-top: 2px solid rgba(0, 0, 0, 0.05);
+  border-top: 2px solid rgba(126, 34, 206, 0.2);
 }
 
 .cancelButton,
@@ -352,25 +416,26 @@
 }
 
 .cancelButton {
-  background: #f3f4f6;
-  color: #374151;
-  border: 2px solid #e5e7eb;
+  background: rgba(51, 65, 85, 0.8);
+  color: #cbd5e1;
+  border: 2px solid rgba(126, 34, 206, 0.2);
 }
 
 .cancelButton:hover:not(:disabled) {
-  background: #e5e7eb;
+  background: rgba(51, 65, 85, 1);
   transform: translateY(-1px);
+  border-color: rgba(126, 34, 206, 0.3);
 }
 
 .saveButton {
-  background: linear-gradient(135deg, #ff4f59, #ff7f35);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: white;
-  box-shadow: 0 4px 15px rgba(255, 79, 89, 0.3);
+  box-shadow: 0 4px 15px rgba(126, 34, 206, 0.3);
 }
 
 .saveButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 79, 89, 0.4);
+  box-shadow: 0 6px 20px rgba(126, 34, 206, 0.4);
 }
 
 .saveButton:disabled,
@@ -405,8 +470,38 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loading das estatísticas */
+.statsLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+  text-align: center;
+}
+
+.statsLoading p {
+  color: #94a3b8;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.statsLoading .spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(126, 34, 206, 0.3);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 /* Responsividade */

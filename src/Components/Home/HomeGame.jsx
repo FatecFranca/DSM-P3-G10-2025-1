@@ -4,38 +4,78 @@ import { useAuthContext } from "../../context/AuthContext";
 import gamesService from "../../services/gamesService";
 import styles from "./Home.module.css";
 
-const Home = () => {
+const HomeGame = () => {
   const { authenticated, user } = useAuthContext();
   const [scrollY, setScrollY] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [featuredGames, setFeaturedGames] = useState([]);
-  const [loadingGames, setLoadingGames] = useState(true);
+  const [loading, setLoading] = useState(true);
+
   // Efeito parallax no scroll
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []); // Carregar jogos em destaque
+  }, []);
+
+  // Buscar jogos com maior rating
   useEffect(() => {
     const loadFeaturedGames = async () => {
       try {
-        console.log("🎮 Carregando jogos em destaque...");
-        setLoadingGames(true);
-        const result = await gamesService.getFeaturedGames();
-        console.log("📊 Resultado da API:", result);
+        setLoading(true);
+        console.log("Carregando jogos em destaque...");
+        const response = await gamesService.getGames({ limit: 10 });
+        console.log("Resposta da API:", response);
+        if (response.success && response.data) {
+          console.log("Jogos recebidos:", response.data.length);
+          // Primeiro, tentar pegar jogos com averageRating
+          let topRatedGames = response.data
+            .filter((game) => game.averageRating && game.averageRating > 0)
+            .sort((a, b) => b.averageRating - a.averageRating)
+            .slice(0, 3);
 
-        if (result.success) {
-          console.log("✅ Jogos carregados:", result.data);
-          setFeaturedGames(result.data || []);
-        } else {
-          console.error("❌ Erro ao carregar jogos:", result.message);
-          setFeaturedGames([]);
+          console.log("Jogos com rating:", topRatedGames.length);
+
+          // Se não houver jogos com averageRating, pegar os primeiros 3 jogos
+          if (topRatedGames.length === 0) {
+            topRatedGames = response.data.slice(0, 3);
+            console.log("Usando primeiros 3 jogos:", topRatedGames.length);
+          }
+
+          console.log("Jogos em destaque finais:", topRatedGames);
+          setFeaturedGames(topRatedGames);
         }
       } catch (error) {
-        console.error("💥 Erro ao carregar jogos em destaque:", error);
-        setFeaturedGames([]);
+        console.error("Erro ao carregar jogos em destaque:", error);
+        // Fallback para dados mock se houver erro
+        setFeaturedGames([
+          {
+            id: 1,
+            title: "Cyberpunk 2077",
+            averageRating: 4.2,
+            coverUrl: "🌃",
+            genres: ["RPG"],
+            description: "Uma aventura épica em Night City",
+          },
+          {
+            id: 2,
+            title: "The Witcher 3",
+            averageRating: 4.8,
+            coverUrl: "⚔️",
+            genres: ["RPG"],
+            description: "A mais épica aventura medieval",
+          },
+          {
+            id: 3,
+            title: "Red Dead Redemption 2",
+            averageRating: 4.7,
+            coverUrl: "🤠",
+            genres: ["Ação"],
+            description: "O velho oeste como nunca antes",
+          },
+        ]);
       } finally {
-        setLoadingGames(false);
+        setLoading(false);
       }
     };
 
@@ -50,15 +90,18 @@ const Home = () => {
       }, 4000);
       return () => clearInterval(timer);
     }
-  }, [featuredGames.length]); // Dados dos gêneros populares (apenas ilustrativo)
+  }, [featuredGames]);
+
+  // Gêneros populares (apenas ilustrativo)
   const topGenres = [
-    { name: "RPG", icon: "⚔️", color: "#8b5cf6" },
-    { name: "FPS", icon: "🔫", color: "#ef4444" },
-    { name: "Estratégia", icon: "🧠", color: "#3b82f6" },
-    { name: "Indie", icon: "🎨", color: "#f59e0b" },
-    { name: "Ação", icon: "💥", color: "#10b981" },
-    { name: "Simulação", icon: "🏗️", color: "#6366f1" },
+    { name: "RPG", count: 1420, icon: "⚔️", color: "#8b5cf6" },
+    { name: "FPS", count: 980, icon: "🔫", color: "#ef4444" },
+    { name: "Estratégia", count: 750, icon: "🧠", color: "#3b82f6" },
+    { name: "Indie", count: 1200, icon: "🎨", color: "#f59e0b" },
+    { name: "Ação", count: 1100, icon: "💥", color: "#10b981" },
+    { name: "Simulação", count: 650, icon: "🏗️", color: "#6366f1" },
   ];
+
   const stats = [
     { label: "Jogos Catalogados", value: "12,847", icon: "🎮" },
     { label: "Reviews Escritas", value: "45,291", icon: "📝" },
@@ -88,7 +131,6 @@ const Home = () => {
               Descubra, avalie e compartilhe suas experiências com os melhores
               jogos.
             </p>
-
             {!authenticated ? (
               <div className={styles.heroButtons}>
                 <Link to="/register" className={styles.primaryButton}>
@@ -128,6 +170,7 @@ const Home = () => {
           <div className={`${styles.floatingIcon} ${styles.float4}`}>🎨</div>
         </div>
       </section>
+
       {/* Stats Section */}
       <section className={styles.stats}>
         <div className={styles.container}>
@@ -143,7 +186,8 @@ const Home = () => {
             ))}
           </div>
         </div>
-      </section>{" "}
+      </section>
+
       {/* Featured Games Carousel */}
       <section className={styles.featured}>
         <div className={styles.container}>
@@ -152,12 +196,12 @@ const Home = () => {
             Jogos em Destaque
           </h2>
 
-          {loadingGames ? (
-            <div className={styles.loadingGames}>
-              <div className={styles.loadingSpinner}>🎮</div>
-              <p>Carregando jogos...</p>
+          {loading ? (
+            <div className={styles.loading}>
+              <div className={styles.loadingSpinner}></div>
+              <p>Carregando jogos em destaque...</p>
             </div>
-          ) : featuredGames.length > 0 ? (
+          ) : (
             <div className={styles.carousel}>
               <div className={styles.carouselContainer}>
                 {featuredGames.map((game, index) => (
@@ -170,19 +214,26 @@ const Home = () => {
                       transform: `translateX(${(index - currentSlide) * 100}%)`,
                     }}
                   >
-                    {" "}
                     <div className={styles.gameImage}>
-                      {game.coverUrl ? (
-                        <img src={game.coverUrl} alt={game.title} />
-                      ) : (
-                        <div className={styles.gameImagePlaceholder}>🎮</div>
-                      )}
+                      {game.coverUrl || game.cover_url ? (
+                        <img
+                          src={game.coverUrl || game.cover_url}
+                          alt={game.title}
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                            e.target.nextSibling.style.display = "flex";
+                          }}
+                        />
+                      ) : null}
+                      <div className={styles.gameImageFallback}>🎮</div>
                     </div>
                     <div className={styles.gameInfo}>
-                      <div className={styles.gameGenre}>{game.genre}</div>
+                      <div className={styles.gameGenre}>
+                        {game.genres ? game.genres[0] : game.genre || "Jogo"}
+                      </div>
                       <h3 className={styles.gameTitle}>{game.title}</h3>
                       <p className={styles.gameDescription}>
-                        {game.description}
+                        {game.description || "Descubra este incrível jogo"}
                       </p>
                       <div className={styles.gameRating}>
                         <div className={styles.stars}>
@@ -190,7 +241,10 @@ const Home = () => {
                             <span
                               key={i}
                               className={
-                                i < Math.floor(game.averageRating || 0)
+                                i <
+                                Math.floor(
+                                  game.averageRating || game.rating || 0
+                                )
                                   ? styles.starFilled
                                   : styles.starEmpty
                               }
@@ -202,20 +256,21 @@ const Home = () => {
                         <span className={styles.ratingValue}>
                           {game.averageRating
                             ? game.averageRating.toFixed(1)
-                            : "Sem avaliações"}
+                            : game.rating || "Sem avaliação"}
                         </span>
-                      </div>{" "}
+                      </div>
                       <Link
                         to={`/jogo/${game.id}`}
                         className={styles.gameButton}
                       >
-                        Ver Detalhes →
+                        Ver Detalhes
                       </Link>
                     </div>
                   </div>
                 ))}
               </div>
 
+              {/* Carousel Indicators */}
               <div className={styles.carouselDots}>
                 {featuredGames.map((_, index) => (
                   <button
@@ -228,13 +283,10 @@ const Home = () => {
                 ))}
               </div>
             </div>
-          ) : (
-            <div className={styles.noGames}>
-              <p>Nenhum jogo em destaque encontrado.</p>
-            </div>
           )}
         </div>
-      </section>{" "}
+      </section>
+
       {/* Genres Section */}
       <section className={styles.genres}>
         <div className={styles.container}>
@@ -242,6 +294,7 @@ const Home = () => {
             <span className={styles.titleIcon}>🎯</span>
             Gêneros Populares
           </h2>
+
           <div className={styles.genresGrid}>
             {topGenres.map((genre, index) => (
               <div
@@ -252,13 +305,15 @@ const Home = () => {
                 <div className={styles.genreIcon}>{genre.icon}</div>
                 <div className={styles.genreInfo}>
                   <h3 className={styles.genreName}>{genre.name}</h3>
+                  <p className={styles.genreCount}>{genre.count} jogos</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </section>{" "}
-      {/* Features Section */}
+      </section>
+
+      {/* Features Section - Grid 2x2 */}
       <section className={styles.features}>
         <div className={styles.container}>
           <h2 className={styles.sectionTitle}>
@@ -267,16 +322,6 @@ const Home = () => {
           </h2>
 
           <div className={styles.featuresGrid}>
-            <div className={styles.feature}>
-              <div className={styles.featureIcon}>🎯</div>
-              <h3>Reviews Precisas</h3>
-              <p>
-                Análises detalhadas feitas por gamers reais, com critérios
-                objetivos e experiência genuína.
-              </p>
-              <div className={styles.featureStats}>+45k reviews</div>
-            </div>
-
             <div className={styles.feature}>
               <div className={styles.featureIcon}>👥</div>
               <h3>Comunidade Ativa</h3>
@@ -298,13 +343,22 @@ const Home = () => {
             </div>
 
             <div className={styles.feature}>
-              <div className={styles.featureIcon}>📊</div>
-              <h3>Análises Avançadas</h3>
+              <div className={styles.featureIcon}>⭐</div>
+              <h3>Sistema de Avaliação</h3>
               <p>
-                Estatísticas detalhadas, comparações e insights sobre tendências
-                do mercado gaming.
+                Sistema inteligente de notas e rankings para descobrir os
+                melhores jogos.
               </p>
-              <div className={styles.featureStats}>IA integrada</div>
+              <div className={styles.featureStats}>Algoritmo próprio</div>
+            </div>
+
+            <div className={styles.feature}>
+              <div className={styles.featureIcon}>📈</div>
+              <h3>Estatísticas Detalhadas</h3>
+              <p>
+                Acompanhe tendências, descobertas e análises do mundo dos games.
+              </p>
+              <div className={styles.featureStats}>Dados em tempo real</div>
             </div>
           </div>
         </div>
@@ -313,4 +367,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomeGame;

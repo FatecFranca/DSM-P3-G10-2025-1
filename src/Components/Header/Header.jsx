@@ -214,15 +214,10 @@ const Header = () => {
                   Jogos
                 </Link>
               </li>{" "}
-              <li>
-                <Link to="/reviews" className={styles.navLink}>
-                  Reviews
-                </Link>
-              </li>
               {authenticated && (
                 <li>
                   <Link to="/admin/jogos" className={styles.navLink}>
-                    Admin Jogos
+                    Postar Jogos
                   </Link>
                 </li>
               )}
@@ -314,22 +309,6 @@ const Header = () => {
                     >
                       👤 Meu Perfil
                     </Link>
-                    <Link
-                      to="/conta/reviews"
-                      className={styles.dropdownItem}
-                      onClick={() => setIsUserDropdownOpen(false)}
-                    >
-                      📝 Minhas Reviews
-                    </Link>
-                    {user?.role === "admin" && (
-                      <Link
-                        to="/admin/jogos"
-                        className={styles.dropdownItem}
-                        onClick={() => setIsUserDropdownOpen(false)}
-                      >
-                        ⚙️ Admin Jogos
-                      </Link>
-                    )}
                     <button
                       onClick={handleLogout}
                       className={styles.dropdownItem}
@@ -473,16 +452,6 @@ const Header = () => {
               Jogos
             </Link>
           </li>
-          <li>
-            <Link
-              to="/reviews"
-              className={styles.mobileNavLink}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <span>📝</span>
-              Reviews{" "}
-            </Link>
-          </li>
           {authenticated && (
             <li>
               <Link
@@ -491,7 +460,7 @@ const Header = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <span>⚙️</span>
-                Admin Jogos
+                Postar Jogos
               </Link>
             </li>
           )}

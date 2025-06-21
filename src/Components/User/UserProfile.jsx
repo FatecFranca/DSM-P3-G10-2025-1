@@ -1,58 +1,91 @@
-import React, { useState } from 'react';
-import { useAuthContext } from '../../context/AuthContext';
-import UserIcon from './UserIcon';
-import styles from './UserProfile.module.css';
+import React, { useState, useEffect } from "react";
+import { useAuthContext } from "../../context/AuthContext";
+import UserIcon from "./UserIcon";
+import userService from "../../services/userService";
+import styles from "./UserProfile.module.css";
 
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
+  const [stats, setStats] = useState({
+    likesReceived: 0,
+    dislikesReceived: 0,
+    reviewsCount: 0,
+    gamesCreated: 0,
+  });
+  const [loadingStats, setLoadingStats] = useState(true);
   const { user, updateUser } = useAuthContext();
-  
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    bio: user?.bio || '',
-    avatarUrl: user?.avatarUrl || ''
+    name: user?.name || "",
+    bio: user?.bio || "",
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
+    setMessage("");
 
     try {
-      // Simular atualização (substitua pela chamada real da API)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const updatedUser = { ...user, ...formData };
-      updateUser(updatedUser);
-      
-      setMessage('Perfil atualizado com sucesso!');
-      setIsEditing(false);
+      // Chamar a API real para atualizar o perfil
+      const response = await userService.updateUserProfile(user.id, {
+        name: formData.name,
+        bio: formData.bio,
+      });
+
+      if (response.success) {
+        // Atualizar o contexto do usuário
+        const updatedUser = { ...user, ...response.data };
+        updateUser(updatedUser);
+
+        setMessage("Perfil atualizado com sucesso!");
+        setIsEditing(false);
+      } else {
+        setMessage(response.message || "Erro ao atualizar perfil.");
+      }
     } catch (error) {
-      setMessage('Erro ao atualizar perfil. Tente novamente.');
+      console.error("Erro ao atualizar perfil:", error);
+      setMessage("Erro ao atualizar perfil. Tente novamente.");
     } finally {
       setLoading(false);
     }
   };
-
   const handleCancel = () => {
     setFormData({
-      name: user?.name || '',
-      bio: user?.bio || '',
-      avatarUrl: user?.avatarUrl || ''
+      name: user?.name || "",
+      bio: user?.bio || "",
     });
     setIsEditing(false);
-    setMessage('');
+    setMessage("");
   };
+
+  // Carregar estatísticas do usuário
+  const loadUserStats = async () => {
+    if (!user?.id) return;
+
+    setLoadingStats(true);
+    try {
+      const response = await userService.getUserStats(user.id);
+      if (response.success) {
+        setStats(response.data);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar estatísticas:", error);
+    } finally {
+      setLoadingStats(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUserStats();
+  }, [user?.id]);
 
   return (
     <div className={styles.userProfile}>
@@ -61,11 +94,13 @@ const UserProfile = () => {
         <div className={styles.profileHeader}>
           <div className={styles.headerContent}>
             <h1 className={styles.title}>Meu Perfil</h1>
-            <p className={styles.subtitle}>Gerencie suas informações pessoais</p>
+            <p className={styles.subtitle}>
+              Gerencie suas informações pessoais
+            </p>
           </div>
-          
+
           {!isEditing && (
-            <button 
+            <button
               className={styles.editButton}
               onClick={() => setIsEditing(true)}
             >
@@ -74,50 +109,50 @@ const UserProfile = () => {
             </button>
           )}
         </div>
-
         {/* Mensagem de feedback */}
         {message && (
-          <div className={`${styles.message} ${message.includes('sucesso') ? styles.success : styles.error}`}>
+          <div
+            className={`${styles.message} ${
+              message.includes("sucesso") ? styles.success : styles.error
+            }`}
+          >
             <span className={styles.messageIcon}>
-              {message.includes('sucesso') ? '✅' : '❌'}
+              {message.includes("sucesso") ? "✅" : "❌"}
             </span>
             {message}
           </div>
-        )}
-
-        {/* Avatar Section */}
+        )}{" "}
+        {/* Avatar Section - Apenas foto e nome */}
         <div className={styles.avatarSection}>
           <div className={styles.avatarContainer}>
             {user?.avatarUrl ? (
-              <img 
-                src={user.avatarUrl} 
+              <img
+                src={user.avatarUrl}
                 alt={`Avatar de ${user.name}`}
                 className={styles.userAvatar}
                 onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
+                  e.target.style.display = "none";
+                  e.target.nextSibling.style.display = "flex";
                 }}
               />
             ) : null}
-            <UserIcon 
-              initial={user?.name?.charAt(0)?.toUpperCase() || 'U'} 
+            <UserIcon
+              initial={user?.name?.charAt(0)?.toUpperCase() || "U"}
               size="xlarge"
-              className={`${styles.avatarFallback} ${user?.avatarUrl ? styles.hidden : ''}`}
+              className={`${styles.avatarFallback} ${
+                user?.avatarUrl ? styles.hidden : ""
+              }`}
             />
           </div>
-          
+
           <div className={styles.avatarInfo}>
             <h2 className={styles.userName}>{user?.name}</h2>
-            <p className={styles.userEmail}>{user?.email}</p>
-            <div className={styles.memberSince}>
-              Membro desde {new Date(user?.createdAt).getFullYear()}
-            </div>
           </div>
         </div>
-
         {/* Conteúdo Principal */}
         {isEditing ? (
           <form onSubmit={handleSubmit} className={styles.editForm}>
+            {" "}
             <div className={styles.formGrid}>
               <div className={styles.formGroup}>
                 <label htmlFor="name" className={styles.label}>
@@ -136,21 +171,6 @@ const UserProfile = () => {
                 />
               </div>
 
-              <div className={styles.formGroup}>
-                <label htmlFor="avatarUrl" className={styles.label}>
-                  <span className={styles.labelText}>URL do Avatar</span>
-                </label>
-                <input
-                  type="url"
-                  id="avatarUrl"
-                  name="avatarUrl"
-                  value={formData.avatarUrl}
-                  onChange={handleInputChange}
-                  className={styles.input}
-                  placeholder="https://exemplo.com/sua-foto.jpg"
-                />
-              </div>
-
               <div className={styles.formGroupFull}>
                 <label htmlFor="bio" className={styles.label}>
                   <span className={styles.labelText}>Biografia</span>
@@ -166,18 +186,17 @@ const UserProfile = () => {
                 />
               </div>
             </div>
-
             <div className={styles.formActions}>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handleCancel}
                 className={styles.cancelButton}
                 disabled={loading}
               >
                 Cancelar
               </button>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className={styles.saveButton}
                 disabled={loading}
               >
@@ -197,7 +216,7 @@ const UserProfile = () => {
           </form>
         ) : (
           <div className={styles.profileContent}>
-            {/* Informações Pessoais */}
+            {/* Informações Pessoais - Nome e Email apenas */}
             <div className={styles.infoCard}>
               <div className={styles.cardHeader}>
                 <h3 className={styles.cardTitle}>
@@ -205,7 +224,6 @@ const UserProfile = () => {
                   Informações Pessoais
                 </h3>
               </div>
-              
               <div className={styles.infoGrid}>
                 <div className={styles.infoItem}>
                   <span className={styles.infoLabel}>Nome:</span>
@@ -215,33 +233,28 @@ const UserProfile = () => {
                   <span className={styles.infoLabel}>Email:</span>
                   <span className={styles.infoValue}>{user?.email}</span>
                 </div>
-                <div className={styles.infoItem}>
-                  <span className={styles.infoLabel}>Username:</span>
-                  <span className={styles.infoValue}>{user?.username || 'Não definido'}</span>
-                </div>
-                <div className={styles.infoItem}>
-                  <span className={styles.infoLabel}>Membro desde:</span>
-                  <span className={styles.infoValue}>
-                    {new Date(user?.createdAt).toLocaleDateString('pt-BR')}
-                  </span>
-                </div>
+              </div>{" "}
+            </div>{" "}
+            {/* Biografia */}
+            <div className={styles.bioCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>
+                  <span className={styles.cardIcon}>📝</span>
+                  Biografia
+                </h3>
+              </div>
+              <div className={styles.bioContent}>
+                {user?.bio ? (
+                  <p className={styles.bioText}>{user.bio}</p>
+                ) : (
+                  <p className={styles.bioTextEmpty}>
+                    Nenhuma biografia adicionada ainda. Clique em "Editar
+                    Perfil" para adicionar uma.
+                  </p>
+                )}
               </div>
             </div>
-
-            {/* Biografia */}
-            {user?.bio && (
-              <div className={styles.infoCard}>
-                <div className={styles.cardHeader}>
-                  <h3 className={styles.cardTitle}>
-                    <span className={styles.cardIcon}>📝</span>
-                    Biografia
-                  </h3>
-                </div>
-                <p className={styles.bioText}>{user.bio}</p>
-              </div>
-            )}
-
-            {/* Estatísticas */}
+            {/* Estatísticas - 4 cards: Likes, Deslikes, Reviews, Jogos Criados */}
             <div className={styles.statsCard}>
               <div className={styles.cardHeader}>
                 <h3 className={styles.cardTitle}>
@@ -249,29 +262,44 @@ const UserProfile = () => {
                   Estatísticas
                 </h3>
               </div>
-              
-              <div className={styles.statsGrid}>
-                <div className={styles.statItem}>
-                  <div className={styles.statNumber}>12</div>
-                  <div className={styles.statLabel}>Reviews Publicadas</div>
-                  <div className={styles.statIcon}>📝</div>
+
+              {loadingStats ? (
+                <div className={styles.statsLoading}>
+                  <div className={styles.spinner}></div>
+                  <p>Carregando estatísticas...</p>
                 </div>
-                <div className={styles.statItem}>
-                  <div className={styles.statNumber}>8</div>
-                  <div className={styles.statLabel}>Jogos Favoritos</div>
-                  <div className={styles.statIcon}>❤️</div>
+              ) : (
+                <div className={styles.statsGrid}>
+                  <div className={styles.statItem}>
+                    <div className={styles.statNumber}>
+                      {stats.likesReceived}
+                    </div>
+                    <div className={styles.statLabel}>Likes Recebidos</div>
+                    <div className={styles.statIcon}>👍</div>
+                  </div>
+                  <div className={styles.statItem}>
+                    <div className={styles.statNumber}>
+                      {stats.dislikesReceived}
+                    </div>
+                    <div className={styles.statLabel}>Deslikes Recebidos</div>
+                    <div className={styles.statIcon}>👎</div>
+                  </div>
+                  <div className={styles.statItem}>
+                    <div className={styles.statNumber}>
+                      {stats.reviewsCount}
+                    </div>
+                    <div className={styles.statLabel}>Reviews</div>
+                    <div className={styles.statIcon}>📝</div>
+                  </div>
+                  <div className={styles.statItem}>
+                    <div className={styles.statNumber}>
+                      {stats.gamesCreated}
+                    </div>
+                    <div className={styles.statLabel}>Jogos Criados</div>
+                    <div className={styles.statIcon}>🎮</div>
+                  </div>
                 </div>
-                <div className={styles.statItem}>
-                  <div className={styles.statNumber}>4.2</div>
-                  <div className={styles.statLabel}>Nota Média</div>
-                  <div className={styles.statIcon}>⭐</div>
-                </div>
-                <div className={styles.statItem}>
-                  <div className={styles.statNumber}>156</div>
-                  <div className={styles.statLabel}>Curtidas Recebidas</div>
-                  <div className={styles.statIcon}>👍</div>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         )}

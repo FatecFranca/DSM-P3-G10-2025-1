@@ -157,7 +157,6 @@ export const AuthProvider = ({ children }) => {
   const getToken = () => {
     return localStorage.getItem("token");
   };
-
   // Função para buscar usuários (útil para debug)
   const getUsers = async () => {
     try {
@@ -172,6 +171,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Função para atualizar o usuário no contexto
+  const updateUser = (updatedUserData) => {
+    const updatedUser = { ...user, ...updatedUserData };
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  };
+
   const value = {
     user,
     authenticated,
@@ -181,6 +187,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     getToken,
     getUsers, // Adicionar para debug
+    updateUser, // Adicionar função de update
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -14,6 +14,7 @@ export const createGame = async (req, res) => {
       developer,
       publisher,
       platform,
+      createdBy, // ID do usuário que está criando o jogo
     } = req.body;
 
     // Debug: verificar dados recebidos
@@ -37,6 +38,7 @@ export const createGame = async (req, res) => {
         developer,
         publisher,
         platform: platform || [],
+        createdBy: createdBy || null, // Incluir o ID do criador se fornecido
       },
     });
 
@@ -277,12 +279,17 @@ export const getFeaturedGames = async (req, res) => {
           },
         },
       },
-    });
-
-    // Filtrar jogos com pelo menos 3 reviews e calcular média
+    }); // Calcular média de rating para todos os jogos
     const gamesWithRatings = games
-      .filter((game) => game.reviews.length >= 3)
       .map((game) => {
+        if (game.reviews.length === 0) {
+          return {
+            ...game,
+            averageRating: 0,
+            reviews: undefined,
+          };
+        }
+
         const avgRating =
           game.reviews.reduce((sum, review) => sum + review.rating, 0) /
           game.reviews.length;

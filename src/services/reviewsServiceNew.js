@@ -89,3 +89,26 @@ export const deleteReview = async (reviewId) => {
     throw error;
   }
 };
+
+// Buscar reviews de um usuário
+export const getReviewsByUser = async (userId) => {
+  try {
+    const response = await fetch(`${API_BASE}/reviews?userId=${userId}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Erro HTTP ${response.status}: ${errorText}`);
+    }
+    const data = await response.json();
+    return {
+      success: true,
+      data: data.reviews || data || [],
+    };
+  } catch (error) {
+    console.error("Erro ao buscar reviews do usuário:", error);
+    return {
+      success: false,
+      message: error.message,
+      data: [],
+    };
+  }
+};

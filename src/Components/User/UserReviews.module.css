@@ -1,14 +1,49 @@
+/* UserReviews.module.css */
 .userReviews {
-  padding: 2rem;
+  padding: 3rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  min-height: 100vh;
+  color: #f8fafc;
+  position: relative;
+  overflow: hidden;
+}
+
+.userReviews::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+      circle at 20% 80%,
+      rgba(126, 34, 206, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(59, 130, 246, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 40%,
+      rgba(168, 85, 247, 0.05) 0%,
+      transparent 50%
+    );
+  z-index: 0;
+  pointer-events: none;
+}
+
+.reviewsContainer {
+  position: relative;
+  z-index: 1;
   max-width: 1000px;
   margin: 0 auto;
 }
 
 .reviewsHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
+  text-align: center;
 }
 
 .headerContent {
@@ -18,7 +53,7 @@
 .title {
   font-size: 2.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #ff4f59, #ff7f35);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -27,40 +62,87 @@
 }
 
 .subtitle {
-  color: #666;
+  color: #94a3b8;
   font-size: 1.1rem;
   margin: 0;
 }
 
-.createButton {
+/* Loading e Error States */
+.loadingContainer,
+.errorContainer {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, #ff4f59, #ff7f35);
-  color: white;
-  text-decoration: none;
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255, 79, 89, 0.3);
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
 }
 
-.createButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 79, 89, 0.4);
-}
-
-.createIcon {
+.loadingContainer p,
+.errorContainer p {
+  color: #cbd5e1;
   font-size: 1.1rem;
+  margin-top: 1rem;
 }
 
+.errorIcon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(126, 34, 206, 0.3);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty State */
 .emptyState {
   text-align: center;
   padding: 4rem 2rem;
-  background: white;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(10px);
   border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(126, 34, 206, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
+}
+
+.emptyState h3 {
+  color: #f8fafc;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.emptyState p {
+  color: #94a3b8;
+  font-size: 1.1rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Reviews List */
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .emptyIcon {
@@ -103,18 +185,21 @@
   gap: 2rem;
 }
 
+/* Review Cards */
 .reviewCard {
-  background: white;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  border: 2px solid rgba(0, 0, 0, 0.02);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(126, 34, 206, 0.2);
   transition: all 0.3s ease;
 }
 
 .reviewCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(126, 34, 206, 0.3);
 }
 
 .reviewHeader {
@@ -126,17 +211,23 @@
 
 .gameInfo {
   display: flex;
-  align-items: center;
   gap: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
   flex: 1;
+}
+
+.gameInfo:hover {
+  transform: translateX(4px);
 }
 
 .gameThumb {
   width: 80px;
   height: 100px;
+  border-radius: 12px;
   object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(126, 34, 206, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .gameDetails {
@@ -144,10 +235,11 @@
 }
 
 .gameTitle {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: #333;
-  margin: 0 0 0.5rem;
+  color: #f8fafc;
+  margin: 0 0 0.75rem;
+  line-height: 1.3;
 }
 
 .reviewRating {
@@ -162,71 +254,24 @@
 }
 
 .starEmpty {
-  color: #d1d5db;
+  color: #374151;
   font-size: 1.2rem;
 }
 
 .ratingNumber {
-  color: #666;
+  color: #94a3b8;
   font-size: 0.9rem;
   font-weight: 500;
-}
-
-.reviewActions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.viewButton,
-.editButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 1.1rem;
-}
-
-.viewButton {
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
-}
-
-.viewButton:hover {
-  background: #3b82f6;
-  color: white;
-  transform: scale(1.1);
-}
-
-.editButton {
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
-}
-
-.editButton:hover {
-  background: #10b981;
-  color: white;
-  transform: scale(1.1);
 }
 
 .reviewContent {
   margin-bottom: 1.5rem;
 }
 
-.reviewTitle {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 1rem;
-}
-
-.reviewExcerpt {
-  color: #555;
-  line-height: 1.6;
+.reviewText {
+  color: #cbd5e1;
   font-size: 1rem;
+  line-height: 1.6;
   margin: 0;
 }
 
@@ -234,8 +279,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 1.5rem;
-  border-top: 2px solid rgba(0, 0, 0, 0.05);
+  padding-top: 1rem;
+  border-top: 1px solid rgba(126, 34, 206, 0.2);
 }
 
 .reviewStats {
@@ -246,18 +291,22 @@
 .stat {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  color: #666;
+  gap: 0.5rem;
+  color: #94a3b8;
   font-size: 0.9rem;
 }
 
 .statIcon {
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 .reviewMeta {
-  color: #999;
-  font-size: 0.9rem;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.publishDate {
+  font-weight: 500;
 }
 
 .loadingContainer {
@@ -280,8 +329,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsividade */

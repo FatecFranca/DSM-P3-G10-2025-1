@@ -1,4 +1,4 @@
-import { apiRequest } from './api';
+import { apiRequest } from "./api";
 
 class UserService {
   constructor() {
@@ -6,12 +6,12 @@ class UserService {
   }
 
   getBaseURL() {
-    if (typeof window !== 'undefined' && window.location) {
-      return window.location.hostname === 'localhost' 
-        ? 'http://localhost:5000/api'
-        : '/api';
+    if (typeof window !== "undefined" && window.location) {
+      return window.location.hostname === "localhost"
+        ? "http://localhost:5000/api"
+        : "/api";
     }
-    return 'http://localhost:5000/api';
+    return "http://localhost:5000/api";
   }
 
   // Obter perfil do usuário
@@ -20,13 +20,13 @@ class UserService {
       const user = await apiRequest(`/users/${id}`);
       return {
         success: true,
-        data: user
+        data: user,
       };
     } catch (error) {
-      console.error('Erro ao buscar perfil do usuário:', error);
+      console.error("Erro ao buscar perfil do usuário:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   }
@@ -35,19 +35,19 @@ class UserService {
   async updateUserProfile(id, userData) {
     try {
       const updatedUser = await apiRequest(`/users/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(userData)
+        method: "PUT",
+        body: JSON.stringify(userData),
       });
 
       return {
         success: true,
-        data: updatedUser
+        data: updatedUser,
       };
     } catch (error) {
-      console.error('Erro ao atualizar perfil:', error);
+      console.error("Erro ao atualizar perfil:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   }
@@ -56,18 +56,18 @@ class UserService {
   async deleteUser(id) {
     try {
       await apiRequest(`/users/${id}`, {
-        method: 'DELETE'
+        method: "DELETE",
       });
 
       return {
         success: true,
-        message: 'Usuário deletado com sucesso'
+        message: "Usuário deletado com sucesso",
       };
     } catch (error) {
-      console.error('Erro ao deletar usuário:', error);
+      console.error("Erro ao deletar usuário:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   }
@@ -75,16 +75,16 @@ class UserService {
   // Listar todos os usuários
   async getUsers() {
     try {
-      const users = await apiRequest('/users');
+      const users = await apiRequest("/users");
       return {
         success: true,
-        data: users
+        data: users,
       };
     } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
+      console.error("Erro ao buscar usuários:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   }
@@ -95,13 +95,36 @@ class UserService {
       const progress = await apiRequest(`/game-progress/user/${userId}`);
       return {
         success: true,
-        data: progress
+        data: progress,
       };
     } catch (error) {
-      console.error('Erro ao buscar progresso de jogos:', error);
+      console.error("Erro ao buscar progresso de jogos:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
+      };
+    }
+  }
+
+  // Buscar estatísticas do usuário
+  async getUserStats(userId) {
+    try {
+      const stats = await apiRequest(`/users/${userId}/stats`);
+      return {
+        success: true,
+        data: stats,
+      };
+    } catch (error) {
+      console.error("Erro ao buscar estatísticas do usuário:", error);
+      return {
+        success: false,
+        message: error.message,
+        data: {
+          likesReceived: 0,
+          dislikesReceived: 0,
+          reviewsCount: 0,
+          gamesCreated: 0,
+        },
       };
     }
   }

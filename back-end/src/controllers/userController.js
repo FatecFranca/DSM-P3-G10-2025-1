@@ -1,18 +1,18 @@
-import prisma from '../database/client.js';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import prisma from "../database/client.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const createUser = async (req, res) => {
   try {
     const { name, email, password, avatarUrl } = req.body;
-    
+
     // Verificar se usuário já existe
     const existingUser = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
     });
-    
+
     if (existingUser) {
-      return res.status(400).json({ error: 'Email já está em uso' });
+      return res.status(400).json({ error: "Email já está em uso" });
     }
 
     // Hash da senha
@@ -23,17 +23,17 @@ export const createUser = async (req, res) => {
         name,
         email,
         password: hashedPassword,
-        avatarUrl
-      }
+        avatarUrl,
+      },
     });
 
     // Remover senha da resposta
     const { password: _, ...userWithoutPassword } = user;
-    
+
     res.status(201).json(userWithoutPassword);
   } catch (error) {
-    console.error('Erro ao criar usuário:', error);
-    res.status(500).json({ error: 'Erro ao criar usuário' });
+    console.error("Erro ao criar usuário:", error);
+    res.status(500).json({ error: "Erro ao criar usuário" });
   }
 };
 
@@ -47,22 +47,22 @@ export const getAllUsers = async (req, res) => {
         avatarUrl: true,
         createdAt: true,
         _count: {
-          select: { reviews: true }
-        }
-      }
+          select: { reviews: true },
+        },
+      },
     });
-    
+
     res.json(users);
   } catch (error) {
-    console.error('Erro ao buscar usuários:', error);
-    res.status(500).json({ error: 'Erro ao buscar usuários' });
+    console.error("Erro ao buscar usuários:", error);
+    res.status(500).json({ error: "Erro ao buscar usuários" });
   }
 };
 
 export const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const user = await prisma.user.findUnique({
       where: { id },
       select: {
@@ -77,60 +77,106 @@ export const getUserById = async (req, res) => {
               select: {
                 id: true,
                 title: true,
-                coverUrl: true
-              }
-            }
-          }
-        }
-      }
+                coverUrl: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!user) {
-      return res.status(404).json({ error: 'Usuário não encontrado' });
+      return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
     res.json(user);
   } catch (error) {
-    console.error('Erro ao buscar usuário:', error);
-    res.status(500).json({ error: 'Erro ao buscar usuário' });
+    console.error("Erro ao buscar usuário:", error);
+    res.status(500).json({ error: "Erro ao buscar usuário" });
   }
 };
 
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, avatarUrl } = req.body;
+    const { name, bio } = req.body;
 
     const user = await prisma.user.update({
       where: { id },
-      data: { name, avatarUrl },
+      data: { name, bio },
       select: {
         id: true,
         name: true,
         email: true,
+        bio: true,
         avatarUrl: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
 
     res.json(user);
   } catch (error) {
-    console.error('Erro ao atualizar usuário:', error);
-    res.status(500).json({ error: 'Erro ao atualizar usuário' });
+    console.error("Erro ao atualizar usuário:", error);
+    res.status(500).json({ error: "Erro ao atualizar usuário" });
   }
 };
 
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     await prisma.user.delete({
-      where: { id }
+      where: { id },
     });
 
     res.status(204).send();
   } catch (error) {
-    console.error('Erro ao deletar usuário:', error);
-    res.status(500).json({ error: 'Erro ao deletar usuário' });
+    console.error("Erro ao deletar usuário:", error);
+    res.status(500).json({ error: "Erro ao deletar usuário" });
+  }
+};
+
+// Buscar estatísticas do usuário
+export const getUserStats = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = id; // Manter como string para MongoDB ObjectId
+
+    // Buscar count de reviews do usuário
+    const reviewsCount = await prisma.review.count({
+      where: { userId },
+    }); // Buscar count de jogos criados pelo usuário
+    const gamesCreated = await prisma.game.count({
+      where: { createdBy: userId },
+    }); // Buscar likes recebidos (reações positivas nas reviews do usuário)
+    const likesReceived = await prisma.reviewReaction.count({
+      where: {
+        type: "LIKE",
+        review: {
+          userId: userId,
+        },
+      },
+    });
+
+    // Buscar dislikes recebidos (reações negativas nas reviews do usuário)
+    const dislikesReceived = await prisma.reviewReaction.count({
+      where: {
+        type: "DISLIKE",
+        review: {
+          userId: userId,
+        },
+      },
+    });
+    const stats = {
+      likesReceived,
+      dislikesReceived,
+      reviewsCount,
+      gamesCreated,
+    };
+
+    res.json(stats);
+  } catch (error) {
+    console.error("Erro ao buscar estatísticas do usuário:", error);
+    res.status(500).json({ error: "Erro ao buscar estatísticas do usuário" });
   }
 };

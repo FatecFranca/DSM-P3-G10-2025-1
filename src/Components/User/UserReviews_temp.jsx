@@ -139,7 +139,7 @@ const UserReviews = () => {
                       {review._count?.reactions?.LIKE || review.likes || 0}
                     </span>
                     <span className={styles.stat}>
-                      <span className={styles.statIcon}>👎</span>
+                      <span className={styles.statIcon}>⬇️</span>
                       {review._count?.reactions?.DISLIKE ||
                         review.dislikes ||
                         0}

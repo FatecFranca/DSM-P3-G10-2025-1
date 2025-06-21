@@ -546,99 +546,64 @@
   color: #cbd5e1;
 }
 
-/* Responsividade aprimorada */
-@media (max-width: 768px) {
+/* Tablet - Responsividade aprimorada */
+@media (max-width: 1024px) {
   .container {
-    padding: 2rem 1rem;
-  }
-
-  .hero {
-    margin-bottom: 3rem;
-    padding: 2rem 1.5rem;
-  }
-
-  .title {
-    font-size: 2.5rem;
-  }
-
-  .subtitle {
-    font-size: 1.1rem;
-  }
-
-  .searchInput {
-    padding: 1.2rem 1.5rem;
-    font-size: 1rem;
+    padding: 2.5rem 1.5rem;
   }
 
   .gamesGrid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 2rem;
   }
 
-  .gameCard {
-    transform-origin: center;
-  }
-
-  .gameInfo {
-    padding: 1.25rem;
-  }
-
-  .gameTitle {
-    font-size: 1.1rem;
-  }
-
-  .gameRating {
-    font-size: 0.9rem;
-    padding: 0.4rem 0.8rem;
-  }
-
-  /* Responsividade para filtros */
-  .filtersContainer {
-    gap: 1.5rem;
-  }
-
-  .genreFilters {
-    gap: 0.8rem;
-    margin-top: 0.5rem;
-  }
-
-  .genreButton {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.85rem;
+  .title {
+    font-size: 3rem;
   }
 }
 
-@media (max-width: 480px) {
+/* Mobile - Responsividade aprimorada */
+@media (max-width: 768px) {
   .container {
     padding: 1.5rem 1rem;
+    gap: 2rem;
   }
 
   .hero {
-    padding: 2rem 1rem;
     margin-bottom: 2rem;
+    padding: 2rem 1rem;
+    border-radius: 1.5rem;
   }
 
   .title {
-    font-size: 2rem;
+    font-size: 2.2rem;
+    margin-bottom: 0.8rem;
   }
 
   .subtitle {
     font-size: 1rem;
+    margin-bottom: 2rem;
   }
 
   .searchInput {
     padding: 1rem 1.2rem;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    border-radius: 1.5rem;
   }
 
   .gamesGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1.5rem;
+    margin-top: 1.5rem;
   }
 
   .gameCard {
-    max-width: 400px;
-    margin: 0 auto;
+    transform-origin: center;
+    border-radius: 1.2rem;
+  }
+
+  .gameCard:hover {
+    transform: translateY(-5px) scale(1.01);
   }
 
   .gameInfo {
@@ -652,40 +617,22 @@
 
   .gameRating {
     font-size: 0.85rem;
-    padding: 0.3rem 0.6rem;
-  }
-
-  .starIcon {
-    font-size: 1rem;
-  }
-
-  .loading,
-  .error,
-  .noGames {
-    padding: 3rem 1.5rem;
-  }
-
-  .loading p,
-  .error p {
-    font-size: 1rem;
-  }
-
-  .noGames {
-    font-size: 1rem;
+    padding: 0.4rem 0.8rem;
   }
 
   /* Responsividade para filtros */
   .filtersContainer {
-    gap: 1rem;
+    gap: 1.2rem;
   }
 
   .genreFilters {
     gap: 0.6rem;
+    margin-top: 0.5rem;
     justify-content: flex-start;
     overflow-x: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    padding-bottom: 0.5rem;
+    padding: 0.5rem 0;
   }
 
   .genreFilters::-webkit-scrollbar {
@@ -693,13 +640,272 @@
   }
 
   .genreButton {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1rem;
     font-size: 0.8rem;
     white-space: nowrap;
     flex-shrink: 0;
+    border-radius: 1.5rem;
+  }
+
+  .resultsInfo {
+    margin: 1.5rem 0;
+  }
+
+  .resultsCount {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+    border-radius: 1.5rem;
+  }
+}
+
+/* Mobile pequeno - Responsividade otimizada */
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem 0.8rem;
+    gap: 1.5rem;
+  }
+
+  .hero {
+    padding: 1.5rem 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 1.2rem;
+  }
+
+  .title {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
   }
 
   .searchInput {
+    padding: 0.8rem 1rem;
     font-size: 0.9rem;
+    border-radius: 1.2rem;
+  }
+
+  .gamesGrid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    margin-top: 1rem;
+  }
+
+  .gameCard {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 1rem;
+  }
+
+  .gameCard:hover {
+    transform: translateY(-3px) scale(1.005);
+  }
+
+  .gameImage {
+    padding-top: 120%; /* Menos altura para mobile */
+  }
+
+  .gameInfo {
+    padding: 0.8rem;
+  }
+
+  .gameTitle {
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+  }
+
+  .gameRating {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.8rem;
+  }
+
+  .starIcon {
+    font-size: 0.9rem;
+    margin-right: 0.3rem;
+  }
+
+  .loading,
+  .error,
+  .noGames {
+    padding: 2rem 1rem;
+    border-radius: 1.2rem;
+  }
+
+  .loading p,
+  .error p,
+  .noGames {
+    font-size: 0.9rem;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+  }
+
+  /* Filtros otimizados para mobile pequeno */
+  .filtersContainer {
+    gap: 1rem;
+  }
+
+  .genreFilters {
+    gap: 0.5rem;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0.3rem 0 0.8rem 0;
+  }
+
+  .genreFilters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .genreButton {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+    border-radius: 1.2rem;
+    min-width: fit-content;
+  }
+
+  .resultsInfo {
+    margin: 1rem 0;
+  }
+
+  .resultsCount {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.8rem;
+    border-radius: 1.2rem;
+  }
+
+  /* Melhorar touch targets */
+  .gameCard,
+  .genreButton,
+  .searchInput {
+    min-height: 44px; /* Garantir área de toque adequada */
+  }
+
+  /* Otimizar animações para mobile */
+  .gameCard {
+    animation: none; /* Remover animações complexas em mobile */
+  }
+
+  .hero {
+    animation: none;
+  }
+
+  .title,
+  .subtitle,
+  .filtersContainer,
+  .gamesGrid {
+    animation: none;
+  }
+}
+
+/* Mobile muito pequeno - Otimização extra */
+@media (max-width: 360px) {
+  .container {
+    padding: 0.8rem 0.5rem;
+  }
+
+  .hero {
+    padding: 1.2rem 0.8rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+  }
+
+  .searchInput {
+    padding: 0.7rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .gameCard {
+    border-radius: 0.8rem;
+  }
+
+  .gameInfo {
+    padding: 0.6rem;
+  }
+
+  .gameTitle {
+    font-size: 0.9rem;
+  }
+
+  .gameRating {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .genreButton {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* Melhorias de performance e UX */
+@media (max-width: 768px) {
+  /* Reduzir efeitos visuais pesados em mobile */
+  .container::before {
+    display: none;
+  }
+
+  .hero::before {
+    display: none;
+  }
+
+  .gameCard::before {
+    display: none;
+  }
+
+  /* Simplificar gradientes para melhor performance */
+  .hero {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+  }
+
+  .gameCard {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+  }
+
+  .gameInfo {
+    background: rgba(15, 23, 42, 0.9);
+  }
+
+  /* Otimizar hover effects para touch */
+  .gameCard:hover {
+    transition: transform 0.2s ease;
+  }
+
+  .genreButton:hover {
+    transition: all 0.2s ease;
+  }
+}
+
+/* Landscape mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .hero {
+    padding: 1.5rem 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .gamesGrid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
 }

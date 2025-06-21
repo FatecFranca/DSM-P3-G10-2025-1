@@ -26,6 +26,7 @@ model User {
   reviewReactions  ReviewReaction[]
   commentReactions CommentReaction[]
   gameProgresses   GameProgress[]
+  createdGames     Game[]         // Jogos criados por este usuário
 
   @@map("users")
 }
@@ -42,6 +43,10 @@ model Game {
   genres      String[]  // Array de strings dos gêneros
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  // Campo para identificar quem criou o jogo
+  createdBy   String?   @db.ObjectId // ID do usuário que criou o jogo
+  creator     User?     @relation(fields: [createdBy], references: [id])
 
   // Relacionamentos
   reviews        Review[]

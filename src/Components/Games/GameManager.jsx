@@ -4,9 +4,11 @@ import GAME_GENRES from "../../constants/gameGenres";
 import { GENRE_MAPPING } from "../../constants/genreMapping";
 import ImageUpload from "../Form/ImageUpload";
 import SafeImage from "../Helper/SafeImage";
+import { useAuthContext } from "../../context/AuthContext";
 import styles from "./GameManager.module.css";
 
 const GameManager = () => {
+  const { user } = useAuthContext();
   const [games, setGames] = useState([]); // Inicializar como array vazio
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null); // Adicionar estado de erro
@@ -54,12 +56,16 @@ const GameManager = () => {
       // Debug: verificar os dados antes de enviar
       console.log("Dados do formulário sendo enviados:", formData);
       console.log("Gêneros selecionados:", formData.genres);
-
       let result;
       if (editingGame) {
         result = await gamesService.updateGame(editingGame.id, formData);
       } else {
-        result = await gamesService.createGame(formData);
+        // Incluir o ID do usuário logado como criador do jogo
+        const gameData = {
+          ...formData,
+          createdBy: user?.id || null,
+        };
+        result = await gamesService.createGame(gameData);
       }
 
       if (result.success) {
