@@ -2,24 +2,19 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
-// Importar rotas
 
 import userRoutes from "./routes/userRoutes.js";
 import gameRoutes from "./routes/gameRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
-import commentRoutes from "./routes/commentRoutes.js";
-import commentReactionRoutes from "./routes/commentReactionRoutes.js";
 import reviewReactionRoutes from "./routes/reviewReactionRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
 import userFavoritesRoutes from "./routes/userFavoritesRoutes.js";
-import gameProgressRoutes from "./routes/gameProgressRoutes.js";
-// Configurar variáveis de ambiente
+
 dotenv.config();
 
 const app = express();
 
-// No arquivo app.js do back-end
 app.use(
   cors({
     origin: "http://localhost:5173", // URL do seu front-end Vite
@@ -29,26 +24,23 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware de logging
+
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
 
-// Rota de teste
+
 app.get("/api/test", (req, res) => {
   res.json({ message: "API está funcionando!" });
 });
 
-// Rotas da API
+
 app.use("/api", authRoutes); // /api/login será o endpoint
 app.use("/api/users", userRoutes);
 app.use("/api/games", gameRoutes);
 app.use("/api/reviews", reviewRoutes);
-app.use("/api/comments", commentRoutes);
-app.use("/api/comment-reactions", commentReactionRoutes);
 app.use("/api/review-reactions", reviewReactionRoutes);
-app.use("/api/game-progress", gameProgressRoutes);
 app.use("/api/favorites", userFavoritesRoutes);
 
 // Middleware para rotas não encontradas
@@ -136,23 +128,9 @@ app.get("/", (req, res) => {
       "PUT /api/reviews/:id": "Atualizar avaliação",
       "DELETE /api/reviews/:id": "Excluir avaliação",
     },
-    Comments: {
-      "GET /api/comments": "Listar comentários",
-      "GET /api/comments/:id": "Obter detalhes do comentário",
-      "POST /api/comments": "Adicionar novo comentário",
-      "PUT /api/comments/:id": "Atualizar comentário",
-      "DELETE /api/comments/:id": "Excluir comentário",
-    },
     Reactions: {
       "POST /api/comment-reactions": "Reagir a um comentário",
       "POST /api/review-reactions": "Reagir a uma avaliação",
-    },
-    Progress: {
-      "GET /api/game-progress": "Listar progresso dos jogos",
-      "GET /api/game-progress/:id": "Obter detalhes do progresso do jogo",
-      "POST /api/game-progress": "Adicionar novo progresso",
-      "PUT /api/game-progress/:id": "Atualizar progresso",
-      "DELETE /api/game-progress/:id": "Excluir progresso",
     },
   };
 

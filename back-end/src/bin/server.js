@@ -2,19 +2,14 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
-// Importar rotas
+
 import reviewRoutes from "../routes/reviewRoutes.js";
 import gameRoutes from "../routes/gameRoutes.js";
-// import genreRoutes from "../routes/genreRoutes.js"; // REMOVIDO - gêneros agora são strings
 import userRoutes from "../routes/userRoutes.js";
-// Novas rotas
-import commentRoutes from "../routes/commentRoutes.js";
 import reviewReactionRoutes from "../routes/reviewReactionRoutes.js";
-import commentReactionRoutes from "../routes/commentReactionRoutes.js";
-import gameProgressRoutes from "../routes/gameProgressRoutes.js";
 import userFavoritesRoutes from "../routes/userFavoritesRoutes.js";
 
-// Configurar variáveis de ambiente
+
 dotenv.config();
 
 const app = express();
@@ -36,10 +31,7 @@ app.get("/", (req, res) => {
       games: "/api/games",
       genres: "/api/genres",
       users: "/api/users",
-      comments: "/api/comments",
       reviewReactions: "/api/review-reactions",
-      commentReactions: "/api/comment-reactions",
-      gameProgress: "/api/game-progress",
     },
     documentation: {
       reviews: {
@@ -74,37 +66,16 @@ app.get("/", (req, res) => {
         "PUT /api/users/:id": "Atualizar usuário",
         "DELETE /api/users/:id": "Deletar usuário",
       },
-      comments: {
-        "GET /api/comments/review/:reviewId":
-          "Listar comentários de uma review",
-        "POST /api/comments": "Criar novo comentário",
-        "PUT /api/comments/:id": "Atualizar comentário",
-        "DELETE /api/comments/:id": "Deletar comentário",
-      },
       reviewReactions: {
         "POST /api/review-reactions": "Reagir a uma review",
         "GET /api/review-reactions/review/:reviewId":
           "Listar reações de uma review",
         "DELETE /api/review-reactions/:id": "Remover reação",
       },
-      commentReactions: {
-        "POST /api/comment-reactions": "Reagir a um comentário",
-        "GET /api/comment-reactions/comment/:commentId":
-          "Listar reações de um comentário",
-        "DELETE /api/comment-reactions/:id": "Remover reação",
-      },
-      gameProgress: {
-        "POST /api/game-progress": "Atualizar progresso de jogo",
-        "GET /api/game-progress/user/:userId":
-          "Listar progresso de jogos por usuário",
-        "GET /api/game-progress/game/:gameId":
-          "Listar usuários por progresso de jogo",
-      },
     },
   });
 });
 
-// Rota de health check
 app.get("/health", (req, res) => {
   res.json({
     status: "OK",
@@ -113,19 +84,12 @@ app.get("/health", (req, res) => {
   });
 });
 
-// Configurar rotas da API
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/games", gameRoutes);
-// app.use("/api/genres", genreRoutes); // REMOVIDO - gêneros agora são strings
 app.use("/api/users", userRoutes);
-// Adicionar novas rotas
-app.use("/api/comments", commentRoutes);
 app.use("/api/review-reactions", reviewReactionRoutes);
-app.use("/api/comment-reactions", commentReactionRoutes);
-app.use("/api/game-progress", gameProgressRoutes);
 app.use("/api/favorites", userFavoritesRoutes);
 
-// Middleware para rotas não encontradas
 app.use("*", (req, res) => {
   res.status(404).json({
     error: "Endpoint não encontrado",
@@ -135,7 +99,6 @@ app.use("*", (req, res) => {
   });
 });
 
-// Middleware para tratamento de erros
 app.use((error, req, res, next) => {
   console.error("Erro no servidor:", error);
 
@@ -149,7 +112,6 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Iniciar servidor
 app.listen(PORT, () => {
   console.log(`
 🚀 Servidor rodando na porta ${PORT}
@@ -162,10 +124,7 @@ app.listen(PORT, () => {
    • Games:             http://localhost:${PORT}/api/games
    • Genres:            http://localhost:${PORT}/api/genres
    • Users:             http://localhost:${PORT}/api/users
-   • Comments:          http://localhost:${PORT}/api/comments
    • Review Reactions:  http://localhost:${PORT}/api/review-reactions
-   • Comment Reactions: http://localhost:${PORT}/api/comment-reactions
-   • Game Progress:     http://localhost:${PORT}/api/game-progress
   `);
 });
 
