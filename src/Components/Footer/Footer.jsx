@@ -36,9 +36,8 @@ const Footer = () => {
                 </div>
                 <span className={styles.logoText}>GameReviews</span>
               </Link>
-              
-              <p style={{ color: '#9ca3af', marginBottom: '1rem', lineHeight: '1.6' }}>
-                Sua plataforma completa para descobrir, avaliar e compartilhar experiências com os melhores jogos.
+                <p style={{ color: '#9ca3af', marginBottom: '1rem', lineHeight: '1.6' }}>
+                Plataforma de avaliação de jogos desenvolvida como Projeto Interdisciplinar do curso de Desenvolvimento de Software Multiplataforma.
               </p>
               
               <div className={styles.socialLinks}>
@@ -95,46 +94,39 @@ const Footer = () => {
             </div>
 
             <div className={styles.footerLinksWrapper}>
-              {}
-              <div className={styles.linksSection}>
+              {}              <div className={styles.linksSection}>
                 <h4 className={styles.linkTitle}>Explorar</h4>
                 <ul className={styles.linksList}>
                   <li><Link to="/" className={styles.footerLink}>Home</Link></li>
                   <li><Link to="/jogos" className={styles.footerLink}>Jogos</Link></li>
-                  <li><Link to="/reviews" className={styles.footerLink}>Reviews</Link></li>
-                  <li><Link to="/generos" className={styles.footerLink}>Gêneros</Link></li>
-                  <li><Link to="/sobre" className={styles.footerLink}>Sobre</Link></li>
+                  <li><Link to="/conta" className={styles.footerLink}>Minha Conta</Link></li>
+                  <li><Link to="/admin/jogos" className={styles.footerLink}>Gerenciar Jogos</Link></li>
                 </ul>
               </div>
 
-              {}
-              <div className={styles.linksSection}>
-                <h4 className={styles.linkTitle}>Categorias</h4>
+              {}              <div className={styles.linksSection}>
+                <h4 className={styles.linkTitle}>Funcionalidades</h4>
                 <ul className={styles.linksList}>
-                  <li><Link to="/genero/acao" className={styles.footerLink}>Ação</Link></li>
-                  <li><Link to="/genero/rpg" className={styles.footerLink}>RPG</Link></li>
-                  <li><Link to="/genero/fps" className={styles.footerLink}>FPS</Link></li>
-                  <li><Link to="/genero/estrategia" className={styles.footerLink}>Estratégia</Link></li>
-                  <li><Link to="/genero/indie" className={styles.footerLink}>Indie</Link></li>
+                  <li><span className={styles.footerFeature}>✓ Avaliar Jogos</span></li>
+                  <li><span className={styles.footerFeature}>✓ Escrever Reviews</span></li>
+                  <li><span className={styles.footerFeature}>✓ Reagir a Reviews</span></li>
+                  <li><span className={styles.footerFeature}>✓ Sistema de Favoritos</span></li>
+                  <li><span className={styles.footerFeature}>✓ Gerenciar Perfil</span></li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
 
-        <div className={styles.divider}></div>
-
-        <div className={styles.bottomSection}>
-          <div className={styles.copyright}>
+        <div className={styles.divider}></div>        <div className={styles.bottomSection}>          <div className={styles.copyright}>
             <span>© {currentYear} GameReviews</span>
             <span className={styles.separator}>•</span>
-            <span>Feito com <span className={styles.heart}>❤️</span> para gamers</span>
+            <span>Projeto Acadêmico - FATEC FRANCA</span>
           </div>
           
           <div className={styles.bottomLinks}>
-            <Link to="/privacidade" className={styles.bottomLink}>Privacidade</Link>
-            <Link to="/termos" className={styles.bottomLink}>Termos</Link>
-            <Link to="/contato" className={styles.bottomLink}>Contato</Link>
+            <span className={styles.bottomLink}>Grupo 10 - DSM 3º Sem</span>
+            <span className={styles.bottomLink}>2025/1</span>
           </div>
         </div>
 

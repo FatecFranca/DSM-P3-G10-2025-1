@@ -231,8 +231,7 @@ O projeto utiliza um design system consistente com:
 
 ## 📞 Contato
 
-\*_Fatec Franca_
-
+**FATEC FRANCA**
 - Curso: Desenvolvimento de Software Multiplataforma
 - Semestre: 3º - 2025/1
 - Disciplina: Projeto Interdisciplinar

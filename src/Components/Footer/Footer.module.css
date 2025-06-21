@@ -162,6 +162,13 @@
   opacity: 1;
 }
 
+.footerFeature {
+  color: #10b981;
+  font-size: 0.95rem;
+  display: inline-block;
+  font-weight: 500;
+}
+
 .divider {
   margin: 2rem 0;
   height: 1px;

@@ -360,8 +360,7 @@ Este projeto está sob a licença MIT.
 
 ---
 
-**Fatec São José dos Campos - Prof. Jessen Vidal**
-
+**FATEC FRANCA**
 - Curso: Desenvolvimento de Software Multiplataforma
 - Semestre: 3º - 2025/1
 - Disciplina: Projeto Interdisciplinar
