@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
-import { getReviewsByUser } from "../../services/reviewsServiceNew";
+import { getReviewsByUser } from "../../services/reviewsService";
 import styles from "./UserReviews.module.css";
 
 const UserReviews = () => {
@@ -166,4 +166,3 @@ const UserReviews = () => {
 };
 
 export default UserReviews;
-

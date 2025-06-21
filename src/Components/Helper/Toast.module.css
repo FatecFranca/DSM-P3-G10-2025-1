@@ -1,0 +1,114 @@
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  min-width: 300px;
+  max-width: 500px;
+  padding: 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.3s ease-in-out;
+  animation: slideIn 0.3s ease-out;
+}
+
+.toast.fadeOut {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  width: 100%;
+}
+
+.message {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 12px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.closeButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Toast types */
+.success {
+  background-color: #10b981;
+  color: white;
+}
+
+.success .closeButton {
+  color: white;
+}
+
+.error {
+  background-color: #ef4444;
+  color: white;
+}
+
+.error .closeButton {
+  color: white;
+}
+
+.warning {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.warning .closeButton {
+  color: white;
+}
+
+.info {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.info .closeButton {
+  color: white;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .toast {
+    left: 20px;
+    right: 20px;
+    min-width: auto;
+    max-width: none;
+  }
+}

@@ -5,10 +5,14 @@ import { GENRE_MAPPING } from "../../constants/genreMapping";
 import ImageUpload from "../Form/ImageUpload";
 import SafeImage from "../Helper/SafeImage";
 import { useAuthContext } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
+import { useModal } from "../../context/ModalContext";
 import styles from "./GameManager.module.css";
 
 const GameManager = () => {
   const { user } = useAuthContext();
+  const { showSuccess, showError } = useToast();
+  const { confirm } = useModal();
   const [games, setGames] = useState([]); // Inicializar como array vazio
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null); // Adicionar estado de erro
@@ -30,20 +34,16 @@ const GameManager = () => {
     setLoading(true);
     setError(null);
     try {
-      console.log("Carregando jogos...");
       const result = await gamesService.getGames();
-      console.log("Resultado da busca de jogos:", result);
 
       if (result.success && Array.isArray(result.data)) {
         setGames(result.data);
       } else {
-        console.error("Dados de jogos inválidos:", result);
-        setGames([]); // Garantir que games sempre seja um array
+        setGames([]);
         setError("Formato de dados inválido recebido do servidor");
       }
     } catch (error) {
-      console.error("Erro ao carregar jogos:", error);
-      setGames([]); // Em caso de erro, definir como array vazio
+      setGames([]);
       setError(`Erro ao carregar jogos: ${error.message}`);
     }
     setLoading(false);
@@ -51,25 +51,19 @@ const GameManager = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      // Debug: verificar os dados antes de enviar
-      console.log("Dados do formulário sendo enviados:", formData);
-      console.log("Gêneros selecionados:", formData.genres);
       let result;
       if (editingGame) {
         result = await gamesService.updateGame(editingGame.id, formData);
       } else {
-        // Incluir o ID do usuário logado como criador do jogo
         const gameData = {
           ...formData,
           createdBy: user?.id || null,
         };
         result = await gamesService.createGame(gameData);
       }
-
       if (result.success) {
-        alert(
+        showSuccess(
           editingGame
             ? "Jogo atualizado com sucesso!"
             : "Jogo criado com sucesso!"
@@ -77,10 +71,10 @@ const GameManager = () => {
         resetForm();
         loadGames();
       } else {
-        alert("Erro: " + result.message);
+        showError("Erro: " + result.message);
       }
     } catch (error) {
-      alert("Erro ao salvar jogo: " + error.message);
+      showError("Erro ao salvar jogo: " + error.message);
     }
     setLoading(false);
   };
@@ -96,20 +90,24 @@ const GameManager = () => {
     });
     setShowForm(true);
   };
-
   const handleDelete = async (game) => {
-    if (window.confirm(`Tem certeza que deseja deletar "${game.title}"?`)) {
+    const shouldDelete = await confirm(
+      `Tem certeza que deseja deletar "${game.title}"?`,
+      "Confirmar Exclusão"
+    );
+
+    if (shouldDelete) {
       setLoading(true);
       try {
         const result = await gamesService.deleteGame(game.id);
         if (result.success) {
-          alert("Jogo deletado com sucesso!");
+          showSuccess("Jogo deletado com sucesso!");
           loadGames();
         } else {
-          alert("Erro ao deletar jogo: " + result.message);
+          showError("Erro ao deletar jogo: " + result.message);
         }
       } catch (error) {
-        alert("Erro ao deletar jogo: " + error.message);
+        showError("Erro ao deletar jogo: " + error.message);
       }
       setLoading(false);
     }
@@ -259,8 +257,7 @@ const GameManager = () => {
                 <div className={styles.gameInfo}>
                   {" "}
                   <h3>{game.title}</h3>
-                  <p>{game.description}</p>{" "}
-                  {}
+                  <p>{game.description}</p> {}
                   {(() => {
                     if (Array.isArray(game.genres) && game.genres.length > 0) {
                       return (
@@ -277,8 +274,7 @@ const GameManager = () => {
                           )}
                         </div>
                       );
-                    }
-                    else if (
+                    } else if (
                       Array.isArray(game.genreIds) &&
                       game.genreIds.length > 0
                     ) {
@@ -331,4 +327,3 @@ const GameManager = () => {
 };
 
 export default GameManager;
-

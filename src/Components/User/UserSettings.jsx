@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import userService from "../../services/userService";
+import { useToast } from "../../context/ToastContext";
+import { useModal } from "../../context/ModalContext";
 import styles from "./UserSettings.module.css";
 
 const UserSettings = () => {
@@ -9,6 +11,8 @@ const UserSettings = () => {
   const [message, setMessage] = useState("");
   const [activeSection, setActiveSection] = useState("account");
   const { user, logout } = useAuthContext();
+  const { showSuccess, showError, showWarning } = useToast();
+  const { confirm } = useModal();
   const navigate = useNavigate();
 
   const [passwordData, setPasswordData] = useState({
@@ -60,26 +64,28 @@ const UserSettings = () => {
   };
   const handleDeleteAccount = async () => {
     if (!user?.id) {
-      setMessage("Erro: Usuário não identificado");
+      showError("Erro: Usuário não identificado");
       return;
     }
 
-    const firstConfirm = window.confirm(
+    const firstConfirm = await confirm(
       "Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.\n\n" +
         "Ao excluir sua conta, você perderá:\n" +
         "• Todos os seus favoritos\n" +
         "• Todas as suas avaliações\n" +
         "• Todo o histórico de atividades\n" +
-        "• Todos os dados da conta"
+        "• Todos os dados da conta",
+      "Confirmar Exclusão de Conta"
     );
 
     if (!firstConfirm) return;
 
-    const secondConfirm = window.confirm(
+    const secondConfirm = await confirm(
       "ÚLTIMA CONFIRMAÇÃO!\n\n" +
         "Sua conta e todos os dados serão permanentemente excluídos.\n" +
         "Esta ação NÃO PODE ser desfeita.\n\n" +
-        "Deseja realmente continuar?"
+        "Deseja realmente continuar?",
+      "CONFIRMAÇÃO FINAL"
     );
 
     if (!secondConfirm) return;
@@ -91,7 +97,7 @@ const UserSettings = () => {
       const result = await userService.deleteUser(user.id);
 
       if (result.success) {
-        alert(
+        showSuccess(
           "Conta excluída com sucesso. Você será redirecionado para a página inicial."
         );
         logout(); // Fazer logout do usuário

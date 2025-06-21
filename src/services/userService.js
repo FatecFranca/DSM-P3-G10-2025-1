@@ -89,23 +89,6 @@ class UserService {
     }
   }
 
-  // Buscar progresso de jogos do usuário
-  async getUserGameProgress(userId) {
-    try {
-      const progress = await apiRequest(`/game-progress/user/${userId}`);
-      return {
-        success: true,
-        data: progress,
-      };
-    } catch (error) {
-      console.error("Erro ao buscar progresso de jogos:", error);
-      return {
-        success: false,
-        message: error.message,
-      };
-    }
-  }
-
   // Buscar estatísticas do usuário
   async getUserStats(userId) {
     try {
@@ -131,4 +114,3 @@ class UserService {
 }
 
 export default new UserService();
-

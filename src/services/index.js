@@ -1,17 +1,15 @@
 import authService from "./authService";
 import userService from "./userService";
 import gamesService from "./gamesService";
-import commentService from "./commentService";
+import reviewsService from "./reviewsService";
 import reactionService from "./reactionService";
-import gameProgressService from "./gameProgressService";
 
 export {
   authService,
   userService,
   gamesService,
-  commentService,
+  reviewsService,
   reactionService,
-  gameProgressService,
 };
 
 export const gameService = gamesService;
@@ -20,8 +18,6 @@ export default {
   auth: authService,
   users: userService,
   games: gamesService,
-  comments: commentService,
+  reviews: reviewsService,
   reactions: reactionService,
-  gameProgress: gameProgressService,
 };
-

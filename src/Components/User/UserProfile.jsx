@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../../context/AuthContext";
+import { useReview } from "../../context/ReviewContext";
 import UserIcon from "./UserIcon";
 import userService from "../../services/userService";
 import styles from "./UserProfile.module.css";
@@ -16,6 +17,7 @@ const UserProfile = () => {
   });
   const [loadingStats, setLoadingStats] = useState(true);
   const { user, updateUser } = useAuthContext();
+  const { reviewCount } = useReview();
   const [formData, setFormData] = useState({
     name: user?.name || "",
     bio: user?.bio || "",
@@ -78,10 +80,9 @@ const UserProfile = () => {
       setLoadingStats(false);
     }
   };
-
   useEffect(() => {
     loadUserStats();
-  }, [user?.id]);
+  }, [user?.id, reviewCount]); // Adicionar reviewCount como dependência
 
   return (
     <div className={styles.userProfile}>

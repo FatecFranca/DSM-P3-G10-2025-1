@@ -4,10 +4,18 @@
 ![Version](https://img.shields.io/badge/versão-1.0.0-blue)
 ![Node.js](https://img.shields.io/badge/Node.js-18.x-green)
 ![Express](https://img.shields.io/badge/Express-4.x-lightgrey)
-![MongoDB](https://img.shields.io/badge/MongoDB-6.0-brightgreen)
+![Prisma](https://img.shields.io/badge/Prisma-5.x-2d3748)
+![SQLite](https://img.shields.io/badge/SQLite-3.x-003b57)
 ![License](https://img.shields.io/badge/licença-MIT-orange)
 
 API backend da plataforma GameReviews - Um sistema de avaliação e recomendação de jogos desenvolvido como parte do Projeto Integrador do curso de Desenvolvimento de Software Multiplataforma.
+
+**Grupo 10 - 2025/1:**
+
+- Otávio Borges Colimo
+- Paulo Ricardo de Azevedo Alvino
+- Thiago Cunha Archete Silva
+- Vinicius de Araújo Silva
 
 ## 📋 Índice
 
@@ -17,62 +25,42 @@ API backend da plataforma GameReviews - Um sistema de avaliação e recomendaç�
 - [Endpoints da API](#-endpoints-da-api)
 - [Modelos de Dados](#-modelos-de-dados)
 - [Executando o Projeto](#-executando-o-projeto)
-- [Ambiente de Desenvolvimento](#-ambiente-de-desenvolvimento)
 - [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Contribuição](#-contribuição)
+- [Scripts Disponíveis](#-scripts-disponíveis)
 
 ## 🚀 Configuração Inicial
 
 ### Pré-requisitos
 
 - [Node.js](https://nodejs.org/) (v18.x ou superior)
-- [MongoDB](https://www.mongodb.com/try/download/community) (v6.0 ou superior)
 - [Git](https://git-scm.com/)
 
-### Clonando o Repositório
+### Instalação
 
 ```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/DSM-P3-G10-2025-1.git
-
-# Entre na pasta do projeto
-cd DSM-P3-G10-2025-1
-
-# Acesse a pasta do backend
+# Entre na pasta do backend
 cd back-end
-```
 
-### Instalação de Dependências
-
-```bash
 # Instale as dependências
 npm install
 
-# Instale o Prisma como dependência de desenvolvimento
-npm install prisma --save-dev
+# Configure o banco de dados
+npx prisma migrate dev
+npx prisma generate
+
+# Inicie o servidor
+npm start
 ```
 
 ### Configuração do Ambiente
 
-1. Crie um arquivo `.env` na pasta `back-end` com base no arquivo `.env.example`:
+Crie um arquivo `.env` na pasta `back-end`:
 
 ```env
-DATABASE_URL="mongodb://127.0.0.1:27017/gamereview?directConnection=true"
-JWT_SECRET="sua_chave_secreta_jwt"
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="sua_chave_secreta_jwt_aqui"
 PORT=5000
 NODE_ENV=development
-```
-
-2. Inicialize o Prisma:
-
-```bash
-npx prisma init --datasource-provider mongodb
-```
-
-3. Gere o cliente Prisma após qualquer modificação no schema:
-
-```bash
-npx prisma generate
 ```
 
 ## 📁 Estrutura do Projeto
@@ -80,24 +68,305 @@ npx prisma generate
 ```
 back-end/
 ├── prisma/
-│   ├── schema.prisma    # Schema do banco de dados
-│   └── seed.js          # Script para popular o banco com dados iniciais
+│   ├── schema.prisma          # Schema do banco de dados
+│   └── migrations/            # Migrações do banco
 ├── src/
-│   ├── config/          # Configurações da aplicação
-│   ├── controllers/     # Controladores de cada recurso
-│   ├── middlewares/     # Middlewares da aplicação
-│   ├── routes/          # Definição das rotas da API
-│   ├── services/        # Lógica de negócio
-│   ├── utils/           # Funções utilitárias
-│   └── app.js           # Configuração do Express
-├── .env                 # Variáveis de ambiente
-├── package.json         # Dependências e scripts
-└── README.md            # Documentação
+│   ├── controllers/           # Controladores da API
+│   │   ├── authController.js
+│   │   ├── gameController.js
+│   │   ├── reviewController.js
+│   │   ├── reviewReactionController.js
+│   │   ├── favoriteController.js
+│   │   └── userController.js
+│   ├── middleware/
+│   │   └── authMiddleware.js  # Middleware de autenticação
+│   ├── routes/                # Rotas da API
+│   │   ├── authRoutes.js
+│   │   ├── gameRoutes.js
+│   │   ├── reviewRoutes.js
+│   │   ├── reviewReactionRoutes.js
+│   │   ├── favoriteRoutes.js
+│   │   └── userRoutes.js
+│   ├── database/
+│   │   └── client.js          # Cliente Prisma
+│   ├── lib/
+│   │   └── utils.js           # Funções utilitárias
+│   ├── bin/
+│   │   └── server.js          # Servidor HTTP
+│   └── app.js                 # Configuração do Express
+├── .env                       # Variáveis de ambiente
+├── package.json               # Dependências e scripts
+└── README.md                  # Esta documentação
 ```
 
-## 🗄️ Banco de Dados
+## �️ Banco de Dados
 
-O projeto utiliza MongoDB como banco de dados NoSQL, com Prisma como ORM para facilitar as operações no banco.
+O projeto utiliza SQLite como banco de dados com Prisma como ORM.
+
+### Modelos Principais
+
+- **User** - Usuários do sistema
+- **Game** - Jogos disponíveis
+- **Review** - Avaliações dos jogos
+- **ReviewReaction** - Curtidas/descurtidas em reviews
+- **Favorite** - Jogos favoritos dos usuários
+
+### Schema do Banco
+
+```prisma
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  bio       String?
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reviews         Review[]
+  reviewReactions ReviewReaction[]
+  favorites       Favorite[]
+  createdGames    Game[]
+}
+
+model Game {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  coverUrl    String?
+  genre       String
+  releaseDate String
+  platform    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+
+  creator   User?      @relation(fields: [createdBy], references: [id])
+  reviews   Review[]
+  favorites Favorite[]
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  gameId    String
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game      Game             @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  reactions ReviewReaction[]
+
+  @@unique([userId, gameId])
+}
+
+model ReviewReaction {
+  id       String      @id @default(cuid())
+  type     ReactionType
+  userId   String
+  reviewId String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, reviewId])
+}
+
+model Favorite {
+  id     String @id @default(cuid())
+  userId String
+  gameId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, gameId])
+}
+
+enum ReactionType {
+  LIKE
+  DISLIKE
+}
+```
+
+## 🛣️ Endpoints da API
+
+### Autenticação
+
+- `POST /api/auth/register` - Registrar novo usuário
+- `POST /api/auth/login` - Fazer login
+- `GET /api/auth/me` - Obter dados do usuário logado
+
+### Usuários
+
+- `GET /api/users/:id` - Obter dados de um usuário
+- `PUT /api/users/:id` - Atualizar dados do usuário
+- `GET /api/users/:id/stats` - Obter estatísticas do usuário
+
+### Jogos
+
+- `GET /api/games` - Listar todos os jogos
+- `GET /api/games/:id` - Obter detalhes de um jogo
+- `POST /api/games` - Criar um novo jogo (requer autenticação)
+- `PUT /api/games/:id` - Atualizar um jogo (requer autenticação)
+- `DELETE /api/games/:id` - Excluir um jogo (requer autenticação)
+
+### Reviews
+
+- `GET /api/reviews` - Listar reviews (com filtros por gameId ou userId)
+- `GET /api/reviews/:id` - Obter uma review específica
+- `POST /api/reviews` - Criar/atualizar uma review (requer autenticação)
+- `PUT /api/reviews/:id` - Atualizar uma review (requer autenticação)
+- `DELETE /api/reviews/:id` - Excluir uma review (requer autenticação)
+
+### Reações de Review
+
+- `GET /api/review-reactions/review/:reviewId` - Listar reações de uma review
+- `POST /api/review-reactions` - Criar ou atualizar reação em review (requer autenticação)
+- `DELETE /api/review-reactions/:id` - Excluir reação de review (requer autenticação)
+
+### Favoritos
+
+- `GET /api/favorites/user/:userId` - Listar jogos favoritos de um usuário
+- `POST /api/favorites` - Adicionar jogo aos favoritos (requer autenticação)
+- `DELETE /api/favorites/:gameId` - Remover jogo dos favoritos (requer autenticação)
+
+## 🔧 Scripts Disponíveis
+
+```bash
+# Iniciar servidor de produção
+npm start
+
+# Iniciar servidor de desenvolvimento (com hot reload)
+npm run dev
+
+# Executar migrações do banco de dados
+npm run db:migrate
+
+# Gerar cliente Prisma
+npm run db:generate
+
+# Reset do banco de dados
+npm run db:reset
+
+# Visualizar banco de dados (Prisma Studio)
+npm run db:studio
+```
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Node.js** - Runtime JavaScript
+- **Express.js** - Framework web
+- **Prisma** - ORM moderno para Node.js
+- **SQLite** - Banco de dados SQL leve
+- **JWT** - Autenticação baseada em tokens
+- **bcrypt** - Hash de senhas
+- **cors** - Middleware para CORS
+- **dotenv** - Carregamento de variáveis de ambiente
+
+## 🔐 Autenticação
+
+A API usa JWT (JSON Web Tokens) para autenticação.
+
+### Como usar:
+
+1. Registre-se ou faça login para obter um token
+2. Inclua o token no header Authorization das requisições protegidas:
+   ```
+   Authorization: Bearer seu_token_jwt_aqui
+   ```
+
+### Rotas Protegidas:
+
+- Todas as rotas POST, PUT, DELETE (exceto register/login)
+- Rotas que acessam dados sensíveis do usuário
+
+## 📊 Respostas da API
+
+### Formato de Sucesso
+
+```json
+{
+  "success": true,
+  "data": {...},
+  "message": "Operação realizada com sucesso"
+}
+```
+
+### Formato de Erro
+
+```json
+{
+  "success": false,
+  "error": "Descrição do erro",
+  "message": "Mensagem de erro amigável"
+}
+```
+
+## � Executando o Projeto
+
+### Desenvolvimento
+
+```bash
+# Instalar dependências
+npm install
+
+# Configurar banco de dados
+npx prisma migrate dev
+npx prisma generate
+
+# Iniciar servidor de desenvolvimento
+npm run dev
+```
+
+O servidor estará disponível em `http://localhost:5000`
+
+### Produção
+
+```bash
+# Instalar dependências
+npm install --production
+
+# Configurar banco de dados
+npx prisma migrate deploy
+npx prisma generate
+
+# Iniciar servidor
+npm start
+```
+
+## 📈 Monitoramento
+
+O servidor inclui logs detalhados para monitoramento:
+
+- Requisições HTTP
+- Operações de banco de dados
+- Erros e exceções
+- Autenticação e autorização
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT.
+
+---
+
+**Fatec São José dos Campos - Prof. Jessen Vidal**
+
+- Curso: Desenvolvimento de Software Multiplataforma
+- Semestre: 3º - 2025/1
+- Disciplina: Projeto Interdisciplinar
+
+⭐ Desenvolvido com ❤️ pelo Grupo 10
 
 ### Conexão com MongoDB Local
 

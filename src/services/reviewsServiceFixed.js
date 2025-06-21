@@ -13,12 +13,13 @@ class ReviewsService {
     }
     return "http://localhost:5000/api";
   }
+
   async getReviewsByGame(gameId) {
     try {
-      const result = await apiRequest(`/reviews?gameId=${gameId}`);
+      const reviews = await apiRequest(`/reviews?gameId=${gameId}`);
       return {
         success: true,
-        data: result.reviews || [], // O backend retorna um objeto com 'reviews'
+        data: reviews,
       };
     } catch (error) {
       return {
@@ -28,12 +29,13 @@ class ReviewsService {
       };
     }
   }
+
   async getReviewsByUser(userId) {
     try {
-      const result = await apiRequest(`/reviews?userId=${userId}`);
+      const reviews = await apiRequest(`/reviews?userId=${userId}`);
       return {
         success: true,
-        data: result.reviews || [], // O backend retorna um objeto com 'reviews'
+        data: reviews,
       };
     } catch (error) {
       return {

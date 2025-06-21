@@ -12,21 +12,17 @@ model User {
   name      String
   email     String   @unique
   password  String
-  username  String?  @unique // Adicionado para identificação única
-  bio       String?  // Biografia do usuário
+  username  String?  @unique
+  bio       String?
   avatarUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relacionamentos existentes
-  reviews   Review[]
-  // Novos relacionamentos para funcionalidades faltantes
-  comments         Comment[]
-  reviewReactions  ReviewReaction[]
-  commentReactions CommentReaction[]
-  gameProgresses   GameProgress[]
-  createdGames     Game[]         // Jogos criados por este usuário
-  favorites        Favorite[]     // Jogos favoritados pelo usuário
+  // Relacionamentos
+  reviews      Review[]
+  reviewReactions ReviewReaction[]
+  createdGames Game[]
+  favorites    Favorite[]
 
   @@map("users")
 }
@@ -37,69 +33,40 @@ model Game {
   description String
   coverUrl    String?
   releaseDate DateTime?
-  developer   String?   // Desenvolvedor
-  publisher   String?   // Publicadora
-  platform    String[]  // Plataformas (PS5, Xbox, PC, etc.)
-  genres      String[]  // Array de strings dos gêneros
+  developer   String?
+  publisher   String?
+  platform    String[]
+  genres      String[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   // Campo para identificar quem criou o jogo
-  createdBy   String?   @db.ObjectId // ID do usuário que criou o jogo
-  creator     User?     @relation(fields: [createdBy], references: [id])
+  createdBy String? @db.ObjectId
+  creator   User?   @relation(fields: [createdBy], references: [id])
+  
   // Relacionamentos
-  reviews        Review[]
-  gameProgresses GameProgress[]
-  favorites      Favorite[]     // Usuários que favoritaram este jogo
+  reviews   Review[]
+  favorites Favorite[]
 
   @@map("games")
 }
 
-model Genre {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String @unique
-  slug String @unique // Para URLs amigáveis
-  @@map("genres")
-}
-
 model Review {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  rating    Int      // Validar 1-5
-  comment   String   // Conteúdo da review
+  rating    Int
+  comment   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relacionamentos existentes
+  // Relacionamentos
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @db.ObjectId
   game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
   gameId String @db.ObjectId
 
-  // Novos relacionamentos
-  comments  Comment[]
   reactions ReviewReaction[]
 
   @@map("reviews")
-}
-
-// NOVAS MODELS PARA FUNCIONALIDADES FALTANTES
-
-model Comment {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relacionamentos
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   String   @db.ObjectId
-  review   Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  reviewId String   @db.ObjectId
-
-  // Reações nos comentários
-  reactions CommentReaction[]
-
-  @@map("comments")
 }
 
 model ReviewReaction {
@@ -115,38 +82,6 @@ model ReviewReaction {
   // Garantir que um usuário só pode ter uma reação por review
   @@unique([userId, reviewId])
   @@map("review_reactions")
-}
-
-model CommentReaction {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  type      ReactionType
-
-  // Relacionamentos
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String    @db.ObjectId
-  comment   Comment   @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  commentId String    @db.ObjectId
-
-  // Garantir que um usuário só pode ter uma reação por comentário
-  @@unique([userId, commentId])
-  @@map("comment_reactions")
-}
-
-model GameProgress {
-  id     String           @id @default(auto()) @map("_id") @db.ObjectId
-  status GameProgressStatus
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-
-  // Relacionamentos
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @db.ObjectId
-  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  gameId String @db.ObjectId
-
-  // Garantir que um usuário só pode ter um status por jogo
-  @@unique([userId, gameId])
-  @@map("game_progresses")
 }
 
 model Favorite {
@@ -165,14 +100,7 @@ model Favorite {
 }
 
 // ENUMS
-
 enum ReactionType {
   LIKE
   DISLIKE
-}
-
-enum GameProgressStatus {
-  WANT_TO_PLAY     // "Jogos que quero jogar"
-  CURRENTLY_PLAYING // "Jogos que estou jogando"
-  COMPLETED        // "Jogos já zerados"
 }
