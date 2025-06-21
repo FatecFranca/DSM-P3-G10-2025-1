@@ -59,3 +59,4 @@ export const getGenreNames = (genreIds) => {
 export const isValidGenre = (genre) => {
   return DEFAULT_GENRES.includes(genre);
 };
+

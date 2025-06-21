@@ -401,3 +401,4 @@ export const searchGenres = async (req, res) => {
     res.status(500).json({ error: "Erro ao pesquisar gêneros" });
   }
 };
+

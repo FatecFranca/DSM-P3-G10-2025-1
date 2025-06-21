@@ -263,12 +263,12 @@ const Reviews = ({ gameId }) => {
   return (
     <div className={styles.wrapper}>
       <h3 className={styles.title}>⭐ Avaliações dos Usuários</h3>
-      {/* Formulário de Nova Avaliação */}
+      {}
       {user ? (
         <div className={styles.reviewFormSection}>
           <h4>✨ Deixe sua avaliação</h4>
           <form onSubmit={handleSubmitReview}>
-            {/* Sistema de Estrelas */}
+            {}
             <div className={styles.stars}>
               <span className={styles.starLabel}>Sua nota:</span>
               {[1, 2, 3, 4, 5].map((star) => (
@@ -286,7 +286,7 @@ const Reviews = ({ gameId }) => {
                 <span className={styles.ratingDisplay}>({rating}/5)</span>
               )}
             </div>
-            {/* Campo de Comentário */}
+            {}
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -294,7 +294,7 @@ const Reviews = ({ gameId }) => {
               rows="4"
               className={styles.commentTextarea}
             />
-            {/* Botão Enviar */}{" "}
+            {}{" "}
             <button
               type="submit"
               disabled={submitting}
@@ -338,13 +338,13 @@ const Reviews = ({ gameId }) => {
                 <span className={styles.ratingText}>({review.rating}/5)</span>
               </div>
             </div>
-            {/* Conteúdo - mostra formulário de edição ou comentário normal */}
+            {}
             {editingReview && editingReview.id === review.id ? (
               <div className={styles.editFormInline}>
                 <h4>✏️ Editando Avaliação</h4>
                 <form onSubmit={handleUpdateReview}>
                   {" "}
-                  {/* Sistema de Estrelas para edição */}
+                  {}
                   <div className={styles.editStars}>
                     <span className={styles.starLabel}>Sua nota:</span>
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -366,7 +366,7 @@ const Reviews = ({ gameId }) => {
                       </span>
                     )}
                   </div>
-                  {/* Campo de edição do comentário */}
+                  {}
                   <textarea
                     value={editComment}
                     onChange={(e) => setEditComment(e.target.value)}
@@ -374,7 +374,7 @@ const Reviews = ({ gameId }) => {
                     className={styles.editTextarea}
                     rows="3"
                   />
-                  {/* Botões de ação inline */}
+                  {}
                   <div className={styles.editActionsInline}>
                     <button
                       type="submit"
@@ -399,7 +399,7 @@ const Reviews = ({ gameId }) => {
                 <div className={styles.reviewContent}>
                   <p>{review.comment}</p>
                 </div>
-                {/* Seção de Reações */}
+                {}
                 <div className={styles.reactionsSection}>
                   {user ? (
                     <div className={styles.reactionButtons}>
@@ -486,3 +486,4 @@ const Reviews = ({ gameId }) => {
 };
 
 export default Reviews;
+

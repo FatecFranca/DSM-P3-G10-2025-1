@@ -434,7 +434,7 @@
   border-left: 4px solid #7e22ce;
 }
 
-/* Estilos para os botões de ação nas reviews */
+
 .reviewActions {
   display: flex;
   gap: 1rem;
@@ -583,7 +583,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Seção de edição com animação aprimorada */
+
 .editReviewSection {
   background: linear-gradient(
     135deg,
@@ -679,7 +679,7 @@
   background-clip: text;
 }
 
-/* Botões de ação do formulário de edição */
+
 .editReviewActions {
   display: flex;
   gap: 1rem;
@@ -811,7 +811,7 @@
   box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
 }
 
-/* Melhoria nos cards de review */
+
 .reviewCard {
   background: linear-gradient(
     135deg,
@@ -855,7 +855,7 @@
   opacity: 1;
 }
 
-/* Melhorias no sistema de estrelas */
+
 .stars {
   display: flex;
   gap: 0.5rem;
@@ -905,7 +905,7 @@
   }
 }
 
-/* Animação de pulso para estrelas em hover */
+
 .star:hover::before {
   content: "";
   position: absolute;
@@ -931,7 +931,7 @@
   }
 }
 
-/* Rating display aprimorado */
+
 .ratingDisplay {
   display: flex;
   align-items: center;
@@ -961,7 +961,7 @@
   text-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
 }
 
-/* Formulário aprimorado */
+
 .form {
   display: flex;
   flex-direction: column;
@@ -1076,7 +1076,7 @@
   display: none;
 }
 
-/* ===== FORMULÁRIO DE EDIÇÃO INLINE ===== */
+
 .editFormInline {
   background: linear-gradient(
     135deg,
@@ -1270,7 +1270,7 @@
   display: none;
 }
 
-/* ===== FORMULÁRIO PRINCIPAL ESTILIZADO ===== */
+
 .reviewFormSection h4 {
   margin-bottom: 2rem;
   font-size: 1.5rem;
@@ -1279,7 +1279,7 @@
   text-align: center;
 }
 
-/* Sistema de estrelas aprimorado */
+
 .stars {
   display: flex;
   align-items: center;
@@ -1333,7 +1333,7 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Textarea aprimorado */
+
 .commentTextarea {
   width: 100%;
   padding: 1.5rem;
@@ -1367,7 +1367,7 @@
   background: rgba(15, 23, 42, 0.9);
 }
 
-/* Botão de envio aprimorado */
+
 .submitButton {
   background: linear-gradient(135deg, #7e22ce, #a855f7, #3b82f6);
   background-size: 200% 200%;
@@ -1435,7 +1435,7 @@
   display: none;
 }
 
-/* Compatibilidade - aliases para as classes de estrelas */
+
 .filled {
   color: #fbbf24;
   text-shadow: 0 0 10px rgba(251, 191, 36, 0.8), 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -1446,9 +1446,9 @@
   color: #64748b;
 }
 
-/* ===== RESPONSIVIDADE COMPLETA REVIEWS ===== */
 
-/* Tablets grandes e desktops menores */
+
+
 @media (max-width: 1200px) {
   .wrapper {
     padding: 2.5rem 2rem;
@@ -1468,7 +1468,7 @@
   }
 }
 
-/* Tablets */
+
 @media (max-width: 968px) {
   .wrapper {
     padding: 2rem 1.5rem;
@@ -1537,7 +1537,7 @@
   }
 }
 
-/* Móveis grandes */
+
 @media (max-width: 768px) {
   .wrapper {
     padding: 1.5rem 1rem;
@@ -1648,7 +1648,7 @@
   }
 }
 
-/* Móveis pequenos */
+
 @media (max-width: 480px) {
   .wrapper {
     padding: 1rem 0.75rem;
@@ -1768,7 +1768,7 @@
   }
 }
 
-/* Móveis muito pequenos */
+
 @media (max-width: 360px) {
   .wrapper {
     padding: 0.75rem 0.5rem;
@@ -1817,7 +1817,7 @@
   }
 }
 
-/* Landscape móveis */
+
 @media (max-height: 500px) and (orientation: landscape) {
   .wrapper {
     margin-top: 1rem;
@@ -1839,9 +1839,7 @@
   }
 }
 
-/* ================================
-   REAÇÕES SECTION
-   ================================ */
+
 
 .reactionsSection {
   margin: 1rem 0;
@@ -1952,7 +1950,7 @@
   font-weight: 500;
 }
 
-/* Responsividade para Reações */
+
 @media (max-width: 768px) {
   .reactionButtons {
     gap: 0.5rem;
@@ -1990,3 +1988,4 @@
     gap: 1rem;
   }
 }
+

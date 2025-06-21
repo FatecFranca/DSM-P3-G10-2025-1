@@ -125,8 +125,51 @@ export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await prisma.user.delete({
+    // Verificar se o usuário existe
+    const existingUser = await prisma.user.findUnique({
       where: { id },
+    });
+
+    if (!existingUser) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    // Excluir as dependências do usuário em ordem
+    await prisma.$transaction(async (tx) => {
+      // 1. Excluir reações de comentários do usuário
+      await tx.commentReaction.deleteMany({
+        where: { userId: id },
+      });
+
+      // 2. Excluir reações de reviews do usuário
+      await tx.reviewReaction.deleteMany({
+        where: { userId: id },
+      });
+
+      // 3. Excluir comentários do usuário
+      await tx.comment.deleteMany({
+        where: { userId: id },
+      });
+
+      // 4. Excluir reviews do usuário
+      await tx.review.deleteMany({
+        where: { userId: id },
+      });
+
+      // 5. Excluir favoritos do usuário
+      await tx.favorite.deleteMany({
+        where: { userId: id },
+      });
+
+      // 6. Excluir progresso de jogos do usuário
+      await tx.gameProgress.deleteMany({
+        where: { userId: id },
+      });
+
+      // 7. Por último, excluir o usuário
+      await tx.user.delete({
+        where: { id },
+      });
     });
 
     res.status(204).send();

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import gamesService from "../../services/gamesService";
 import SafeImage from "../Helper/SafeImage";
+import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import styles from "./GamesList.module.css";
 
 const GamesList = () => {
@@ -214,14 +215,19 @@ const GamesList = () => {
                     className={styles.gameImageElement}
                     fallbackSrc="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIwIiBoZWlnaHQ9IjI5MyIgdmlld0JveD0iMCAwIDIyMCAyOTMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMjAiIGhlaWdodD0iMjkzIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMTAgMTMwQzEyMC40NiAxMzAgMTI5IDEyMS40NiAxMjkgMTExQzEyOSAxMDAuNTQgMTIwLjQ2IDkyIDExMCA5MkM5OS41NCA5MiA5MSAxMDAuNTQgOTEgMTExQzkxIDEyMS40NiA5OS41NCAxMzAgMTEwIDEzMFoiIGZpbGw9IiM5N0EzQUYiLz4KPHA+PHBhdGggZD0iTTE1NSAxODBDMTQwIDE3MyAxMTAgMTQwIDExMCAxNzNDMTEwIDE3MyA4MCAxNzMgODAgMTgwSDE1NVoiIGZpbGw9IiM5N0EzQUYiLz4KPHA+PHRleHQgeD0iMTEwIiB5PSIyMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk3QTNBRiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Sk9HTzwvdGV4dD4KPC9zdmc+Cg=="
                   />
+                  <div className={styles.favoriteButtonContainer}>
+                    <FavoriteButton game={game} size="small" />
+                  </div>
                 </div>{" "}
                 <div className={styles.gameInfo}>
                   <h3 className={styles.gameTitle}>
                     {game.title || game.titulo || "Jogo sem título"}
-                  </h3>
+                  </h3>{" "}
                   <div className={styles.gameRating}>
                     <span className={styles.starIcon}>★</span>
-                    <span>{game.averageRating?.toFixed(1) || "N/A"}</span>
+                    <span className={styles.ratingText}>
+                      {game.averageRating?.toFixed(1) || "N/A"}
+                    </span>
                   </div>
                 </div>
               </Link>

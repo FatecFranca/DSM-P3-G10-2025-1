@@ -18,3 +18,4 @@ export const GAME_GENRES = [
 ];
 
 export default GAME_GENRES;
+

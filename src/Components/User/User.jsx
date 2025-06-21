@@ -50,7 +50,7 @@ const User = () => {
   return (
     <div className={styles.userContainer}>
       <div className={styles.container}>
-        {/* Menu de navegação interno */}
+        {}
         <div className={styles.userHeader}>
           <h1>👤 Área do Usuário</h1>
           <p>Bem-vindo, {user?.name}!</p>

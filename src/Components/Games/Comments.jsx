@@ -11,7 +11,6 @@ const Comments = ({ gameId }) => {
   const [submitting, setSubmitting] = useState(false);
   const { user, authenticated } = useAuthContext();
 
-  // Buscar comentários reais do backend
   useEffect(() => {
     if (gameId) {
       const fetchComments = async () => {
@@ -30,7 +29,6 @@ const Comments = ({ gameId }) => {
     }
   }, [gameId]);
 
-  // Enviar novo comentário
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!commentText.trim()) return;
@@ -100,3 +98,4 @@ const Comments = ({ gameId }) => {
 };
 
 export default Comments;
+

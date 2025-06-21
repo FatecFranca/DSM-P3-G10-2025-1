@@ -1,4 +1,4 @@
-/* ===== RESET E BASE ===== */
+
 .home {
   margin: 0;
   padding: 0;
@@ -6,7 +6,7 @@
   min-height: 100vh;
 }
 
-/* ===== HERO BANNER - VERSÃO LINDA ===== */
+
 .hero {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   min-height: 100vh;
@@ -60,7 +60,7 @@
   }
 }
 
-/* Título principal melhorado */
+
 .title {
   font-size: clamp(2.5rem, 8vw, 4.5rem);
   font-weight: 900;
@@ -114,7 +114,7 @@
   text-shadow: 0 0 30px rgba(251, 191, 36, 0.8);
 }
 
-/* Subtítulo melhorado */
+
 .subtitle {
   font-size: clamp(1.1rem, 3vw, 1.4rem);
   margin-bottom: 2.5rem;
@@ -128,7 +128,7 @@
   letter-spacing: 0.3px;
 }
 
-/* Mensagem de boas-vindas melhorada */
+
 .welcomeMessage {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
@@ -148,7 +148,7 @@
   transform: translateY(-2px);
 }
 
-/* Botões melhorados */
+
 .heroButtons {
   display: flex;
   gap: 1.5rem;
@@ -213,7 +213,7 @@
   transform: scale(1.2) rotate(10deg);
 }
 
-/* Elementos flutuantes melhorados */
+
 .floatingElements {
   position: absolute;
   inset: 0;
@@ -302,7 +302,7 @@
   }
 }
 
-/* ===== SEÇÕES GERAIS MELHORADAS ===== */
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -342,7 +342,7 @@
   color: transparent;
 }
 
-/* ===== ESTATÍSTICAS MELHORADAS ===== */
+
 .stats {
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   padding: 5rem 0;
@@ -430,7 +430,7 @@
   letter-spacing: 0.5px;
 }
 
-/* ===== JOGOS EM DESTAQUE MELHORADOS ===== */
+
 .featured {
   background: white;
   padding: 5rem 0;
@@ -607,7 +607,7 @@
   box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
 }
 
-/* ===== GÊNEROS MELHORADOS ===== */
+
 .genres {
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   padding: 5rem 0;
@@ -705,7 +705,7 @@
   transform: translateX(8px);
 }
 
-/* ===== RESPONSIVIDADE MELHORADA ===== */
+
 @media (max-width: 768px) {
   .hero {
     min-height: 90vh;
@@ -819,7 +819,7 @@
   }
 }
 
-/* ===== MELHORIAS DE ACESSIBILIDADE ===== */
+
 @media (prefers-reduced-motion: reduce) {
   .heroAnimation,
   .iconFloat,
@@ -843,7 +843,7 @@
   outline-offset: 2px;
 }
 
-/* ===== DARK MODE SUPPORT ===== */
+
 @media (prefers-color-scheme: dark) {
   .home {
     background: #0f172a;
@@ -881,9 +881,9 @@
   }
 }
 
-/* ...existing code... */
 
-/* ===== REVIEWS RECENTES MELHORADAS ===== */
+
+
 .recentReviews {
   background-color: rgb(30, 41, 59);
   padding: 5rem 0;
@@ -1081,7 +1081,7 @@
   left: 100%;
 }
 
-/* ===== FEATURES SECTION MELHORADA ===== */
+
 .features {
   background-color: rgb(30, 41, 59);
   padding: 5rem 0;
@@ -1173,7 +1173,7 @@
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-/* ===== CTA SECTION MELHORADA ===== */
+
 .cta {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   padding: 6rem 0;
@@ -1299,7 +1299,7 @@
   box-shadow: 0 15px 50px rgba(255, 255, 255, 0.2);
 }
 
-/* ===== LOADING DOS JOGOS ===== */
+
 .loadingGames {
   text-align: center;
   padding: 4rem 2rem;
@@ -1328,7 +1328,7 @@
   font-size: 1.1rem;
 }
 
-/* ===== BOTÃO DO JOGO ===== */
+
 .gameButton {
   display: inline-flex;
   align-items: center;
@@ -1352,7 +1352,7 @@
   background: linear-gradient(45deg, #5a67d8, #6b46c1);
 }
 
-/* ===== RESPONSIVIDADE PARA NOVAS SEÇÕES ===== */
+
 @media (max-width: 768px) {
   .reviewsGrid {
     grid-template-columns: 1fr;
@@ -1472,7 +1472,7 @@
   }
 }
 
-/* ===== ANIMAÇÕES PARA AS NOVAS SEÇÕES ===== */
+
 @keyframes slideInFromBottom {
   from {
     opacity: 0;
@@ -1520,7 +1520,7 @@
   animation-delay: 0.6s;
 }
 
-/* ===== MELHORIAS DE HOVER PARA MOBILE ===== */
+
 @media (hover: none) {
   .reviewCard:hover,
   .feature:hover,
@@ -1530,3 +1530,4 @@
     transform: none;
   }
 }
+

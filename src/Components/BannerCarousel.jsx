@@ -152,7 +152,7 @@ const BannerCarousel = () => {
   return (
     <section className={styles.carousel} aria-label="Banner carousel">
       <div className={styles.carouselContainer}>
-        {/* Slides */}
+        {}
         <div
           className={styles.slidesContainer}
           onTouchStart={handleTouchStart}
@@ -214,7 +214,7 @@ const BannerCarousel = () => {
           ))}
         </div>
 
-        {/* Controles de navegação */}
+        {}
         <button
           className={`${styles.navButton} ${styles.navPrev}`}
           onClick={slideAnterior}
@@ -235,7 +235,7 @@ const BannerCarousel = () => {
           </svg>
         </button>
 
-        {/* Controle Play/Pause */}
+        {}
         <button
           className={styles.playPauseButton}
           onClick={togglePlayPause}
@@ -253,7 +253,7 @@ const BannerCarousel = () => {
         </button>
       </div>
 
-      {/* Indicadores */}
+      {}
       <div className={styles.indicadores} role="tablist">
         {banners.map((banner, index) => (
           <button
@@ -276,7 +276,7 @@ const BannerCarousel = () => {
         ))}
       </div>
 
-      {/* Informações do slide atual */}
+      {}
       <div className={styles.slideCounter}>
         <span>{indiceAtivo + 1}</span>
         <span className={styles.separator}>/</span>

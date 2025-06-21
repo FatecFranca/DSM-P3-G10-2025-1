@@ -1,4 +1,4 @@
-/* UserSettings.module.css */
+
 .userSettings {
   padding: 3rem;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
@@ -368,7 +368,7 @@
   }
 }
 
-/* Responsividade melhorada */
+
 @media (max-width: 768px) {
   .userSettings {
     padding: 1rem;
@@ -419,3 +419,4 @@
     padding: 1.5rem;
   }
 }
+

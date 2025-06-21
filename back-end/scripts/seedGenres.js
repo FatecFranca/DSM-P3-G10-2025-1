@@ -63,3 +63,4 @@ seedGenres().catch((error) => {
   console.error("Erro ao popular gêneros:", error);
   process.exit(1);
 });
+

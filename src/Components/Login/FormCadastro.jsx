@@ -509,7 +509,7 @@ const FormCadastro = () => {
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        {/* Header com título e progresso */}
+        {}
         <div className={styles.header}>
           <h1 className={styles.title}>🎮 Crie sua conta GameReviews</h1>
 
@@ -532,7 +532,7 @@ const FormCadastro = () => {
           </div>
         </div>
 
-        {/* Botão de teste em desenvolvimento */}
+        {}
         {process.env.NODE_ENV === "development" && (
           <div className={styles.devTools}>
             <Button
@@ -556,7 +556,7 @@ const FormCadastro = () => {
           </div>
         )}
 
-        {/* Mensagens de erro e sucesso */}
+        {}
         {error && (
           <div className={styles.errorContainer}>
             <Error error={error} />
@@ -574,13 +574,13 @@ const FormCadastro = () => {
           </div>
         )}
 
-        {/* Formulário */}
+        {}
         <div className={styles.formContainer}>
           <form
             onSubmit={step === 1 ? nextStep : handleSubmit}
             className={styles.form}
           >
-            {/* STEP 1: Dados Pessoais */}
+            {}
             {step === 1 && (
               <div className={styles.formStep}>
                 <div className={styles.inputGroup}>
@@ -648,7 +648,7 @@ const FormCadastro = () => {
               </div>
             )}
 
-            {/* STEP 2: Credenciais */}
+            {}
             {step === 2 && (
               <div className={styles.formStep}>
                 <div className={styles.inputGroup}>
@@ -812,7 +812,7 @@ const FormCadastro = () => {
           </form>
         </div>
 
-        {/* Link para login */}
+        {}
         <div className={styles.loginLink}>
           <p>
             Já tem uma conta?{" "}
@@ -822,7 +822,7 @@ const FormCadastro = () => {
           </p>
         </div>
 
-        {/* Info de segurança */}
+        {}
         <div className={styles.securityInfo}>
           <div className={styles.securityIcon}>🔒</div>
           <p>Seus dados estão protegidos com criptografia de ponta</p>
@@ -833,3 +833,4 @@ const FormCadastro = () => {
 };
 
 export default FormCadastro;
+

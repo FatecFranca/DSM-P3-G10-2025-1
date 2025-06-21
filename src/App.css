@@ -28,7 +28,7 @@ body {
   flex: 1;
 }
 
-/* Loading Components */
+
 .loading-container {
   min-height: 50vh;
   display: flex;
@@ -62,7 +62,7 @@ body {
   }
 }
 
-/* Animações */
+
 .animeDown {
   opacity: 0;
   transform: translateY(-20px);
@@ -76,9 +76,10 @@ body {
   }
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .main-content {
     padding: 0;
   }
 }
+

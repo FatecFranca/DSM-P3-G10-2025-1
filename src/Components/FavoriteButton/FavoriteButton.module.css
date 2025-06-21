@@ -1,0 +1,408 @@
+.container {
+  position: relative;
+  display: inline-block;
+}
+
+.favoriteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.favoriteButton::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.favoriteButton:hover::before {
+  opacity: 1;
+}
+
+.favoriteButton:hover {
+  border-color: rgba(233, 30, 99, 0.6);
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(233, 30, 99, 0.25);
+}
+
+.favoriteButton:active {
+  transform: scale(0.96);
+}
+
+.favoriteButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+.favoriteButton.favorited {
+  background: linear-gradient(135deg, #e91e63 0%, #ad1457 100%);
+  border-color: #e91e63;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(233, 30, 99, 0.4);
+}
+
+.favoriteButton.favorited::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+}
+
+.favoriteButton.favorited:hover {
+  background: linear-gradient(135deg, #c2185b 0%, #880e4f 100%);
+  box-shadow: 0 6px 24px rgba(233, 30, 99, 0.5);
+  transform: scale(1.1);
+}
+
+.heartIcon {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.favoriteButton:hover .heartIcon {
+  transform: scale(1.15);
+}
+
+.favoriteButton.favorited .heartIcon {
+  color: #fff;
+  animation: heartBeat 0.8s ease-in-out;
+  transform: scale(1.1);
+}
+
+@keyframes heartBeat {
+  0% {
+    transform: scale(1.1);
+  }
+  20% {
+    transform: scale(1.3);
+  }
+  40% {
+    transform: scale(1.1);
+  }
+  60% {
+    transform: scale(1.25);
+  }
+  80% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+
+/* Tamanhos do botão */
+.small {
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+  min-width: 36px;
+}
+
+.small .heartIcon {
+  font-size: 16px;
+}
+
+.medium {
+  width: 44px;
+  height: 44px;
+  font-size: 16px;
+  min-width: 44px;
+}
+
+.medium .heartIcon {
+  font-size: 20px;
+}
+
+.large {
+  width: 52px;
+  height: 52px;
+  font-size: 18px;
+  border-radius: 16px;
+  padding: 0 1.2rem;
+  min-width: 52px;
+}
+
+.large .heartIcon {
+  font-size: 24px;
+}
+
+/* Versão com texto */
+.withText {
+  border-radius: 28px;
+  padding: 0 1rem;
+  min-width: auto;
+  width: auto;
+}
+
+.withText.small {
+  padding: 0 0.8rem;
+  height: 36px;
+}
+
+.withText.medium {
+  padding: 0 1rem;
+  height: 44px;
+}
+
+.withText.large {
+  padding: 0 1.2rem;
+  height: 52px;
+}
+
+.text {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.025em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.small .text {
+  font-size: 12px;
+}
+
+.large .text {
+  font-size: 16px;
+}
+
+/* Spinner de loading */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top: 2px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.small .spinner {
+  width: 14px;
+  height: 14px;
+  border-width: 1.5px;
+}
+
+.large .spinner {
+  width: 20px;
+  height: 20px;
+  border-width: 2.5px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mensagens de feedback */
+.message {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  z-index: 1000;
+  animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
+}
+
+.message.success {
+  background: linear-gradient(
+    135deg,
+    rgba(76, 175, 80, 0.95) 0%,
+    rgba(56, 142, 60, 0.95) 100%
+  );
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.message.error {
+  background: linear-gradient(
+    135deg,
+    rgba(244, 67, 54, 0.95) 0%,
+    rgba(211, 47, 47, 0.95) 100%
+  );
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .favoriteButton {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .favoriteButton:hover {
+    transform: none;
+  }
+
+  .favoriteButton:active {
+    transform: scale(0.94);
+  }
+
+  .small {
+    width: 38px;
+    height: 38px;
+  }
+
+  .medium {
+    width: 46px;
+    height: 46px;
+  }
+
+  .large {
+    width: 54px;
+    height: 54px;
+  }
+
+  .withText.small {
+    height: 38px;
+    padding: 0 0.9rem;
+  }
+
+  .withText.medium {
+    height: 46px;
+    padding: 0 1.1rem;
+  }
+
+  .withText.large {
+    height: 54px;
+    padding: 0 1.3rem;
+  }
+
+  .message {
+    font-size: 12px;
+    padding: 0.5rem 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .small {
+    width: 36px;
+    height: 36px;
+  }
+
+  .medium {
+    width: 42px;
+    height: 42px;
+  }
+
+  .large {
+    width: 48px;
+    height: 48px;
+  }
+
+  .withText.small {
+    height: 36px;
+    padding: 0 0.7rem;
+  }
+
+  .withText.medium {
+    height: 42px;
+    padding: 0 0.9rem;
+  }
+
+  .withText.large {
+    height: 48px;
+    padding: 0 1rem;
+  }
+
+  .text {
+    font-size: 12px;
+  }
+
+  .small .text {
+    font-size: 11px;
+  }
+
+  .large .text {
+    font-size: 13px;
+  }
+}
+
+/* Efeitos especiais */
+.favoriteButton.favorited {
+  animation: favoriteAdded 0.6s ease-out;
+}
+
+@keyframes favoriteAdded {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  .favoriteButton,
+  .heartIcon,
+  .message {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .favoriteButton:hover {
+    transform: none;
+  }
+
+  .favoriteButton:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Modo escuro */
+@media (prefers-color-scheme: dark) {
+  .favoriteButton {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .favoriteButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}

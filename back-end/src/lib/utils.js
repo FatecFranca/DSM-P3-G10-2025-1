@@ -1,9 +1,4 @@
-/*
-  Função que processa a query string da URL da requisição
-  e verifica se o parâmetro "include" foi passado. Em caso
-  positivo, preenche um objeto com os relacionamentos que
-  devem ser incluídos na consulta sendo executada
-*/
+
 function includeRelations(query) {
 
   // Por padrão, não inclui nenhum relacionamento

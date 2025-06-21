@@ -44,7 +44,7 @@
   opacity: 0.8;
 }
 
-/* Animação de entrada suave */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -60,7 +60,7 @@
   animation: fadeIn 0.5s ease-out;
 }
 
-/* Responsividade */
+
 @media (max-width: 768px) {
   .loadingContainer {
     min-height: 50vh;

@@ -1,4 +1,4 @@
-/* GameManager.module.css - Estilo escuro padrão do site */
+
 .container {
   padding: 3rem;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
@@ -78,7 +78,7 @@
 .addButton:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(126, 34, 206, 0.4);
-} /* Formulário */
+} 
 .form {
   position: relative;
   z-index: 1;
@@ -147,7 +147,7 @@
   resize: vertical;
 }
 
-/* Lista de gêneros */
+
 .genreList {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -188,7 +188,7 @@
   accent-color: var(--primary);
 }
 
-/* Ações do formulário */
+
 .formActions {
   display: flex;
   gap: 1rem;
@@ -237,7 +237,7 @@
   transform: translateY(-1px);
 }
 
-/* Lista de jogos */
+
 .gamesList {
   position: relative;
   z-index: 1;
@@ -281,7 +281,7 @@
   justify-content: center;
 }
 
-/* Grid de jogos */
+
 .gamesGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -403,7 +403,7 @@
   transform: translateY(-1px);
 }
 
-/* Responsividade */
+
 @media (max-width: 768px) {
   .container {
     padding: 1.5rem;
@@ -459,3 +459,4 @@
     padding: 1rem;
   }
 }
+

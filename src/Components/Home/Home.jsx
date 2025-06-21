@@ -68,7 +68,7 @@ const Home = () => {
 
   return (
     <div className={styles.home}>
-      {/* Hero Section com Parallax */}
+      {}
       <section
         className={styles.hero}
         style={{ transform: `translateY(${scrollY * 0.3}px)` }}
@@ -120,7 +120,7 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Floating Elements */}
+        {}
         <div className={styles.floatingElements}>
           <div className={`${styles.floatingIcon} ${styles.float1}`}>🎯</div>
           <div className={`${styles.floatingIcon} ${styles.float2}`}>⭐</div>
@@ -128,7 +128,7 @@ const Home = () => {
           <div className={`${styles.floatingIcon} ${styles.float4}`}>🎨</div>
         </div>
       </section>
-      {/* Stats Section */}
+      {}
       <section className={styles.stats}>
         <div className={styles.container}>
           <div className={styles.statsGrid}>
@@ -144,7 +144,7 @@ const Home = () => {
           </div>
         </div>
       </section>{" "}
-      {/* Featured Games Carousel */}
+      {}
       <section className={styles.featured}>
         <div className={styles.container}>
           <h2 className={styles.sectionTitle}>
@@ -235,7 +235,7 @@ const Home = () => {
           )}
         </div>
       </section>{" "}
-      {/* Genres Section */}
+      {}
       <section className={styles.genres}>
         <div className={styles.container}>
           <h2 className={styles.sectionTitle}>
@@ -258,7 +258,7 @@ const Home = () => {
           </div>
         </div>
       </section>{" "}
-      {/* Features Section */}
+      {}
       <section className={styles.features}>
         <div className={styles.container}>
           <h2 className={styles.sectionTitle}>
@@ -314,3 +314,4 @@ const Home = () => {
 };
 
 export default Home;
+

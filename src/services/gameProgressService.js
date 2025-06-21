@@ -71,3 +71,4 @@ class GameProgressService {
 }
 
 export default new GameProgressService();
+

@@ -260,9 +260,8 @@ const GameManager = () => {
                   {" "}
                   <h3>{game.title}</h3>
                   <p>{game.description}</p>{" "}
-                  {/* Exibir gêneros - suporte ao formato novo (genres) e antigo (genreIds) */}
+                  {}
                   {(() => {
-                    // Novo formato: array de strings
                     if (Array.isArray(game.genres) && game.genres.length > 0) {
                       return (
                         <div className={styles.gameGenres}>
@@ -279,7 +278,6 @@ const GameManager = () => {
                         </div>
                       );
                     }
-                    // Formato antigo: array de IDs (fallback com conversão para nomes)
                     else if (
                       Array.isArray(game.genreIds) &&
                       game.genreIds.length > 0
@@ -333,3 +331,4 @@ const GameManager = () => {
 };
 
 export default GameManager;
+

@@ -196,12 +196,12 @@ const Header = () => {
       >
         <div className={styles.container}>
           {" "}
-          {/* Logo */}
+          {}
           <Link to="/" className={styles.logo}>
             <span className={styles.logoIcon}>🎮</span>
             <span className={styles.logoText}>GameReviews</span>
           </Link>
-          {/* Navegação Desktop */}
+          {}
           <nav className={styles.nav}>
             <ul className={styles.navList}>
               <li>
@@ -223,7 +223,7 @@ const Header = () => {
               )}
             </ul>
           </nav>{" "}
-          {/* Busca Desktop */}
+          {}
           <div className={styles.searchContainer} ref={searchInputRef}>
             <form onSubmit={handleSearch} className={styles.searchForm}>
               <input
@@ -239,7 +239,7 @@ const Header = () => {
               </button>
             </form>
 
-            {/* Sugestões Desktop */}
+            {}
             {showSuggestions && searchSuggestions.length > 0 && (
               <div className={styles.suggestions}>
                 {searchSuggestions.map((game) => (
@@ -284,7 +284,7 @@ const Header = () => {
               </div>
             )}
           </div>{" "}
-          {/* Área do usuário Desktop */}
+          {}
           <div className={styles.userSection}>
             {authenticated ? (
               <div className={styles.userDropdown}>
@@ -329,7 +329,7 @@ const Header = () => {
               </div>
             )}
           </div>
-          {/* Botão do Menu Mobile */}
+          {}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={styles.mobileMenuButton}
@@ -341,14 +341,14 @@ const Header = () => {
           </button>
         </div>
       </header>
-      {/* Overlay do menu mobile - FORA do header */}
+      {}
       {isMobileMenuOpen && (
         <div
           className={`${styles.mobileMenuOverlay} ${styles.open}`}
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}{" "}
-      {/* Menu mobile - FORA do header */}
+      {}
       <div
         className={`${styles.mobileMenu} ${
           isMobileMenuOpen ? styles.open : ""
@@ -361,7 +361,7 @@ const Header = () => {
         >
           ✕
         </button>{" "}
-        {/* Busca mobile */}
+        {}
         <div
           className={styles.mobileSearchContainer}
           ref={mobileSearchInputRef}
@@ -385,7 +385,7 @@ const Header = () => {
             </button>
           </form>
 
-          {/* Sugestões Mobile */}
+          {}
           {showMobileSuggestions && mobileSearchSuggestions.length > 0 && (
             <div className={styles.mobileSuggestions}>
               {mobileSearchSuggestions.map((game) => (
@@ -430,7 +430,7 @@ const Header = () => {
             </div>
           )}
         </div>
-        {/* Navegação mobile */}
+        {}
         <ul className={styles.mobileNavList}>
           <li>
             <Link
@@ -465,7 +465,7 @@ const Header = () => {
             </li>
           )}
         </ul>
-        {/* Seção do usuário mobile */}
+        {}
         <div className={styles.mobileUserSection}>
           {authenticated ? (
             <div className={styles.mobileUserInfo}>
@@ -486,14 +486,6 @@ const Header = () => {
               >
                 <span>👤</span>
                 Meu Perfil
-              </Link>
-              <Link
-                to="/conta/reviews"
-                className={styles.mobileNavLink}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <span>📝</span>
-                Minhas Reviews
               </Link>
               <button onClick={handleLogout} className={styles.mobileNavLink}>
                 <span>🚪</span>
@@ -525,3 +517,4 @@ const Header = () => {
 };
 
 export default Header;
+

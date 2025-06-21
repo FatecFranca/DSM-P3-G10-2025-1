@@ -28,7 +28,7 @@ const Footer = () => {
       <div className={styles.container}>
         <div className={styles.topSection}>
           <div className={styles.footerGrid}>
-            {/* Logo e Redes Sociais */}
+            {}
             <div className={styles.logoSection}>
               <Link to="/" className={styles.logoLink}>
                 <div className={styles.logoIcon}>
@@ -95,7 +95,7 @@ const Footer = () => {
             </div>
 
             <div className={styles.footerLinksWrapper}>
-              {/* Navegação Principal */}
+              {}
               <div className={styles.linksSection}>
                 <h4 className={styles.linkTitle}>Explorar</h4>
                 <ul className={styles.linksList}>
@@ -107,7 +107,7 @@ const Footer = () => {
                 </ul>
               </div>
 
-              {/* Categorias */}
+              {}
               <div className={styles.linksSection}>
                 <h4 className={styles.linkTitle}>Categorias</h4>
                 <ul className={styles.linksList}>
@@ -138,7 +138,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Botão Voltar ao Topo */}
+        {}
         <button 
           className={`${styles.scrollToTop} ${showScrollTop ? styles.visible : ''}`}
           onClick={scrollToTop}

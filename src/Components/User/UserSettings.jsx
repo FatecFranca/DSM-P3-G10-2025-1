@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { useAuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import userService from "../../services/userService";
 import styles from "./UserSettings.module.css";
 
 const UserSettings = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [activeSection, setActiveSection] = useState("account");
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
+  const navigate = useNavigate();
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -55,22 +58,52 @@ const UserSettings = () => {
       setLoading(false);
     }
   };
+  const handleDeleteAccount = async () => {
+    if (!user?.id) {
+      setMessage("Erro: Usuário não identificado");
+      return;
+    }
 
-  const handleDeleteAccount = () => {
-    if (
-      window.confirm(
-        "Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita."
-      )
-    ) {
-      if (
-        window.confirm(
-          "Última confirmação: Sua conta e todos os dados serão permanentemente excluídos."
-        )
-      ) {
+    const firstConfirm = window.confirm(
+      "Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.\n\n" +
+        "Ao excluir sua conta, você perderá:\n" +
+        "• Todos os seus favoritos\n" +
+        "• Todas as suas avaliações\n" +
+        "• Todo o histórico de atividades\n" +
+        "• Todos os dados da conta"
+    );
+
+    if (!firstConfirm) return;
+
+    const secondConfirm = window.confirm(
+      "ÚLTIMA CONFIRMAÇÃO!\n\n" +
+        "Sua conta e todos os dados serão permanentemente excluídos.\n" +
+        "Esta ação NÃO PODE ser desfeita.\n\n" +
+        "Deseja realmente continuar?"
+    );
+
+    if (!secondConfirm) return;
+
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const result = await userService.deleteUser(user.id);
+
+      if (result.success) {
         alert(
-          "Funcionalidade de exclusão de conta será implementada em breve."
+          "Conta excluída com sucesso. Você será redirecionado para a página inicial."
         );
+        logout(); // Fazer logout do usuário
+        navigate("/"); // Redirecionar para a página inicial
+      } else {
+        setMessage(`Erro ao excluir conta: ${result.message}`);
       }
+    } catch (error) {
+      console.error("Erro ao excluir conta:", error);
+      setMessage("Erro inesperado ao excluir conta. Tente novamente.");
+    } finally {
+      setLoading(false);
     }
   };
   const sections = [
@@ -89,7 +122,7 @@ const UserSettings = () => {
         </div>
 
         <div className={styles.settingsLayout}>
-          {/* Menu lateral */}
+          {}
           <nav className={styles.settingsNav}>
             {sections.map((section) => (
               <button
@@ -105,7 +138,7 @@ const UserSettings = () => {
             ))}
           </nav>
 
-          {/* Conteúdo das configurações */}
+          {}
           <div className={styles.settingsContent}>
             {message && (
               <div
@@ -119,7 +152,7 @@ const UserSettings = () => {
                 {message}
               </div>
             )}{" "}
-            {/* Seção Conta/Perfil */}
+            {}
             {activeSection === "account" && (
               <div className={styles.section}>
                 <div className={styles.sectionHeader}>
@@ -162,7 +195,7 @@ const UserSettings = () => {
                 </div>
               </div>
             )}{" "}
-            {/* Seção Segurança */}
+            {}
             {activeSection === "security" && (
               <div className={styles.section}>
                 <div className={styles.sectionHeader}>
@@ -172,7 +205,7 @@ const UserSettings = () => {
                   </h2>
                 </div>
 
-                {/* Formulário de alterar senha */}
+                {}
                 <form
                   onSubmit={handlePasswordSubmit}
                   className={styles.passwordForm}
@@ -238,7 +271,7 @@ const UserSettings = () => {
                   </button>
                 </form>
 
-                {/* Zona de perigo - exclusão de conta */}
+                {}
                 <div className={styles.dangerZone}>
                   <h3 className={styles.dangerTitle}>🚨 Zona de Perigo</h3>
                   <div className={styles.dangerItem}>
@@ -248,12 +281,13 @@ const UserSettings = () => {
                         Exclua permanentemente sua conta e todos os dados
                         associados. Esta ação não pode ser desfeita.
                       </p>
-                    </div>
+                    </div>{" "}
                     <button
                       onClick={handleDeleteAccount}
                       className={styles.dangerButton}
+                      disabled={loading}
                     >
-                      Excluir conta
+                      {loading ? "Excluindo..." : "Excluir conta"}
                     </button>
                   </div>
                 </div>

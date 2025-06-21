@@ -12,6 +12,7 @@ import commentRoutes from "../routes/commentRoutes.js";
 import reviewReactionRoutes from "../routes/reviewReactionRoutes.js";
 import commentReactionRoutes from "../routes/commentReactionRoutes.js";
 import gameProgressRoutes from "../routes/gameProgressRoutes.js";
+import userFavoritesRoutes from "../routes/userFavoritesRoutes.js";
 
 // Configurar variáveis de ambiente
 dotenv.config();
@@ -122,6 +123,7 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/review-reactions", reviewReactionRoutes);
 app.use("/api/comment-reactions", commentReactionRoutes);
 app.use("/api/game-progress", gameProgressRoutes);
+app.use("/api/favorites", userFavoritesRoutes);
 
 // Middleware para rotas não encontradas
 app.use("*", (req, res) => {

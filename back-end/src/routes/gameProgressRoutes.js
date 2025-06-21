@@ -19,3 +19,4 @@ router.post('/', updateGameProgress);
 router.delete('/:id', removeProgress);
 
 export default router;
+

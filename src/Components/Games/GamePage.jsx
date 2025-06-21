@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import gamesService from "../../services/gamesService";
 import SafeImage from "../Helper/SafeImage";
+import FavoriteButton from "../FavoriteButton/FavoriteButton";
 import styles from "./GamePage.module.css";
 import Detail from "../Detail";
 import Reviews from "./Reviews";
@@ -101,21 +102,29 @@ const GamePage = () => {
   return (
     <section className={`${styles.container} animeDown`}>
       <div className={styles.info}>
-        <SafeImage
-          src={
-            game.coverUrl ||
-            game.cover_url ||
-            game.imageUrl ||
-            game.image_url ||
-            game.imagem ||
-            game.image
-          }
-          alt={game.title || game.titulo || "Imagem do jogo"}
-          className={styles.image}
-          fallbackSrc="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDMwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTcwQzE2MC40NiAxNzAgMTY5IDE2MS40NiAxNjkgMTUxQzE2OSAxNDAuNTQgMTYwLjQ2IDEzMiAxNTAgMTMyQzEzOS41NCAxMzIgMTMxIDE0MC41NCAxMzEgMTUxQzEzMSAxNjEuNDYgMTM5LjU0IDE3MCAxNTAgMTcwWiIgZmlsbD0iIzk3QTNBRiIvPgo8cGF0aCBkPSJNMjEwIDI2OEMxODUgMjU4IDE0NSAyMDAgMTQ1IDI1OEMxNDUgMjU4IDkwIDI1OCA5MCAyNjhIMjEwWiIgZmlsbD0iIzk3QTNBRiIvPgo8dGV4dCB4PSIxNTAiIHk9IjMwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSIjOTdBM0FGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5KT0dPPC90ZXh0Pgo8L3N2Zz4K"
-        />
+        {" "}
+        <div className={styles.imageContainer}>
+          <SafeImage
+            src={
+              game.coverUrl ||
+              game.cover_url ||
+              game.imageUrl ||
+              game.image_url ||
+              game.imagem ||
+              game.image
+            }
+            alt={game.title || game.titulo || "Imagem do jogo"}
+            className={styles.image}
+            fallbackSrc="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDMwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTcwQzE2MC40NiAxNzAgMTY5IDE2MS40NiAxNjkgMTUxQzE2OSAxNDAuNTQgMTYwLjQ2IDEzMiAxNTAgMTMyQzEzOS41NCAxMzIgMTMxIDE0MC41NCAxMzEgMTUxQzEzMSAxNjEuNDYgMTM5LjU0IDE3MCAxNTAgMTcwWiIgZmlsbD0iIzk3QTNBRiIvPgo8cGF0aCBkPSJNMjEwIDI2OEMxODUgMjU4IDE0NSAyMDAgMTQ1IDI1OEMxNDUgMjU4IDkwIDI1OCA5MCAyNjhIMjEwWiIgZmlsbD0iIzk3QTNBRiIvPgo8dGV4dCB4PSIxNTAiIHk9IjMwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSIjOTdBM0FGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5KT0dPPC90ZXh0Pgo8L3N2Zz4K"
+          />
+          <div className={styles.favoriteButtonContainer}>
+            <FavoriteButton game={game} size="medium" />
+          </div>
+        </div>
         <div className={styles.details}>
-          <h1 className="title">{game.title || game.titulo}</h1>
+          <div className={styles.header}>
+            <h1 className="title">{game.title || game.titulo}</h1>
+          </div>
           <p>
             <strong>Gêneros:</strong> {getGenresText()}
           </p>

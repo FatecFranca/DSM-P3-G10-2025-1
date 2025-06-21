@@ -32,16 +32,13 @@ const UserProfile = () => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-
     try {
-      // Chamar a API real para atualizar o perfil
       const response = await userService.updateUserProfile(user.id, {
         name: formData.name,
         bio: formData.bio,
       });
 
       if (response.success) {
-        // Atualizar o contexto do usuário
         const updatedUser = { ...user, ...response.data };
         updateUser(updatedUser);
 
@@ -66,7 +63,6 @@ const UserProfile = () => {
     setMessage("");
   };
 
-  // Carregar estatísticas do usuário
   const loadUserStats = async () => {
     if (!user?.id) return;
 
@@ -90,7 +86,7 @@ const UserProfile = () => {
   return (
     <div className={styles.userProfile}>
       <div className={styles.profileContainer}>
-        {/* Header */}
+        {}
         <div className={styles.profileHeader}>
           <div className={styles.headerContent}>
             <h1 className={styles.title}>Meu Perfil</h1>
@@ -109,7 +105,7 @@ const UserProfile = () => {
             </button>
           )}
         </div>
-        {/* Mensagem de feedback */}
+        {}
         {message && (
           <div
             className={`${styles.message} ${
@@ -122,7 +118,7 @@ const UserProfile = () => {
             {message}
           </div>
         )}{" "}
-        {/* Avatar Section - Apenas foto e nome */}
+        {}
         <div className={styles.avatarSection}>
           <div className={styles.avatarContainer}>
             {user?.avatarUrl ? (
@@ -149,7 +145,7 @@ const UserProfile = () => {
             <h2 className={styles.userName}>{user?.name}</h2>
           </div>
         </div>
-        {/* Conteúdo Principal */}
+        {}
         {isEditing ? (
           <form onSubmit={handleSubmit} className={styles.editForm}>
             {" "}
@@ -216,7 +212,7 @@ const UserProfile = () => {
           </form>
         ) : (
           <div className={styles.profileContent}>
-            {/* Informações Pessoais - Nome e Email apenas */}
+            {}
             <div className={styles.infoCard}>
               <div className={styles.cardHeader}>
                 <h3 className={styles.cardTitle}>
@@ -235,7 +231,7 @@ const UserProfile = () => {
                 </div>
               </div>{" "}
             </div>{" "}
-            {/* Biografia */}
+            {}
             <div className={styles.bioCard}>
               <div className={styles.cardHeader}>
                 <h3 className={styles.cardTitle}>
@@ -254,7 +250,7 @@ const UserProfile = () => {
                 )}
               </div>
             </div>
-            {/* Estatísticas - 4 cards: Likes, Deslikes, Reviews, Jogos Criados */}
+            {}
             <div className={styles.statsCard}>
               <div className={styles.cardHeader}>
                 <h3 className={styles.cardTitle}>

@@ -1,4 +1,4 @@
-/* UserProfile.module.css */
+
 .userProfile {
   padding: 3rem;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
@@ -317,7 +317,7 @@
   opacity: 0.3;
 }
 
-/* Formulário de Edição */
+
 .editForm {
   background: rgba(15, 23, 42, 0.8);
   backdrop-filter: blur(10px);
@@ -478,7 +478,7 @@
   }
 }
 
-/* Loading das estatísticas */
+
 .statsLoading {
   display: flex;
   flex-direction: column;
@@ -504,7 +504,7 @@
   animation: spin 1s linear infinite;
 }
 
-/* Responsividade */
+
 @media (max-width: 768px) {
   .userProfile {
     padding: 1rem;
@@ -563,3 +563,4 @@
     font-size: 2rem;
   }
 }
+

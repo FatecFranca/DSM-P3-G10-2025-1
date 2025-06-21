@@ -20,13 +20,13 @@ model User {
 
   // Relacionamentos existentes
   reviews   Review[]
-
   // Novos relacionamentos para funcionalidades faltantes
   comments         Comment[]
   reviewReactions  ReviewReaction[]
   commentReactions CommentReaction[]
   gameProgresses   GameProgress[]
   createdGames     Game[]         // Jogos criados por este usuário
+  favorites        Favorite[]     // Jogos favoritados pelo usuário
 
   @@map("users")
 }
@@ -47,10 +47,10 @@ model Game {
   // Campo para identificar quem criou o jogo
   createdBy   String?   @db.ObjectId // ID do usuário que criou o jogo
   creator     User?     @relation(fields: [createdBy], references: [id])
-
   // Relacionamentos
   reviews        Review[]
   gameProgresses GameProgress[]
+  favorites      Favorite[]     // Usuários que favoritaram este jogo
 
   @@map("games")
 }
@@ -147,6 +147,21 @@ model GameProgress {
   // Garantir que um usuário só pode ter um status por jogo
   @@unique([userId, gameId])
   @@map("game_progresses")
+}
+
+model Favorite {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+
+  // Relacionamentos
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.ObjectId
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId String @db.ObjectId
+
+  // Garantir que um usuário só pode favoritar um jogo uma vez
+  @@unique([userId, gameId])
+  @@map("favorites")
 }
 
 // ENUMS

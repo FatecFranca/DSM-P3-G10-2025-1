@@ -21,3 +21,4 @@ export const getGenreNames = (genreIds) => {
 
   return names.length > 0 ? names.join(", ") : "Não informado";
 };
+

@@ -102,6 +102,11 @@
   }
 }
 
+.imageContainer {
+  position: relative;
+  display: inline-block;
+}
+
 .image {
   width: 300px;
   height: 400px;
@@ -113,6 +118,21 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 2;
+}
+
+.favoriteButtonContainer {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 15;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+
+.imageContainer:hover .favoriteButtonContainer {
+  transform: translateY(-2px) scale(1.05);
 }
 
 .image:hover {
@@ -249,7 +269,6 @@
   scrollbar-color: rgba(126, 34, 206, 0.5) transparent;
 }
 
-/* Custom scrollbar para webkit browsers */
 .description::-webkit-scrollbar {
   width: 8px;
 }
@@ -301,7 +320,6 @@
   z-index: 2;
 }
 
-/* Efeito de fade no final do texto quando há scroll */
 .description:hover::after {
   background: linear-gradient(to top, rgba(126, 34, 206, 0.25), transparent);
 }
@@ -453,10 +471,7 @@
 }
 
 .rating {
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffd700;
   font-weight: 900;
   font-size: 1.2rem;
   margin-left: 0.5rem;
@@ -482,9 +497,25 @@
   }
 }
 
-/* ===== RESPONSIVIDADE COMPLETA GAMEPAGE ===== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 1.5rem;
+  gap: 1.5rem;
+}
 
-/* Tablets grandes e desktops menores */
+.header h1 {
+  margin: 0;
+  flex: 1;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 @media (max-width: 1200px) {
   .container {
     padding: 2rem 1.5rem;
@@ -493,11 +524,19 @@
   .info {
     gap: 2rem;
   }
+  .imageContainer {
+    align-self: center;
+  }
 
   .image {
     width: 280px;
     height: 370px;
     min-width: 280px;
+  }
+
+  .favoriteButtonContainer {
+    top: 0.875rem;
+    right: 0.875rem;
   }
 
   .details {
@@ -510,7 +549,6 @@
   }
 }
 
-/* Tablets */
 @media (max-width: 968px) {
   .container {
     padding: 2rem 1rem;
@@ -523,13 +561,22 @@
     text-align: center;
     padding: 2rem 1.5rem;
   }
+  .imageContainer {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
 
   .image {
     width: 300px;
     height: 400px;
     min-width: 300px;
     max-width: 300px;
-    margin: 0 auto;
+  }
+
+  .favoriteButtonContainer {
+    top: 0.75rem;
+    right: 0.75rem;
   }
 
   .details {
@@ -570,7 +617,6 @@
   }
 }
 
-/* Móveis grandes */
 @media (max-width: 768px) {
   .container {
     padding: 1.5rem 1rem;
@@ -584,13 +630,22 @@
     align-items: center;
     text-align: center;
   }
+  .imageContainer {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
 
   .image {
     width: 260px;
     height: 340px;
     min-width: 260px;
     max-width: 260px;
-    margin: 0 auto;
+  }
+
+  .favoriteButtonContainer {
+    top: 0.75rem;
+    right: 0.75rem;
   }
 
   .details {
@@ -637,9 +692,28 @@
   .error h2 {
     font-size: 2rem;
   }
+
+  /* Melhorias específicas para o header com botão de favoritos */
+  .header {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .header h1 {
+    min-width: auto;
+    margin-bottom: 0;
+    order: 1;
+  }
+
+  /* Botão de favoritos fica em destaque em mobile */
+  .header > div {
+    order: 2;
+  }
 }
 
-/* Móveis pequenos */
 @media (max-width: 480px) {
   .container {
     padding: 1rem 0.75rem;
@@ -650,6 +724,11 @@
     border-radius: 1.5rem;
     gap: 1.5rem;
   }
+  .imageContainer {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
 
   .image {
     width: 220px;
@@ -657,6 +736,11 @@
     min-width: 220px;
     max-width: 220px;
     border-radius: 1rem;
+  }
+
+  .favoriteButtonContainer {
+    top: 0.625rem;
+    right: 0.625rem;
   }
 
   .details h1 {
@@ -709,7 +793,6 @@
   }
 }
 
-/* Móveis muito pequenos */
 @media (max-width: 360px) {
   .container {
     padding: 0.75rem 0.5rem;
@@ -743,58 +826,15 @@
   }
 }
 
-/* Media query para telas médias/grandes - garantir layout lado a lado */
-@media (min-width: 969px) {
-  .info {
-    flex-direction: row;
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  .image {
-    flex-shrink: 0;
-  }
-
-  .details {
-    flex: 1;
-    text-align: left;
-  }
-
-  .details p {
-    text-align: left;
-  }
+.header {
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
 }
 
-/* Indicador de scroll para descrições longas */
-.description.hasScroll::after {
-  content: "⬇️ Role para ver mais";
-  position: absolute;
-  bottom: 10px;
-  right: 20px;
-  font-size: 0.8rem;
-  color: rgba(126, 34, 206, 0.8);
-  background: rgba(15, 23, 42, 0.9);
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  border: 1px solid rgba(126, 34, 206, 0.3);
-  animation: pulse 2s infinite;
-  pointer-events: none;
-  z-index: 10;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-
-/* Quando chegou no final do scroll, esconde o indicador */
-.description::-webkit-scrollbar-thumb:active + .description.hasScroll::after {
-  display: none;
+.header h1 {
+  min-width: auto;
+  font-size: clamp(1.8rem, 5vw, 2.2rem);
+  margin-bottom: 0.5rem;
 }

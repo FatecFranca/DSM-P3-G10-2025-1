@@ -1,4 +1,4 @@
-/* CSS Variables */
+
 :root {
   --carousel-primary: #ff0f35;
   --carousel-primary-dark: #d70029;
@@ -9,7 +9,7 @@
   --carousel-duration: 5s;
 }
 
-/* Loading State */
+
 .carouselLoading {
   display: flex;
   flex-direction: column;
@@ -35,7 +35,7 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Carousel Container */
+
 .carousel {
   position: relative;
   width: 100%;
@@ -51,7 +51,7 @@
   height: 100%;
 }
 
-/* Slides Container */
+
 .slidesContainer {
   position: relative;
   width: 100%;
@@ -77,7 +77,7 @@
   transform: translateX(0);
 }
 
-/* Slide Background */
+
 .slideBackground {
   position: absolute;
   top: 0;
@@ -108,7 +108,7 @@
   );
 }
 
-/* Slide Content */
+
 .slideContent {
   position: relative;
   z-index: 2;
@@ -138,7 +138,7 @@
   }
 }
 
-/* Slide Badges */
+
 .slideBadges {
   display: flex;
   gap: 0.75rem;
@@ -166,7 +166,7 @@
   backdrop-filter: blur(10px);
 }
 
-/* Slide Text */
+
 .slideTitulo {
   font-size: clamp(2rem, 5vw, 4rem);
   font-weight: 800;
@@ -191,7 +191,7 @@
   max-width: 500px;
 }
 
-/* Slide Actions */
+
 .slideActions {
   display: flex;
   gap: 1rem;
@@ -245,7 +245,7 @@
   font-size: 1rem;
 }
 
-/* Navigation Buttons */
+
 .navButton {
   position: absolute;
   top: 50%;
@@ -279,7 +279,7 @@
   right: 2rem;
 }
 
-/* Play/Pause Button */
+
 .playPauseButton {
   position: absolute;
   top: 2rem;
@@ -304,7 +304,7 @@
   transform: scale(1.1);
 }
 
-/* Indicators */
+
 .indicadores {
   position: absolute;
   bottom: 2rem;
@@ -360,7 +360,7 @@
   100% { width: 100%; }
 }
 
-/* Slide Counter */
+
 .slideCounter {
   position: absolute;
   bottom: 2rem;
@@ -380,7 +380,7 @@
   opacity: 0.6;
 }
 
-/* Responsividade */
+
 @media (max-width: 1024px) {
   .carousel {
     height: 70vh;
@@ -517,7 +517,7 @@
   }
 }
 
-/* Acessibilidade */
+
 @media (prefers-reduced-motion: reduce) {
   .slide,
   .navButton,
@@ -536,7 +536,7 @@
   }
 }
 
-/* Alto contraste */
+
 @media (prefers-contrast: high) {
   .slideOverlay {
     background: rgba(0, 0, 0, 0.8);

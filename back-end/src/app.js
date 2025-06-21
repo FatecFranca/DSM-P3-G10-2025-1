@@ -6,14 +6,14 @@ import dotenv from "dotenv";
 
 import userRoutes from "./routes/userRoutes.js";
 import gameRoutes from "./routes/gameRoutes.js";
-// import genreRoutes from './routes/genreRoutes.js'; // REMOVIDO - gêneros agora são strings
 import reviewRoutes from "./routes/reviewRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import commentReactionRoutes from "./routes/commentReactionRoutes.js";
 import reviewReactionRoutes from "./routes/reviewReactionRoutes.js";
-import gameProgressRoutes from "./routes/gameProgressRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
+import userFavoritesRoutes from "./routes/userFavoritesRoutes.js";
+import gameProgressRoutes from "./routes/gameProgressRoutes.js";
 // Configurar variáveis de ambiente
 dotenv.config();
 
@@ -44,12 +44,12 @@ app.get("/api/test", (req, res) => {
 app.use("/api", authRoutes); // /api/login será o endpoint
 app.use("/api/users", userRoutes);
 app.use("/api/games", gameRoutes);
-// app.use('/api/genres', genreRoutes); // REMOVIDO - gêneros agora são strings
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/comment-reactions", commentReactionRoutes);
 app.use("/api/review-reactions", reviewReactionRoutes);
 app.use("/api/game-progress", gameProgressRoutes);
+app.use("/api/favorites", userFavoritesRoutes);
 
 // Middleware para rotas não encontradas
 app.use("*", (req, res) => {

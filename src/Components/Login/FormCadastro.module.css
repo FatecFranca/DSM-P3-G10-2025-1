@@ -28,7 +28,7 @@
   text-align: center;
 }
 
-/* Progress bar and steps */
+
 .progressBar {
   height: 6px;
   background-color: #e0e0e0;
@@ -100,7 +100,7 @@
   z-index: -1;
 }
 
-/* Form styles */
+
 .form {
   margin-bottom: 1.5rem;
 }
@@ -128,7 +128,7 @@
   margin-top: 0.5rem;
 }
 
-/* Password field with toggle */
+
 .passwordField {
   position: relative;
 }
@@ -158,7 +158,7 @@
   color: #333;
 }
 
-/* Password strength indicator */
+
 .passwordStrength {
   margin-top: 0.75rem;
 }
@@ -187,7 +187,7 @@
   font-weight: 600;
 }
 
-/* Avatar preview */
+
 .avatarPreview {
   display: flex;
   justify-content: center;
@@ -202,7 +202,7 @@
   border: 2px solid #e0e0e0;
 }
 
-/* Terms checkbox */
+
 .termsCheck {
   margin-bottom: 1.5rem;
 }
@@ -271,7 +271,7 @@
   text-decoration: underline;
 }
 
-/* Button styles */
+
 .buttonGroup {
   display: flex;
   gap: 1rem;
@@ -304,7 +304,7 @@ button:hover .buttonIcon:first-child {
   transform: translateX(-3px);
 }
 
-/* Loading spinner */
+
 .spinner {
   display: inline-block;
   width: 16px;
@@ -316,7 +316,7 @@ button:hover .buttonIcon:first-child {
   margin-right: 0.5rem;
 }
 
-/* Login link */
+
 .loginLink {
   text-align: center;
   border-top: 1px solid #eee;
@@ -335,7 +335,7 @@ button:hover .buttonIcon:first-child {
   text-decoration: underline;
 }
 
-/* Error and success messages */
+
 .errorContainer, .successContainer {
   margin-bottom: 1.5rem;
 }
@@ -356,7 +356,7 @@ button:hover .buttonIcon:first-child {
   margin-right: 10px;
 }
 
-/* Security info */
+
 .securityInfo {
   display: flex;
   align-items: center;
@@ -371,7 +371,7 @@ button:hover .buttonIcon:first-child {
   font-size: 1rem;
 }
 
-/* Animations */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -401,7 +401,7 @@ button:hover .buttonIcon:first-child {
   }
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 576px) {
   .container {
     padding: 1.5rem;

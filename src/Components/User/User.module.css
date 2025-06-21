@@ -1,4 +1,4 @@
-/* User Container Principal */
+
 .userContainer {
   min-height: 100vh;
   background: #f5f6fa;
@@ -14,7 +14,7 @@
   overflow: hidden;
 }
 
-/* Estados de Loading e Erro */
+
 .loadingContainer, 
 .errorContainer {
   display: flex;
@@ -69,7 +69,7 @@
   box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
 }
 
-/* Header do Usuário */
+
 .userHeader {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -108,7 +108,7 @@
   z-index: 1;
 }
 
-/* Sistema de Tabs */
+
 .tabsContainer {
   display: flex;
   background: white;
@@ -166,14 +166,14 @@
   width: 100%;
 }
 
-/* Conteúdo Principal */
+
 .mainContent {
   padding: 2rem;
   min-height: 500px;
   background: #fafbfc;
 }
 
-/* Versão com SideBar */
+
 .withSidebar {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -185,7 +185,7 @@
   padding: 2rem;
 }
 
-/* Animações */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -201,7 +201,7 @@
   animation: fadeIn 0.4s ease-out;
 }
 
-/* Estados Interativos */
+
 .tab:active {
   transform: translateY(1px);
 }
@@ -210,7 +210,7 @@
   transform: translateY(0);
 }
 
-/* Responsive Design */
+
 @media (max-width: 1024px) {
   .userContainer {
     padding: 0.5rem;
@@ -286,7 +286,7 @@
   }
 }
 
-/* Dark Mode Support (opcional) */
+
 @media (prefers-color-scheme: dark) {
   .userContainer {
     background: #0f172a;
@@ -326,7 +326,7 @@
   }
 }
 
-/* Utilitários */
+
 .visuallyHidden {
   position: absolute;
   width: 1px;
@@ -343,7 +343,7 @@
   overflow: hidden;
 }
 
-/* Focus States para Acessibilidade */
+
 .tab:focus-visible {
   outline: 2px solid #667eea;
   outline-offset: -2px;

@@ -27,7 +27,7 @@
   height: 70px;
 }
 
-/* Logo */
+
 .logo {
   display: flex;
   align-items: center;
@@ -55,7 +55,7 @@
   color: transparent;
 }
 
-/* Navegação Desktop */
+
 .nav {
   display: flex;
   align-items: center;
@@ -91,7 +91,7 @@
   color: white;
 }
 
-/* Busca Desktop - Oculta no mobile */
+
 .searchContainer {
   position: relative;
   display: flex;
@@ -148,7 +148,7 @@
   transform: scale(1.05);
 }
 
-/* Sugestões de busca */
+
 .suggestions {
   position: absolute;
   top: 100%;
@@ -227,14 +227,14 @@
   font-style: italic;
 }
 
-/* Seção do usuário */
+
 .userSection {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-/* Seção do usuário */
+
 .userSection {
   display: flex;
   align-items: center;
@@ -350,7 +350,7 @@
   box-shadow: 0 4px 15px rgba(126, 34, 206, 0.3);
 }
 
-/* Menu Mobile */
+
 .mobileMenuButton {
   display: none;
   flex-direction: column;
@@ -425,7 +425,7 @@
   color: var(--primary-light);
 }
 
-/* Busca Mobile */
+
 .mobileSearchContainer {
   position: relative;
   margin-bottom: 2rem;
@@ -485,7 +485,7 @@
   margin-top: 0.5rem;
 }
 
-/* Navegação Mobile */
+
 .mobileNavList {
   list-style: none;
   padding: 0;
@@ -517,7 +517,7 @@
   font-size: 1.25rem;
 }
 
-/* Seção do usuário mobile */
+
 .mobileUserSection {
   border-top: 1px solid rgba(126, 34, 206, 0.3);
   padding-top: 2rem;
@@ -587,7 +587,7 @@
   border: none;
 }
 
-/* Media Queries - Responsividade */
+
 @media (max-width: 768px) {
   .nav {
     display: none;
@@ -649,7 +649,7 @@
   }
 }
 
-/* Animações */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -764,7 +764,7 @@
   transform: scaleY(1);
 }
 
-/* Menu dropdown */
+
 .userMenu {
   position: absolute;
   top: calc(100% + 10px);
@@ -904,7 +904,7 @@
   color: inherit;
 }
 
-/* Botões de autenticação */
+
 .authButtons {
   display: flex;
   align-items: center;
@@ -941,27 +941,27 @@
   box-shadow: 0 6px 20px rgba(255, 79, 89, 0.4);
 }
 
-/* Responsividade melhorada */
+
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem;
   }
 
-  /* Mostrar botão do menu mobile */
+  
   .mobileMenuButton {
     display: flex;
   }
 
-  /* Ocultar navegação desktop */
+  
   .nav {
     display: none;
   }
 
-  /* Ocultar busca desktop no mobile */
+  
   .searchContainer {
     display: none;
   }
-  /* Ocultar área do usuário desktop no mobile */
+  
   .userSection {
     display: none;
   }
@@ -1005,7 +1005,7 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.2rem;
-  color: white; /* Texto branco para contrastar com o fundo roxo */
+  color: white; 
   text-decoration: none;
   border-radius: 12px;
   transition: all 0.3s ease;
@@ -1059,7 +1059,7 @@
   transform: scale(1.1);
 }
 
-/* Seção do usuário mobile */
+
 .mobileUserSection {
   border-top: 1px solid #e2e8f0;
   padding-top: 2rem;
@@ -1130,7 +1130,7 @@
   box-shadow: 0 4px 12px rgba(255, 79, 89, 0.3);
 }
 
-/* Container de busca com sugestões */
+
 .searchContainer {
   position: relative;
   display: flex;
@@ -1139,7 +1139,7 @@
   flex: 1;
 }
 
-/* Sugestões Desktop */
+
 .suggestions {
   position: absolute;
   top: 100%;
@@ -1244,13 +1244,13 @@
   font-size: 0.9rem;
 }
 
-/* Container de busca mobile */
+
 .mobileSearchContainer {
   position: relative;
   width: 100%;
 }
 
-/* Sugestões Mobile */
+
 .mobileSuggestions {
   position: absolute;
   top: 100%;
@@ -1267,24 +1267,24 @@
   animation: slideDown 0.2s ease-out;
 }
 
-/* Responsividade para sugestões */
+
 @media (max-width: 768px) {
-  /* Ocultar busca desktop no mobile */
+  
   .searchContainer {
     display: none;
   }
 
-  /* Ocultar navegação desktop no mobile */
+  
   .nav {
     display: none;
   }
 
-  /* Ocultar área do usuário desktop no mobile */
+  
   .userSection {
     display: none;
   }
 
-  /* Mostrar botão do menu mobile */
+  
   .mobileMenuButton {
     display: flex;
   }
@@ -1341,3 +1341,4 @@
     font-size: 0.7rem;
   }
 }
+
