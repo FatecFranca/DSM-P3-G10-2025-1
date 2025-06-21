@@ -136,37 +136,22 @@ export const deleteUser = async (req, res) => {
 
     // Excluir as dependências do usuário em ordem
     await prisma.$transaction(async (tx) => {
-      // 1. Excluir reações de comentários do usuário
-      await tx.commentReaction.deleteMany({
-        where: { userId: id },
-      });
-
-      // 2. Excluir reações de reviews do usuário
+      // 1. Excluir reações de reviews do usuário
       await tx.reviewReaction.deleteMany({
         where: { userId: id },
       });
 
-      // 3. Excluir comentários do usuário
-      await tx.comment.deleteMany({
-        where: { userId: id },
-      });
-
-      // 4. Excluir reviews do usuário
+      // 2. Excluir reviews do usuário
       await tx.review.deleteMany({
         where: { userId: id },
       });
 
-      // 5. Excluir favoritos do usuário
+      // 3. Excluir favoritos do usuário
       await tx.favorite.deleteMany({
         where: { userId: id },
       });
 
-      // 6. Excluir progresso de jogos do usuário
-      await tx.gameProgress.deleteMany({
-        where: { userId: id },
-      });
-
-      // 7. Por último, excluir o usuário
+      // 4. Por último, excluir o usuário
       await tx.user.delete({
         where: { id },
       });
